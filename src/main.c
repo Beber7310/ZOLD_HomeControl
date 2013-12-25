@@ -1,11 +1,14 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define MAIN_CODE
 #include "radiateur.h"
 #include "SerialManagement.h"
 #include "Components.h"
+
+#include "utils.h"
 
 sem_t sem_capteur_data_available;
 
@@ -30,13 +33,13 @@ int main()
 
 	if (pthread_create (&th_radiateur, NULL, radiateur_loop, 0) < 0)
 	{
-		printf ("pthread_create error for thread radiateur_loop\n");
+		info("START UP","pthread_create error for thread radiateur_loop\n");
 		exit (1);
 	}
 
 	if (pthread_create (&th_uart, NULL, uart_rf_loop, 0) < 0)
 	{
-		printf ("pthread_create error for thread uart_rf_loop\n");
+		info("START UP","pthread_create error for thread uart_rf_loop\n");
 		exit (1);
 	}
 

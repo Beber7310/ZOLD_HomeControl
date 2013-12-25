@@ -5,7 +5,9 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <string.h>
+#include <unistd.h>
 #include "Components.h"
+#include "utils.h"
 
 /** SerialManagement.c
  *
@@ -15,11 +17,11 @@
 
 int fd_fil_pilote;
 #define BAUDRATE B9600
-#define FIL_PILOTE_DEVICE "/dev/ttyACM1"
+#define FIL_PILOTE_DEVICE "/dev/ttyACM0"
 
 int fd_rf;
 #define BAUDRATE B9600
-#define RF_DEVICE "/dev/ttyACM0"
+#define RF_DEVICE "/dev/ttyACM1"
 
 int SerialFilPilote(void)
 {
@@ -252,7 +254,7 @@ void update_capteur_info(char* pBuf)
 
 	if(identified==0 && pBuf[0] == '>')
 	{
-		printf("[INFO] unidentified rf tag %s\n",pBuf);
+		warning("Unidentified rf tag %s",pBuf);
 	}
 }
 

@@ -4,9 +4,13 @@
  *  Created on: 16 déc. 2013
  *      Author: Bertrand
  */
+#include <stdio.h>
+#include <string.h>
 
 #include "Components.h"
 #include "radiateur.h"
+#include "utils.h"
+#include "SerialManagement.h"
 
 extern radiateur_t 		radiateur[RD_LAST];
 extern interrupter_t 	interrupter[IT_LAST];
@@ -14,12 +18,12 @@ extern thermometer_t	thermometer[TH_LAST];
 
 void radiateur_init(void)
 {
-	radiateur[RD_HOMECINEMA].type= FIL_PILOTE;
-	radiateur[RD_HOMECINEMA].index = 0;
-	radiateur[RD_HOMECINEMA].thermometer=-1;
-	radiateur[RD_HOMECINEMA].interupteur=IT_HOMECINEMA;
-	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
-	radiateur[RD_HOMECINEMA].expected_state = 0;
+	radiateur[RD_CUISINE].type= FIL_PILOTE;
+	radiateur[RD_CUISINE].index = 0;
+	radiateur[RD_CUISINE].thermometer=-1;
+	radiateur[RD_CUISINE].interupteur=IT_CUISINE;
+	radiateur[RD_CUISINE].calculated_target_temp = 0;
+	radiateur[RD_CUISINE].expected_state = 0;
 
 	radiateur[RD_SALON].type= FIL_PILOTE;
 	radiateur[RD_SALON].index = 1;
@@ -42,12 +46,14 @@ void radiateur_init(void)
 	radiateur[RD_DAPHNEE].calculated_target_temp = 0;
 	radiateur[RD_DAPHNEE].expected_state = 0;
 
-	radiateur[RD_CUISINE].type= FIL_PILOTE;
-	radiateur[RD_CUISINE].index = 4;
-	radiateur[RD_CUISINE].thermometer=-1;
-	radiateur[RD_CUISINE].interupteur=IT_CUISINE;
-	radiateur[RD_CUISINE].calculated_target_temp = 0;
-	radiateur[RD_CUISINE].expected_state = 0;
+
+
+	radiateur[RD_HOMECINEMA].type= FIL_PILOTE;
+	radiateur[RD_HOMECINEMA].index = 4;
+	radiateur[RD_HOMECINEMA].thermometer=-1;
+	radiateur[RD_HOMECINEMA].interupteur=IT_HOMECINEMA;
+	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
+	radiateur[RD_HOMECINEMA].expected_state = 0;
 
 }
 
@@ -141,10 +147,14 @@ void radiateur_evaluate_next_state(int rad)
 
 	if(measured_temp<targ_temp)
 	{
+		if(radiateur[rad].expected_state==0)
+			info("RADIATEUR","Switch on radiator %i",rad);
 		radiateur[rad].expected_state=1;
 	}
 	else
 	{
+		if(radiateur[rad].expected_state==1)
+			info("RADIATEUR","Switch off radiator %i",rad);
 		radiateur[rad].expected_state=0;
 	}
 }
