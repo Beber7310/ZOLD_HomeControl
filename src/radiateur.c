@@ -11,6 +11,7 @@
 #include "radiateur.h"
 #include "utils.h"
 #include "SerialManagement.h"
+#include "rrd.h"
 
 extern radiateur_t 		radiateur[RD_LAST];
 extern interrupter_t 	interrupter[IT_LAST];
@@ -25,12 +26,12 @@ void radiateur_init(void)
 	radiateur[RD_CUISINE].calculated_target_temp = 0;
 	radiateur[RD_CUISINE].expected_state = 0;
 
-	radiateur[RD_SALON].type= FIL_PILOTE;
-	radiateur[RD_SALON].index = 1;
-	radiateur[RD_SALON].thermometer=TH_SALON;
-	radiateur[RD_SALON].interupteur=-1;
-	radiateur[RD_SALON].calculated_target_temp = 0;
-	radiateur[RD_SALON].expected_state = 0;
+	radiateur[RD_DAPHNEE].type= FIL_PILOTE;
+	radiateur[RD_DAPHNEE].index = 1;
+	radiateur[RD_DAPHNEE].thermometer=TH_DAPHNEE;
+	radiateur[RD_DAPHNEE].interupteur=-1;
+	radiateur[RD_DAPHNEE].calculated_target_temp = 0;
+	radiateur[RD_DAPHNEE].expected_state = 0;
 
 	radiateur[RD_VICTOR].type= FIL_PILOTE;
 	radiateur[RD_VICTOR].index = 2;
@@ -39,21 +40,19 @@ void radiateur_init(void)
 	radiateur[RD_VICTOR].calculated_target_temp = 0;
 	radiateur[RD_VICTOR].expected_state = 0;
 
-	radiateur[RD_DAPHNEE].type= FIL_PILOTE;
-	radiateur[RD_DAPHNEE].index = 3;
-	radiateur[RD_DAPHNEE].thermometer=TH_DAPHNEE;
-	radiateur[RD_DAPHNEE].interupteur=-1;
-	radiateur[RD_DAPHNEE].calculated_target_temp = 0;
-	radiateur[RD_DAPHNEE].expected_state = 0;
-
-
-
 	radiateur[RD_HOMECINEMA].type= FIL_PILOTE;
-	radiateur[RD_HOMECINEMA].index = 4;
+	radiateur[RD_HOMECINEMA].index = 3;
 	radiateur[RD_HOMECINEMA].thermometer=-1;
 	radiateur[RD_HOMECINEMA].interupteur=IT_HOMECINEMA;
 	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
 	radiateur[RD_HOMECINEMA].expected_state = 0;
+
+	radiateur[RD_SALON].type= FIL_PILOTE;
+	radiateur[RD_SALON].index = 4;
+	radiateur[RD_SALON].thermometer=TH_SALON;
+	radiateur[RD_SALON].interupteur=-1;
+	radiateur[RD_SALON].calculated_target_temp = 0;
+	radiateur[RD_SALON].expected_state = 0;
 
 }
 
@@ -63,27 +62,39 @@ void thermometer_init(void)
 	thermometer[TH_EXTERIEUR].mesure_date=0;
 	thermometer[TH_EXTERIEUR].temperature=19.0f;
 	strcpy(thermometer[TH_EXTERIEUR].id,">281C0CC8030000D8");
+	strcpy(thermometer[TH_EXTERIEUR].name,"Exterior");
+	rrd_create_temp(thermometer[TH_EXTERIEUR].name);
 
 	thermometer[TH_GARAGE].mesure_date=0;
 	thermometer[TH_GARAGE].temperature=19.0f;
 	strcpy(thermometer[TH_GARAGE].id,">28E01DC803000066");
+	strcpy(thermometer[TH_GARAGE].name,"Garage");
+	rrd_create_temp(thermometer[TH_GARAGE].name);
 
 	thermometer[TH_SALON].mesure_date=0;
 	thermometer[TH_SALON].temperature=19.0f;
 	strcpy(thermometer[TH_SALON].id,">28980CC8030000EE");
+	strcpy(thermometer[TH_SALON].name,"Salon");
+	rrd_create_temp(thermometer[TH_SALON].name);
 
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;
 	strcpy(thermometer[TH_DAPHNEE].id,">28ADE14A0400007A");
+	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
+	rrd_create_temp(thermometer[TH_DAPHNEE].name);
 
 	thermometer[TH_VICTOR].mesure_date=0;
 	thermometer[TH_VICTOR].temperature=19.0f;
 	strcpy(thermometer[TH_VICTOR].id,">2877EB4A040000CC");
+	strcpy(thermometer[TH_VICTOR].name,"Victor");
+	rrd_create_temp(thermometer[TH_VICTOR].name);
+
 
 	thermometer[TH_BARNABE].mesure_date=0;
 	thermometer[TH_BARNABE].temperature=19.0f;
 	strcpy(thermometer[TH_BARNABE].id,">2816B14A04000010");
-
+	strcpy(thermometer[TH_BARNABE].name,"Barnabe");
+	rrd_create_temp(thermometer[TH_BARNABE].name);
 }
 
 void interupter_init(void)

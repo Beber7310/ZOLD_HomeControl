@@ -10,8 +10,6 @@
 
 #include "utils.h"
 
-sem_t sem_capteur_data_available;
-
 int main()
 {
 	pthread_t th_radiateur;
@@ -27,21 +25,23 @@ int main()
 	}
 	return 0;
 */
+	info("START UP","\n\n    ---- Home control ---- \n");
 
 	sem_init(&sem_capteur_data_available, 0,0);
 
-
 	if (pthread_create (&th_radiateur, NULL, radiateur_loop, 0) < 0)
 	{
-		info("START UP","pthread_create error for thread radiateur_loop\n");
+		info("START UP","pthread_create error for thread radiateur_loop");
 		exit (1);
 	}
+	info("START UP","Thread radiateur created");
 
 	if (pthread_create (&th_uart, NULL, uart_rf_loop, 0) < 0)
 	{
-		info("START UP","pthread_create error for thread uart_rf_loop\n");
+		info("START UP","pthread_create error for thread uart_rf_loop");
 		exit (1);
 	}
+	info("START UP","Thread rf created\n");
 
 	while(1)
 	{

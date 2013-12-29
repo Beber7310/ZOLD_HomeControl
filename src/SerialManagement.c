@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include "Components.h"
 #include "utils.h"
+#include "rrd.h"
 
 /** SerialManagement.c
  *
@@ -17,11 +18,11 @@
 
 int fd_fil_pilote;
 #define BAUDRATE B9600
-#define FIL_PILOTE_DEVICE "/dev/ttyACM0"
+#define FIL_PILOTE_DEVICE "/dev/ttyACM1"
 
 int fd_rf;
 #define BAUDRATE B9600
-#define RF_DEVICE "/dev/ttyACM1"
+#define RF_DEVICE "/dev/ttyACM0"
 
 int SerialFilPilote(void)
 {
@@ -236,8 +237,10 @@ void update_capteur_info(char* pBuf)
 		{
 			thermometer[ii].temperature=atof(pBuf+18);
 			thermometer[ii].mesure_date=time(NULL);
+			rrd_add_temp(thermometer[ii].name,thermometer[ii].temperature);
 			identified++;
 			sem_post(&sem_capteur_data_available);
+			info("RF","Received thermometer %s: %f",thermometer[ii].name,thermometer[ii].temperature);
 		}
 	}
 
@@ -249,12 +252,13 @@ void update_capteur_info(char* pBuf)
 			interrupter[ii].action_date=time(NULL);
 			identified++;
 			sem_post(&sem_capteur_data_available);
+			info("RF","Received interupter %i: %i",ii,interrupter[ii].action);
 		}
 	}
 
 	if(identified==0 && pBuf[0] == '>')
 	{
-		warning("Unidentified rf tag %s",pBuf);
+		warning("RF","Unidentified rf tag %s",pBuf);
 	}
 }
 
@@ -283,7 +287,7 @@ void * uart_rf_loop(void * arg)
 
 int SendBlyssCmd(int id,int value)
 {
-	char cmd[16]="FE6142180981C0 \n";
+	char cmd[16]="FE6142180981C0\n";
 
 	cmd[3]='0';
 	cmd[4]='0';

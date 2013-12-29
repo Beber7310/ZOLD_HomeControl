@@ -38,9 +38,10 @@ typedef struct {
 enum thermometer_name { TH_EXTERIEUR=0,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE,TH_LAST};
 
 typedef struct {
+	char name[32];
 	float temperature;
 	time_t mesure_date;
-	char id[18];
+	char id[32];
 
 } thermometer_t;
 
