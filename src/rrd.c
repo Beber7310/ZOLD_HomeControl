@@ -25,7 +25,7 @@ int rrd_add_temp(char* thermometer, float temp)
 int rrd_create_temp(char* thermometer)
 {
 	char buf[512];
-	sprintf(buf,"rrdtool create %s.rrd DS:%s:GAUGE:60:U:U RRA:AVERAGE:0.5:1:14400 RRA:AVERAGE:0.5:6:14400",thermometer,thermometer);
+	sprintf(buf,"rrdtool create %s.rrd --no-overwrite --step 60 DS:%s:GAUGE:60:U:U RRA:AVERAGE:0.5:1:14400 RRA:AVERAGE:0.5:6:14400",thermometer,thermometer);
 	system(buf);
 	return 0;
 
