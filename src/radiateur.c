@@ -25,6 +25,8 @@ void radiateur_init(void)
 	radiateur[RD_CUISINE].interupteur=IT_CUISINE;
 	radiateur[RD_CUISINE].calculated_target_temp = 0;
 	radiateur[RD_CUISINE].expected_state = 0;
+	strcpy(radiateur[RD_CUISINE].name,"Cuisine");
+	radiateur_init_pgm(RD_CUISINE);
 
 	radiateur[RD_DAPHNEE].type= FIL_PILOTE;
 	radiateur[RD_DAPHNEE].index = 1;
@@ -32,6 +34,8 @@ void radiateur_init(void)
 	radiateur[RD_DAPHNEE].interupteur=-1;
 	radiateur[RD_DAPHNEE].calculated_target_temp = 0;
 	radiateur[RD_DAPHNEE].expected_state = 0;
+	strcpy(radiateur[RD_DAPHNEE].name,"Daphnee");
+	radiateur_init_pgm(RD_DAPHNEE);
 
 	radiateur[RD_VICTOR].type= FIL_PILOTE;
 	radiateur[RD_VICTOR].index = 2;
@@ -39,6 +43,8 @@ void radiateur_init(void)
 	radiateur[RD_VICTOR].interupteur=-1;
 	radiateur[RD_VICTOR].calculated_target_temp = 0;
 	radiateur[RD_VICTOR].expected_state = 0;
+	strcpy(radiateur[RD_VICTOR].name,"Victor");
+	radiateur_init_pgm(RD_VICTOR);
 
 	radiateur[RD_HOMECINEMA].type= FIL_PILOTE;
 	radiateur[RD_HOMECINEMA].index = 3;
@@ -46,6 +52,8 @@ void radiateur_init(void)
 	radiateur[RD_HOMECINEMA].interupteur=IT_HOMECINEMA;
 	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
 	radiateur[RD_HOMECINEMA].expected_state = 0;
+	strcpy(radiateur[RD_HOMECINEMA].name,"Homecinema");
+	radiateur_init_pgm(RD_HOMECINEMA);
 
 	radiateur[RD_SALON].type= FIL_PILOTE;
 	radiateur[RD_SALON].index = 4;
@@ -53,7 +61,29 @@ void radiateur_init(void)
 	radiateur[RD_SALON].interupteur=-1;
 	radiateur[RD_SALON].calculated_target_temp = 0;
 	radiateur[RD_SALON].expected_state = 0;
+	strcpy(radiateur[RD_SALON].name,"Salon");
+	radiateur_init_pgm(RD_SALON);
 
+}
+
+void radiateur_init_pgm(int rad)
+{
+	int ii,jj;
+	for(ii=0;ii<7*24*4;ii+=24*4)
+	{
+		for(jj=0;jj<24*4;jj++)
+		{
+			if((jj<7*4)||(jj>21*4))
+			{
+				radiateur[rad].program[ii+jj]=15.0f ;
+			}
+			else
+			{
+			radiateur[rad].program[ii+jj]=20.0f ;
+			}
+		}
+	}
+	rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void thermometer_init(void)

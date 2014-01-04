@@ -22,8 +22,9 @@ enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_VICTOR,RD_DAPHNEE,RD_CUISINE,R
 
 typedef struct {
 	enum 	radiateur_type type;
+	char 	name[32];
 	int 	index;
-	char 	program[7*24*4];
+	float 	program[7*24*4];
 	int 	thermometer;
 	int 	interupteur;
 	int 	calculated_target_temp;
