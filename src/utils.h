@@ -8,10 +8,16 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+void init_msg(void);
 void info(char* tag,char *format,...);
 void warning(char* tag,char *format,...);
 
-void send_http_msg(FILE* stream);
+int get_http_msg(char* buf,int buflen);
+int get_http_sts(char* bufhttp,int buflen);
+int get_http_cmd(char* bufhttp,int buflen);
+int parse_http_cmd(char* cmd);
+int parse_http_cmd_token(char* cmd);
+
 
 typedef struct {
 	char 	level[16];

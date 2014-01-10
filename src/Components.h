@@ -29,6 +29,8 @@ typedef struct {
 	int 	interupteur;
 	int 	calculated_target_temp;
 	int 	expected_state;
+	time_t	http_req_time;
+	int		http_req_temp;
 } radiateur_t;
 
 

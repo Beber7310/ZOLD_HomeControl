@@ -215,7 +215,14 @@ void SerialFilPiloteSendCommande(void)
 
 	for(ii=0;ii<RD_LAST;ii++)
 	{
-		cmd+= (radiateur[ii].expected_state)<<(radiateur[ii].index);
+		if(ii==RD_SALON)
+		{
+			cmd+= (radiateur[ii].expected_state?1:0)<<(radiateur[ii].index);
+		}
+		else
+		{
+			cmd+= (radiateur[ii].expected_state?0:1)<<(radiateur[ii].index);
+		}
 	}
 
 	write(fd_fil_pilote,&cmd,1);

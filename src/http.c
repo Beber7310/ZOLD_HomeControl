@@ -25,6 +25,12 @@
 #include <time.h>
 #include <pthread.h>
 
+
+
+#define HTTP_LIVE_MSG 	"hc_msg"
+#define HTTP_LIVE_STS 	"hc_sts"
+#define HTTP_LIVE_CMD 	"hc_cmd"
+
 #include "utils.h"
 /* affiche un message d'erreur, errno et quitte */
 void fatal_error(const char* msg)
@@ -223,32 +229,72 @@ void envoie_fichier(FILE* stream, char* chemin, int keepalive)
 
 void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 {
+	char short_name[256];
 	char modiftime[30];
 	char curtime[30];
-	struct timeval  tv;
-	char buf[4096];
-	struct stat s;
-	int fd;
 
-	/* ouverture et vérifications */
+	int http_length;
+	char* bufhttp;
+
+	strncpy(short_name,chemin,sizeof(short_name)-1);
+	if(!strtok(short_name,"?"))
+	{
+		strcpy(short_name,chemin);
+	}
+
+	if(strcmp(short_name,HTTP_LIVE_MSG)==0)
+	{
+		bufhttp = (char*)malloc(256*1024);
+		http_length=get_http_msg(bufhttp,256*1024);
+	}
+	else if(strcmp(short_name,HTTP_LIVE_STS)==0)
+	{
+		bufhttp = (char*)malloc(256*1024);
+		http_length=get_http_sts(bufhttp,256*1024);
+	}
+	else if(strcmp(short_name,HTTP_LIVE_CMD)==0)
+	{
+		parse_http_cmd(chemin);
+		bufhttp = (char*)malloc(256*1024);
+		http_length=get_http_cmd(bufhttp,256*1024);
+
+	}
+	else
+	{
+		envoie_404(stream, chemin); return;
+	}
+
 
 	modiftime[strlen(modiftime)-1] = 0; /* supprime le \n final */
 	curtime[strlen(curtime)-1] = 0;     /* supprime le \n final */
 
+
+	int get_http_msg(char* bufhttp,int buflen);
+
 	/* envoie l'en-tête */
 	fprintf(stream, "HTTP/1.1 200 OK\r\n");
 	fprintf(stream, "Connection: %s\r\n", keepalive ? "keep-alive" : "close");
-	fprintf(stream, "Content-length: %li\r\n", (long)s.st_size);
-	fprintf(stream, "Content-type: %s\r\n", type_fichier(chemin));
+	fprintf(stream, "Content-length: %i\r\n", http_length);
+	fprintf(stream, "Content-type: %s\r\n", "text/html");
 	fprintf(stream, "Date: %s\r\n", curtime);
 	fprintf(stream, "Last-modified: %s\r\n", modiftime);
 	fprintf(stream, "\r\n");
 
 	/* envoie le corps */
-	send_http_msg(stream);
+	int w;
+	for (w=0; w<http_length; )
+	{
+		int a = fwrite(bufhttp+w, 1, http_length-w, stream);
+		if (a<=0)
+		{
+			if (errno==EINTR) continue;
+			break;
+		}
+		w += a;
+	}
 
+	free(bufhttp);
 
-	close(fd);
 }
 
 /* traitement d'une connection
@@ -274,7 +320,6 @@ void* traite_connection(void* arg)
 		keepalive = lit_en_tetes(stream);
 
 		/* envoie la réponse */
-		printf("URL: %s\n",url);
 		if(strncmp("hc_",url,3)==0)
 		{
 			envoie_live_data(stream, url, keepalive);
@@ -289,7 +334,6 @@ void* traite_connection(void* arg)
 	fin_connection(stream, "ok");
 	return NULL;
 }
-
 
 /* boucle de réception des connections */
 void * http_loop(void * arg)

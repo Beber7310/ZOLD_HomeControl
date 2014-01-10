@@ -17,7 +17,6 @@ int rrd_add_temp(char* thermometer, float temp)
 	char buf[512];
 	sprintf(buf,"rrdtool update %s.rrd %i:%f",thermometer,(int)time(NULL),temp);
 	system(buf);
-	printf(buf);
 	return 0;
 }
 

@@ -25,13 +25,13 @@ rem Upload the file to raspberry pi
 %PUTTYSCP_BIN% -pw %PASSWORD% "%1" %USERNAME%@%RASPBERRYPI_ADDR%:"%2"
 
 rem Build a list of actions to do on the pi (chmod, execute GDB server)
-if exist %~dp0%CMD_FILENAME% del %~dp0%CMD_FILENAME%
+rem if exist %~dp0%CMD_FILENAME% del %~dp0%CMD_FILENAME%
 rem echo rm "%2" >> %~dp0%CMD_FILENAME%
-echo chmod +x "%2" >> %~dp0%CMD_FILENAME%
-echo gdbserver :3785 "%2" >> %~dp0%CMD_FILENAME%
+rem echo chmod +x "%2" >> %~dp0%CMD_FILENAME%
+rem echo gdbserver :3785 "%2" >> %~dp0%CMD_FILENAME%
 
 rem Execute the action list on the raspberry pi
-%PUTTY_BIN% -pw %PASSWORD% -m %~dp0%CMD_FILENAME% %USERNAME%@%RASPBERRYPI_ADDR%
+rem %PUTTY_BIN% -pw %PASSWORD% -m %~dp0%CMD_FILENAME% %USERNAME%@%RASPBERRYPI_ADDR%
  
 rem exit /b %ERRORLEVEL%
 

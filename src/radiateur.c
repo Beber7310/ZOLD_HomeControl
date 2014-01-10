@@ -25,8 +25,10 @@ void radiateur_init(void)
 	radiateur[RD_CUISINE].interupteur=IT_CUISINE;
 	radiateur[RD_CUISINE].calculated_target_temp = 0;
 	radiateur[RD_CUISINE].expected_state = 0;
+	radiateur[RD_CUISINE].http_req_time=0;
+	radiateur[RD_CUISINE].http_req_temp=0;
 	strcpy(radiateur[RD_CUISINE].name,"Cuisine");
-	radiateur_init_pgm(RD_CUISINE);
+	radiateur_init_pgm_piece(RD_CUISINE);
 
 	radiateur[RD_DAPHNEE].type= FIL_PILOTE;
 	radiateur[RD_DAPHNEE].index = 1;
@@ -34,8 +36,10 @@ void radiateur_init(void)
 	radiateur[RD_DAPHNEE].interupteur=-1;
 	radiateur[RD_DAPHNEE].calculated_target_temp = 0;
 	radiateur[RD_DAPHNEE].expected_state = 0;
+	radiateur[RD_DAPHNEE].http_req_time=0;
+	radiateur[RD_DAPHNEE].http_req_temp=0;
 	strcpy(radiateur[RD_DAPHNEE].name,"Daphnee");
-	radiateur_init_pgm(RD_DAPHNEE);
+	radiateur_init_pgm_chambre(RD_DAPHNEE);
 
 	radiateur[RD_VICTOR].type= FIL_PILOTE;
 	radiateur[RD_VICTOR].index = 2;
@@ -43,8 +47,10 @@ void radiateur_init(void)
 	radiateur[RD_VICTOR].interupteur=-1;
 	radiateur[RD_VICTOR].calculated_target_temp = 0;
 	radiateur[RD_VICTOR].expected_state = 0;
+	radiateur[RD_VICTOR].http_req_time=0;
+	radiateur[RD_VICTOR].http_req_temp=0;
 	strcpy(radiateur[RD_VICTOR].name,"Victor");
-	radiateur_init_pgm(RD_VICTOR);
+	radiateur_init_pgm_chambre(RD_VICTOR);
 
 	radiateur[RD_HOMECINEMA].type= FIL_PILOTE;
 	radiateur[RD_HOMECINEMA].index = 3;
@@ -52,8 +58,10 @@ void radiateur_init(void)
 	radiateur[RD_HOMECINEMA].interupteur=IT_HOMECINEMA;
 	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
 	radiateur[RD_HOMECINEMA].expected_state = 0;
+	radiateur[RD_HOMECINEMA].http_req_time=0;
+	radiateur[RD_HOMECINEMA].http_req_temp=0;
 	strcpy(radiateur[RD_HOMECINEMA].name,"Homecinema");
-	radiateur_init_pgm(RD_HOMECINEMA);
+	radiateur_init_pgm_piece(RD_HOMECINEMA);
 
 	radiateur[RD_SALON].type= FIL_PILOTE;
 	radiateur[RD_SALON].index = 4;
@@ -61,12 +69,14 @@ void radiateur_init(void)
 	radiateur[RD_SALON].interupteur=-1;
 	radiateur[RD_SALON].calculated_target_temp = 0;
 	radiateur[RD_SALON].expected_state = 0;
+	radiateur[RD_SALON].http_req_time=0;
+	radiateur[RD_SALON].http_req_temp=0;
 	strcpy(radiateur[RD_SALON].name,"Salon");
-	radiateur_init_pgm(RD_SALON);
+	radiateur_init_pgm_salon(RD_SALON);
 
 }
 
-void radiateur_init_pgm(int rad)
+void radiateur_init_pgm_salon(int rad)
 {
 	int ii,jj;
 	for(ii=0;ii<7*24*4;ii+=24*4)
@@ -79,11 +89,44 @@ void radiateur_init_pgm(int rad)
 			}
 			else
 			{
-			radiateur[rad].program[ii+jj]=20.0f ;
+				radiateur[rad].program[ii+jj]=20.0f ;
 			}
 		}
 	}
-	rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+}
+
+void radiateur_init_pgm_chambre(int rad)
+{
+	int ii,jj;
+	for(ii=0;ii<7*24*4;ii+=24*4)
+	{
+		for(jj=0;jj<24*4;jj++)
+		{
+			if((jj>19*4)||(jj<21*4))
+			{
+				radiateur[rad].program[ii+jj]=20.0f ;
+			}
+			else
+			{
+				radiateur[rad].program[ii+jj]=15.0f ;
+			}
+		}
+	}
+	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+}
+
+void radiateur_init_pgm_piece(int rad)
+{
+	int ii,jj;
+	for(ii=0;ii<7*24*4;ii+=24*4)
+	{
+		for(jj=0;jj<24*4;jj++)
+		{
+				radiateur[rad].program[ii+jj]=15.0f ;
+		}
+	}
+	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void thermometer_init(void)
@@ -93,38 +136,38 @@ void thermometer_init(void)
 	thermometer[TH_EXTERIEUR].temperature=19.0f;
 	strcpy(thermometer[TH_EXTERIEUR].id,">281C0CC8030000D8");
 	strcpy(thermometer[TH_EXTERIEUR].name,"Exterior");
-	rrd_create_temp(thermometer[TH_EXTERIEUR].name);
+	//rrd_create_temp(thermometer[TH_EXTERIEUR].name);
 
 	thermometer[TH_GARAGE].mesure_date=0;
 	thermometer[TH_GARAGE].temperature=19.0f;
 	strcpy(thermometer[TH_GARAGE].id,">28E01DC803000066");
 	strcpy(thermometer[TH_GARAGE].name,"Garage");
-	rrd_create_temp(thermometer[TH_GARAGE].name);
+	//rrd_create_temp(thermometer[TH_GARAGE].name);
 
 	thermometer[TH_SALON].mesure_date=0;
 	thermometer[TH_SALON].temperature=19.0f;
 	strcpy(thermometer[TH_SALON].id,">28980CC8030000EE");
 	strcpy(thermometer[TH_SALON].name,"Salon");
-	rrd_create_temp(thermometer[TH_SALON].name);
+	//rrd_create_temp(thermometer[TH_SALON].name);
 
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;
 	strcpy(thermometer[TH_DAPHNEE].id,">28ADE14A0400007A");
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
-	rrd_create_temp(thermometer[TH_DAPHNEE].name);
+	//rrd_create_temp(thermometer[TH_DAPHNEE].name);
 
 	thermometer[TH_VICTOR].mesure_date=0;
 	thermometer[TH_VICTOR].temperature=19.0f;
 	strcpy(thermometer[TH_VICTOR].id,">2877EB4A040000CC");
 	strcpy(thermometer[TH_VICTOR].name,"Victor");
-	rrd_create_temp(thermometer[TH_VICTOR].name);
+	//rrd_create_temp(thermometer[TH_VICTOR].name);
 
 
 	thermometer[TH_BARNABE].mesure_date=0;
 	thermometer[TH_BARNABE].temperature=19.0f;
 	strcpy(thermometer[TH_BARNABE].id,">2816B14A04000010");
 	strcpy(thermometer[TH_BARNABE].name,"Barnabe");
-	rrd_create_temp(thermometer[TH_BARNABE].name);
+	//rrd_create_temp(thermometer[TH_BARNABE].name);
 }
 
 void interupter_init(void)
@@ -175,6 +218,11 @@ void radiateur_evaluate_next_state(int rad)
 		}
 	}
 
+	if((time(NULL)-radiateur[RD_SALON].http_req_time)<3600)
+	{
+		targ_temp=radiateur[RD_SALON].http_req_temp;
+	}
+
 	radiateur[rad].calculated_target_temp=targ_temp;
 
 	if(radiateur[rad].thermometer>=0)
@@ -185,17 +233,18 @@ void radiateur_evaluate_next_state(int rad)
 	{
 		measured_temp=19.0f;
 	}
+	// info("RADIATEUR","Radiator %s target temp: %f measured temp: %f",radiateur[rad].name,targ_temp,measured_temp);
 
 	if(measured_temp<targ_temp)
 	{
 		if(radiateur[rad].expected_state==0)
-			info("RADIATEUR","Switch on radiator %i",rad);
+			info("RADIATEUR","Switch on radiator %s",radiateur[rad].name);
 		radiateur[rad].expected_state=1;
 	}
 	else
 	{
 		if(radiateur[rad].expected_state==1)
-			info("RADIATEUR","Switch off radiator %i",rad);
+			info("RADIATEUR","Switch off radiator %s",radiateur[rad].name);
 		radiateur[rad].expected_state=0;
 	}
 }
@@ -210,6 +259,7 @@ void * radiateur_loop(void * arg)
 
 	while(1)
 	{
+		// info("RADIATEUR","Evaluate radiateur status");
 		for(ii=0;ii<RD_LAST;ii++)
 		{
 			radiateur_evaluate_next_state(ii);

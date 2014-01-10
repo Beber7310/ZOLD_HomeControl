@@ -19,21 +19,11 @@ int main()
 	pthread_t th_radiateur;
 	pthread_t th_uart;
 	pthread_t th_http;
-/*
-	SerialSeup();
-	sleep(5);
-	while(1)
-	{
-		SerialSendChar(ii++);
-		printf ("%i\n",ii);
-		sleep(1);
-	}
-	return 0;
-*/
 
+	init_msg();
 
 	info("START UP","\n\n    ---- Home control ---- \n");
-    setpriority(PRIO_PROCESS, 0, -20);
+    setpriority(PRIO_PROCESS, 0, -10);
 
 	sem_init(&sem_capteur_data_available, 0,0);
 
@@ -51,13 +41,13 @@ int main()
 	}
 	info("START UP","Thread http created");
 
-	/*
+
 	if (pthread_create (&th_uart, NULL, uart_rf_loop, 0) < 0)
 	{
 		info("START UP","pthread_create error for thread uart_rf_loop");
 		exit (1);
 	}
-	*/
+
 	info("START UP","Thread rf created");
 
 	while(1)
