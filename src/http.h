@@ -9,5 +9,7 @@
 #define HTTP_H_
 
 void * http_loop(void * arg);
+int http_q_data(int * current_len,char * bufhttp,char *format,...);
+
 
 #endif /* HTTP_H_ */

@@ -24,14 +24,17 @@
 #include <fcntl.h>
 #include <time.h>
 #include <pthread.h>
-
+#include <stdarg.h>
 
 
 #define HTTP_LIVE_MSG 	"hc_msg"
 #define HTTP_LIVE_STS 	"hc_sts"
 #define HTTP_LIVE_CMD 	"hc_cmd"
+#define HTTP_LIVE_TMP 	"hc_tmp"
 
 #include "utils.h"
+#include "rrd.h"
+
 /* affiche un message d'erreur, errno et quitte */
 void fatal_error(const char* msg)
 {
@@ -230,8 +233,8 @@ void envoie_fichier(FILE* stream, char* chemin, int keepalive)
 void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 {
 	char short_name[256];
-	char modiftime[30];
-	char curtime[30];
+	char modiftime[30]={1};
+	char curtime[30]={0};
 
 	int http_length;
 	char* bufhttp;
@@ -259,6 +262,13 @@ void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 		http_length=get_http_cmd(bufhttp,256*1024);
 
 	}
+	else if(strcmp(short_name,HTTP_LIVE_TMP)==0)
+	{
+		parse_http_cmd(chemin);
+		bufhttp = (char*)malloc(5*1024*1024);
+		http_length=log_get_http_temp(bufhttp,5*1024*1024);
+
+	}
 	else
 	{
 		envoie_404(stream, chemin); return;
@@ -268,8 +278,6 @@ void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 	modiftime[strlen(modiftime)-1] = 0; /* supprime le \n final */
 	curtime[strlen(curtime)-1] = 0;     /* supprime le \n final */
 
-
-	int get_http_msg(char* bufhttp,int buflen);
 
 	/* envoie l'en-tête */
 	fprintf(stream, "HTTP/1.1 200 OK\r\n");
@@ -362,4 +370,22 @@ void * http_loop(void * arg)
 		errno = pthread_detach(id);
 		if (errno) fatal_error("Echec de pthread_detach");
 	}
+}
+
+
+int http_q_data(int * current_len,char * bufhttp,char *format,...)
+{
+	char buf[1024];
+	va_list args;
+
+	va_start(args,format);
+	vsprintf(buf,format,args);
+	va_end(args);
+
+	strcpy(&bufhttp[*current_len],buf);
+
+	*current_len=*current_len+strlen(buf);
+
+
+	return 0;
 }

@@ -13,9 +13,14 @@
 #include "SerialManagement.h"
 #include "rrd.h"
 
+/*
 extern radiateur_t 		radiateur[RD_LAST];
 extern interrupter_t 	interrupter[IT_LAST];
 extern thermometer_t	thermometer[TH_LAST];
+extern presence_t 	    presence[PR_LAST];
+extern thermometer_t	thermometer[TH_LAST];
+*/
+
 
 void radiateur_init(void)
 {
@@ -28,7 +33,7 @@ void radiateur_init(void)
 	radiateur[RD_CUISINE].http_req_time=0;
 	radiateur[RD_CUISINE].http_req_temp=0;
 	strcpy(radiateur[RD_CUISINE].name,"Cuisine");
-	radiateur_init_pgm_piece(RD_CUISINE);
+	radiateur_init_pgm_cuisine(RD_CUISINE);
 
 	radiateur[RD_DAPHNEE].type= FIL_PILOTE;
 	radiateur[RD_DAPHNEE].index = 1;
@@ -61,7 +66,7 @@ void radiateur_init(void)
 	radiateur[RD_HOMECINEMA].http_req_time=0;
 	radiateur[RD_HOMECINEMA].http_req_temp=0;
 	strcpy(radiateur[RD_HOMECINEMA].name,"Homecinema");
-	radiateur_init_pgm_piece(RD_HOMECINEMA);
+	radiateur_init_pgm_homecinema(RD_HOMECINEMA);
 
 	radiateur[RD_SALON].type= FIL_PILOTE;
 	radiateur[RD_SALON].index = 4;
@@ -103,7 +108,7 @@ void radiateur_init_pgm_chambre(int rad)
 	{
 		for(jj=0;jj<24*4;jj++)
 		{
-			if((jj>19*4)||(jj<21*4))
+			if(((jj>19*4)&&(jj<21*4)) || ((jj>7*4)&&(jj<8*4)))
 			{
 				radiateur[rad].program[ii+jj]=20.0f ;
 			}
@@ -116,18 +121,56 @@ void radiateur_init_pgm_chambre(int rad)
 	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
-void radiateur_init_pgm_piece(int rad)
+void radiateur_init_pgm_cuisine(int rad)
 {
 	int ii,jj;
 	for(ii=0;ii<7*24*4;ii+=24*4)
 	{
 		for(jj=0;jj<24*4;jj++)
 		{
+			if((jj>6*4)&&(jj<9*4))
+			{
+				radiateur[rad].program[ii+jj]=20.0f ;
+			}
+			else
+			{
 				radiateur[rad].program[ii+jj]=15.0f ;
+			}
 		}
 	}
 	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
+
+void radiateur_init_pgm_homecinema(int rad)
+{
+	int ii,jj;
+	for(ii=0;ii<7*24*4;ii+=24*4)
+	{
+		for(jj=0;jj<24*4;jj++)
+				{
+		if((jj>=20*4)&&(jj<21*4))
+		{
+			radiateur[rad].program[ii+jj]=20.0f ;
+		}
+		else
+		{
+			radiateur[rad].program[ii+jj]=15.0f ;
+		}
+				}
+	}
+	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+}
+
+void radiateur_init_pgm_piece(int rad)
+{
+	int ii;
+	for(ii=0;ii<7*24*4;ii++)
+	{
+		radiateur[rad].program[ii]=15.0f ;
+	}
+	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+}
+
 
 void thermometer_init(void)
 {
@@ -172,13 +215,6 @@ void thermometer_init(void)
 
 void interupter_init(void)
 {
-	enum Interrupter_name { IT_HOMECINEMA=0,IT_CUISINE,IT_GARAGE,IT_LAST};
-
-	typedef struct {
-		time_t action_date;
-		int action;
-		char id[18];
-	} interrupter_t;
 
 	interrupter[IT_HOMECINEMA].action_date=0;
 	interrupter[IT_HOMECINEMA].action=0;
@@ -196,6 +232,39 @@ void interupter_init(void)
 
 }
 
+void Light_init(void)
+{
+
+	light[LI_ATELIER].action_date=0;
+	light[LI_ATELIER].blyss_id=3;
+	light[LI_ATELIER].presence=PR_ATELIER;
+	strcpy(light[LI_ATELIER].name,"Atelier");
+
+	light[LI_ETABLI].action_date=0;
+	light[LI_ETABLI].blyss_id=4;
+	light[LI_ETABLI].presence=PR_GARAGE;
+	strcpy(light[LI_ETABLI].name,"Etabli");
+
+	light[LI_GARAGE].action_date=0;
+	light[LI_GARAGE].blyss_id=2;
+	light[LI_GARAGE].presence=PR_GARAGE;
+	strcpy(light[LI_GARAGE].name,"Garage");
+
+}
+
+void Presence_init(void)
+{
+
+	presence[PR_ATELIER].action_date=0;
+	strcpy(presence[PR_ATELIER].id,">00000000000802F3");
+	strcpy(presence[PR_ATELIER].name,"Atelier");
+
+
+	presence[PR_GARAGE].action_date=0;
+	strcpy(presence[PR_GARAGE].id,">0000000000080769");
+	strcpy(presence[PR_GARAGE].name,"Garage");
+
+}
 void radiateur_evaluate_next_state(int rad)
 {
 	float targ_temp,measured_temp;
@@ -204,10 +273,8 @@ void radiateur_evaluate_next_state(int rad)
 	struct tm * timeinfo;
 	int index_prog;
 
-	time ( &rawtime );
-	timeinfo = localtime ( &rawtime );
-	index_prog=((timeinfo->tm_wday*24*60)+(timeinfo->tm_hour*60)+timeinfo->tm_min)/15;
 
+	index_prog=get_pgm_index();
 	targ_temp=radiateur[rad].program[index_prog];
 
 	if(radiateur[rad].interupteur>=0)
@@ -235,13 +302,13 @@ void radiateur_evaluate_next_state(int rad)
 	}
 	// info("RADIATEUR","Radiator %s target temp: %f measured temp: %f",radiateur[rad].name,targ_temp,measured_temp);
 
-	if(measured_temp<targ_temp)
+	if(measured_temp<(targ_temp-0.5))
 	{
 		if(radiateur[rad].expected_state==0)
 			info("RADIATEUR","Switch on radiator %s",radiateur[rad].name);
 		radiateur[rad].expected_state=1;
 	}
-	else
+	else if(measured_temp>(targ_temp+0.5))
 	{
 		if(radiateur[rad].expected_state==1)
 			info("RADIATEUR","Switch off radiator %s",radiateur[rad].name);
@@ -256,7 +323,8 @@ void * radiateur_loop(void * arg)
 	radiateur_init();
 	thermometer_init();
 	interupter_init();
-
+	Light_init();
+	Presence_init();
 	while(1)
 	{
 		// info("RADIATEUR","Evaluate radiateur status");

@@ -8,73 +8,119 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
+#include "http.h"
 
-
-	// rrdtool create test.rrd --start 1051480800 DS:vitesse:COUNTER:600:U:U RRA:AVERAGE:0.5:1:24 RRA:AVERAGE:0.5:6:10
-
-int rrd_add_temp(char* thermometer, float temp)
+int logData(char* dbtype,char* dbname,time_t date,float data)
 {
-	char buf[512];
-	sprintf(buf,"rrdtool update %s.rrd %i:%f",thermometer,(int)time(NULL),temp);
-	system(buf);
-	return 0;
+	char filename[256];
+
+	sprintf(filename,"db/%s_%s.db",dbtype,dbname);
+
+	FILE * pFile;
+	pFile = fopen(filename,"ab");
+
+	if (pFile!=NULL)
+	{
+
+		fwrite (&date , sizeof(date), 1, pFile);
+		fwrite (&data , sizeof(data), 1, pFile);
+
+		fclose (pFile);
+	}
+
 }
 
 
-int rrd_create_temp(char* thermometer)
+int log_get_http_temp(char* bufhttp,int buflen)
 {
-	char buf[512];
-	sprintf(buf,"rrdtool create %s.rrd --no-overwrite --step 60 DS:%s:GAUGE:60:U:U RRA:AVERAGE:0.5:1:14400 RRA:AVERAGE:0.5:6:14400",thermometer,thermometer);
-	system(buf);
-	return 0;
+	FILE * pFile;
 
-}
 
-int rrd_create_rad_pgm(char* thermometer,float* pgm)
-{
+	time_t start_time;
+	struct tm * timeinfo;
+	time_t date;
 	int ii;
-	char buf[512];
-	sprintf(buf,"rrdtool create pgm_%s.rrd --start 920804400 --step 900 DS:%s:GAUGE:900:U:U RRA:AVERAGE:0.5:1:672",thermometer,thermometer);
-	system(buf);
+	float data;
+	int read_len;
+	int http_len=0;
 
-	printf("populate rrd\n");
-	for(ii=1;ii<7*24*4;ii+=8)
+	float* pResult;
+
+
+	if (pFile!=NULL)
 	{
-		sprintf(buf,"rrdtool update pgm_%s.rrd %i:%f %i:%f %i:%f %i:%f %i:%f %i:%f %i:%f %i:%f",thermometer,\
-				920851200 + (15*60 * ii),pgm[ii],\
-			    920851200 + (15*60 * (ii+1)),pgm[ii+1],\
-			    920851200 + (15*60 * (ii+2)),pgm[ii+2],\
-			    920851200 + (15*60 * (ii+3)),pgm[ii+3],\
-			    920851200 + (15*60 * (ii+4)),pgm[ii+4],\
-			    920851200 + (15*60 * (ii+5)),pgm[ii+5],\
-			    920851200 + (15*60 * (ii+6)),pgm[ii+6],\
-			    920851200 + (15*60 * (ii+7)),pgm[ii+7]);
-		system(buf);
+		http_q_data(&http_len,bufhttp,"<html>\n");
+		http_q_data(&http_len,bufhttp,"<head>\n");
+		http_q_data(&http_len,bufhttp,"<script type='text/javascript' src='http://www.google.com/jsapi'></script>\n");
+		http_q_data(&http_len,bufhttp,"<script type='text/javascript'>\n");
+		http_q_data(&http_len,bufhttp,"google.load('visualization', '1', {'packages':['annotatedtimeline']});\n");
+		http_q_data(&http_len,bufhttp,"google.setOnLoadCallback(drawChart);\n");
+		http_q_data(&http_len,bufhttp,"function drawChart() {\n");
+		http_q_data(&http_len,bufhttp,"var data = new google.visualization.DataTable();\n");
+		http_q_data(&http_len,bufhttp,"data.addColumn('datetime', 'datetime');\n");
+		http_q_data(&http_len,bufhttp,"data.addColumn('number', 'Salon');\n");
+		http_q_data(&http_len,bufhttp,"data.addColumn('number', 'Exterieur');\n");
+		http_q_data(&http_len,bufhttp,"data.addColumn('number', 'Garage');\n");
+		http_q_data(&http_len,bufhttp,"data.addColumn('number', 'Chambre B');\n");
+		http_q_data(&http_len,bufhttp,"data.addColumn('number', 'Chambre V');\n");
+		http_q_data(&http_len,bufhttp,"data.addColumn('number', 'Chambre D');\n");
+		http_q_data(&http_len,bufhttp,"data.addRows([\n");
+
+		pFile = fopen("db/th_Salon.db","rb");
+		do
+		{
+			fread (&date, sizeof(time_t), 1,pFile);
+			timeinfo = localtime (&date);
+			read_len=fread (&data, sizeof(float), 1,pFile);
+
+
+			http_q_data(&http_len,bufhttp,"[new Date(%i,%i,%i,%i,%i,%i), %.2f,%s,%s,%s,%s,%s],\n",1900+timeinfo->tm_year,timeinfo->tm_mon,timeinfo->tm_mday,\
+					timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,data,"null","null","null","null","null");
+		}while(read_len);
+		fclose(pFile);
+
+		pFile = fopen("db/th_Exterior.db","rb");
+		do
+		{
+			fread (&date, sizeof(time_t), 1,pFile);
+			timeinfo = localtime (&date);
+			read_len=fread (&data, sizeof(float), 1,pFile);
+
+
+			http_q_data(&http_len,bufhttp,"[new Date(%i,%i,%i,%i,%i,%i), %s,%.2f,%s,%s,%s,%s],\n",1900+timeinfo->tm_year,timeinfo->tm_mon,timeinfo->tm_mday,\
+					timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,"null",data,"null","null","null","null");
+		}while(read_len);
+		fclose(pFile);
+
+		pFile = fopen("db/th_Garage.db","rb");
+		do
+		{
+			fread (&date, sizeof(time_t), 1,pFile);
+			timeinfo = localtime (&date);
+			read_len=fread (&data, sizeof(float), 1,pFile);
+
+
+			http_q_data(&http_len,bufhttp,"[new Date(%i,%i,%i,%i,%i,%i), %s,%s,%.2f,%s,%s,%s],\n",1900+timeinfo->tm_year,timeinfo->tm_mon,timeinfo->tm_mday,\
+					timeinfo->tm_hour,timeinfo->tm_min,timeinfo->tm_sec,"null","null",data,"null","null","null");
+		}while(read_len);
+		fclose(pFile);
+
+		http_q_data(&http_len,bufhttp,"       ]);\n");
+		http_q_data(&http_len,bufhttp,"        var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));\n");
+		http_q_data(&http_len,bufhttp,"        chart.draw(data, {displayAnnotations: true});\n");
+		http_q_data(&http_len,bufhttp,"      }\n");
+		http_q_data(&http_len,bufhttp,"    </script>\n");
+		http_q_data(&http_len,bufhttp,"    <meta http-equiv=\"Refresh\" content=\"%i\">\n",600);
+		http_q_data(&http_len,bufhttp,"  </head>\n");
+		http_q_data(&http_len,bufhttp,"  <body>\n");
+		http_q_data(&http_len,bufhttp,"    <div id='chart_div' style='width: 1027px; height: 550px;'></div>\n");
+		http_q_data(&http_len,bufhttp,"  </body>\n");
+		http_q_data(&http_len,bufhttp,"</html>\n");
+
+
 	}
-	printf("start rrd graph \n");
-
-	sprintf(buf,"rrdtool graph pgm_%s.jpeg -t %s -w 800 -h 400 --start 920851200 --end 921456000 DEF:%s=pgm_%s.rrd:%s:AVERAGE LINE2:%s#FF0000",thermometer,thermometer,thermometer,thermometer,thermometer,thermometer);
-	system(buf);
-	printf("done rrd graph \n");
-	return 0;
-
-}
-
-int rrd_test(void)
-{
-	int ii,start_time;
-
-	char buf[512];
-	sprintf(buf,"rrdtool create %s.rrd --start 920804400 --step 60 DS:%s:GAUGE:60:U:U RRA:AVERAGE:0.5:1:14400 RRA:AVERAGE:0.5:6:14400","pipo","pipo");
-	system(buf);
 
 
-	for(ii=0;ii<50;ii++)
-	{
-		sprintf(buf,"rrdtool update %s.rrd %i:%f","pipo",920804400 + (60 * ii),ii/1.2f);
 
-		system(buf);
-	}
-
-return 0;
+	return http_len;
 }

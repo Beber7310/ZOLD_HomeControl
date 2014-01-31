@@ -13,8 +13,6 @@
 #endif /* RDD_H_ */
 
 
-int rrd_add_temp(char * thermometer, float temp);
-void rrd_create_temp(char* thermometer);
-int rrd_create_rad_pgm(char* thermometer,float* pgm);
+int logData(char* dbtype,char* dbname,time_t date,float data);
+int log_get_http_temp(char* bufhttp,int buflen);
 
-int rrd_test(void);

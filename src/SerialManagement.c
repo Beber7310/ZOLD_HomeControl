@@ -244,10 +244,10 @@ void update_capteur_info(char* pBuf)
 		{
 			thermometer[ii].temperature=atof(pBuf+18);
 			thermometer[ii].mesure_date=time(NULL);
-			rrd_add_temp(thermometer[ii].name,thermometer[ii].temperature);
 			identified++;
 			sem_post(&sem_capteur_data_available);
 			info("RF","Received thermometer %s: %f",thermometer[ii].name,thermometer[ii].temperature);
+			logData("th",thermometer[ii].name,time(NULL),thermometer[ii].temperature);
 		}
 	}
 
@@ -260,6 +260,17 @@ void update_capteur_info(char* pBuf)
 			identified++;
 			sem_post(&sem_capteur_data_available);
 			info("RF","Received interupter %i: %i",ii,interrupter[ii].action);
+		}
+	}
+
+	for(ii=0;ii<PR_LAST;ii++)
+	{
+		if(strncmp(pBuf,presence[ii].id,16)==0)
+		{
+			presence[ii].action_date=time(NULL);
+			identified++;
+			sem_post(&sem_capteur_data_available);
+			info("RF","Received presence : %s",presence[ii].name);
 		}
 	}
 
