@@ -6,6 +6,9 @@
 #include <termios.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
+
+
 #include "Components.h"
 #include "utils.h"
 #include "rrd.h"
@@ -240,22 +243,46 @@ void update_capteur_info(char* pBuf)
 
 	for(ii=0;ii<TH_LAST;ii++)
 	{
-		if(strncmp(pBuf,thermometer[ii].id,16)==0)
+		if(pBuf[1]=='V' && thermometer[ii].type == 'V')
 		{
-			thermometer[ii].temperature=atof(pBuf+18);
-			thermometer[ii].mesure_date=time(NULL);
-			identified++;
-			sem_post(&sem_capteur_data_available);
-			info("RF","Received thermometer %s: %f",thermometer[ii].name,thermometer[ii].temperature);
-			logData("th",thermometer[ii].name,time(NULL),thermometer[ii].temperature);
+			if(strncmp(pBuf,thermometer[ii].id,18)==0)
+			{
+				thermometer[ii].temperature=atof(pBuf+20);
+				thermometer[ii].mesure_date=time(NULL);
+				identified++;
+				sem_post(&sem_capteur_data_available);
+				info("RF","Received thermometer %s: %f",thermometer[ii].name,thermometer[ii].temperature);
+				logData("th",thermometer[ii].name,time(NULL),thermometer[ii].temperature);
+			}
+		}
+		if(pBuf[1]=='C' && thermometer[ii].type == 'C')
+		{
+			if(strncmp(pBuf,thermometer[ii].id,10)==0)
+			{
+				// Serial.print("Temp: ");
+				// int temp = ((data[5] & 0x0F) << 4) | ((data[6] & 0xF0) >> 4);
+				// Serial.println(temp/10.0f);
+
+				//>C:65085033300F30
+				pBuf[16]=0;
+				thermometer[ii].temperature=strtol(pBuf+13,0,16)/10.0f;
+				thermometer[ii].mesure_date=time(NULL);
+				identified++;
+				sem_post(&sem_capteur_data_available);
+				info("RF","Received thermometer %s: %f",thermometer[ii].name,thermometer[ii].temperature);
+				logData("th",thermometer[ii].name,time(NULL),thermometer[ii].temperature);
+
+				pBuf[12]=0;
+				info("RF","Received Humidity %s: %i%%",thermometer[ii].name,strtol(pBuf+10,0,16));
+			}
 		}
 	}
 
 	for(ii=0;ii<IT_LAST;ii++)
 	{
-		if(strncmp(pBuf,interrupter[ii].id,16)==0)
+		if(strncmp(pBuf,interrupter[ii].id,10)==0)
 		{
-			interrupter[ii].action=(pBuf[18]=='1')? 1 : 0;
+			interrupter[ii].action=(pBuf[11]=='1')? 1 : 0;
 			interrupter[ii].action_date=time(NULL);
 			identified++;
 			sem_post(&sem_capteur_data_available);
@@ -265,7 +292,7 @@ void update_capteur_info(char* pBuf)
 
 	for(ii=0;ii<PR_LAST;ii++)
 	{
-		if(strncmp(pBuf,presence[ii].id,16)==0)
+		if(strncmp(pBuf,presence[ii].id,18)==0)
 		{
 			presence[ii].action_date=time(NULL);
 			identified++;
@@ -283,37 +310,74 @@ void update_capteur_info(char* pBuf)
 void * uart_rf_loop(void * arg)
 {
 	char buf[255];
+	int index=0;
+
 	int res;
 
 	SerialFilPilote();
 	SerialRF();
 
+
 	while(1)
 	{
-		res = read(fd_rf,buf,255);
+		res = read(fd_rf,&buf[index],255);
+		index+=res;
 
-		if(res>18)
+		for(int ii=0;ii<sizeof(buf);ii++)
 		{
-
-			buf[res-1]=0;
-			update_capteur_info(buf);
-
+			if((buf[ii]=='\n') ||(buf[ii]=='\r') )
+			{
+				buf[ii]=0;
+				index=0;
+				update_capteur_info(buf);
+			}
 		}
+
+
 	}
 
 }
 
 int SendBlyssCmd(int id,int value)
 {
-	char cmd[16]="FE6142180981C0\n";
+	char timestamp=0;
+	static char key_index=0;
+	char key[]= {0x98, 0xDA, 0x1E, 0xE6, 0x67};
 
+    long            ms; // Milliseconds
+    time_t          s;  // Seconds
+    struct timespec spec;
+
+    clock_gettime(CLOCK_REALTIME, &spec);
+
+    s  = spec.tv_sec;
+    ms = spec.tv_nsec / 326; // Convert nanoseconds to milliseconds
+    info("debug","%i %i",ms,spec.tv_nsec);
+
+
+	timestamp=(311*ms)/1000;
+
+	//0x98 -> 0xDA -> 0x1E -> 0xE6 -> 0x67
+
+
+	char cmd[16]="FE6142280981C0\n";
+	/*
 	cmd[3]='0';
 	cmd[4]='0';
 	cmd[5]='0';
 	cmd[6]=(id%10)+'0';
-
+	*/
 	cmd[8]= (value>0)? '0' : '1';
 
+	cmd[9]=hextochar(key[key_index]>>4);
+	cmd[10]=hextochar(key[key_index]&0xF);
+
+	cmd[11]=hextochar(timestamp>>4);
+	cmd[12]=hextochar(timestamp&0xF);
+
+
+
+	key_index=(key_index+1)%sizeof(key);
 
 	return write(fd_rf,cmd,strlen(cmd));
 }

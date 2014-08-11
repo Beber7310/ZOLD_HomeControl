@@ -14,11 +14,12 @@ void warning(char* tag,char *format,...);
 
 int get_http_msg(char* buf,int buflen);
 int get_http_sts(char* bufhttp,int buflen);
+int get_http_sts_short(char* bufhttp,int buflen);
 int get_http_cmd(char* bufhttp,int buflen);
 int parse_http_cmd(char* cmd);
 int parse_http_cmd_token(char* cmd);
 int get_pgm_index(void);
-
+char hextochar(char hex);
 typedef struct {
 	char 	level[16];
 	char 	tag[32];

@@ -38,14 +38,17 @@ typedef struct {
 //
 //	Thermometer
 //
-enum thermometer_name { TH_EXTERIEUR=0,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE,TH_LAST};
+
+
+
+enum thermometer_name { TH_EXTERIEUR=0,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE,TH_PARENT,TH_CUISINE,TH_LAST};
 
 typedef struct {
 	char name[32];
 	float temperature;
 	time_t mesure_date;
 	char id[32];
-
+	char type;
 } thermometer_t;
 
 
@@ -62,12 +65,13 @@ typedef struct {
 } interrupter_t;
 
 
-enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_LAST};
+enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_LAST};//
 typedef struct {
 	char name[32];
 	time_t action_date;
 	int blyss_id;
 	int presence;
+	int interupteur[20];
 } light_t;
 
 enum Presence_name { PR_GARAGE=0,PR_ATELIER,PR_LAST};
@@ -92,5 +96,6 @@ EXT light_t			light[LI_LAST];
 
 
 EXT sem_t 			sem_capteur_data_available;
+
 
 #endif /* COMPONENTS_H_ */

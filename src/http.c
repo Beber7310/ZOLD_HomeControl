@@ -27,10 +27,11 @@
 #include <stdarg.h>
 
 
-#define HTTP_LIVE_MSG 	"hc_msg"
-#define HTTP_LIVE_STS 	"hc_sts"
-#define HTTP_LIVE_CMD 	"hc_cmd"
-#define HTTP_LIVE_TMP 	"hc_tmp"
+#define HTTP_LIVE_MSG 			"hc_msg"
+#define HTTP_LIVE_STS 			"hc_sts"
+#define HTTP_LIVE_STS_SHORT 	"hc_sts_short"
+#define HTTP_LIVE_CMD 			"hc_cmd"
+#define HTTP_LIVE_TMP 			"hc_tmp"
 
 #include "utils.h"
 #include "rrd.h"
@@ -252,9 +253,17 @@ void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 	}
 	else if(strcmp(short_name,HTTP_LIVE_STS)==0)
 	{
+		printf("HTTP_LIVE_STS\n");
 		bufhttp = (char*)malloc(256*1024);
 		http_length=get_http_sts(bufhttp,256*1024);
 	}
+	else if(strcmp(short_name,HTTP_LIVE_STS_SHORT)==0)
+	{
+		printf("HTTP_LIVE_STS_SHORT\n");
+		bufhttp = (char*)malloc(256*1024);
+		http_length=get_http_sts_short(bufhttp,256*1024);
+	}
+
 	else if(strcmp(short_name,HTTP_LIVE_CMD)==0)
 	{
 		parse_http_cmd(chemin);

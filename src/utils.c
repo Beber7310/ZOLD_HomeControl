@@ -39,7 +39,7 @@ int get_http_msg(char* bufhttp,int buflen)
 {
 	int len=0;
 	int ii;
- 	char buf[512];
+	char buf[512];
 	ii=(last_msg-1);
 
 	while(ii!=last_msg)
@@ -63,12 +63,121 @@ int get_http_msg(char* bufhttp,int buflen)
 	return len;
 }
 
+int get_http_sts_short(char* bufhttp,int buflen)
+{
+	int len=0;
+	int ii,jj,kk;
+	char buf[512];
+	int index_prog;
+
+	index_prog=get_pgm_index();
+
+	sprintf(buf,"<pre>\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+	/////////////////////////////////////////////////////////////////
+	// Radiator
+
+	sprintf(buf,"[RADIATOR]\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+	for(ii=0;ii<RD_LAST;ii++)
+	{
+		sprintf(buf," %s %i %i \n",radiateur[ii].name,radiateur[ii].calculated_target_temp,radiateur[ii].expected_state);
+		strcpy(&bufhttp[len],buf);
+		len+=strlen(buf);
+		if(len>buflen-512)
+		{
+			return len;
+		}
+	}
+
+
+
+	/////////////////////////////////////////////////////////////////
+	// Thermometer
+
+	sprintf(buf,"[THERMOMETRE]\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+
+	for(ii=0;ii<TH_LAST;ii++)
+	{
+
+		sprintf(buf," %s %f %is \n",thermometer[ii].name,thermometer[ii].temperature,time(NULL)-thermometer[ii].mesure_date);
+		strcpy(&bufhttp[len],buf);
+		len+=strlen(buf);
+		if(len>buflen-512)
+		{
+			return len;
+		}
+	}
+
+
+
+	/////////////////////////////////////////////////////////////////
+	// Presence
+
+	sprintf(buf,"[PRESENCE]\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+
+	for(ii=0;ii<PR_LAST;ii++)
+	{
+		char buffer [80];
+		struct tm * timeinfo;
+
+		timeinfo = localtime (&presence[ii].action_date);
+		strftime (buffer,80,"%d/%m/%y %R",timeinfo);
+
+		sprintf(buf," %s %s\n",presence[ii].name,buffer);
+		strcpy(&bufhttp[len],buf);
+		len+=strlen(buf);
+		if(len>buflen-512)
+		{
+			return len;
+		}
+	}
+	/////////////////////////////////////////////////////////////////
+	// Light
+
+	sprintf(buf,"[LIGHT]\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+
+	for(ii=0;ii<LI_LAST;ii++)
+	{
+		char buffer [80];
+		struct tm * timeinfo;
+
+
+		sprintf(buf," %s\n",light[ii].name);
+		strcpy(&bufhttp[len],buf);
+		len+=strlen(buf);
+		if(len>buflen-512)
+		{
+			return len;
+		}
+	}
+	sprintf(buf,"</pre>\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+
+	return len;
+}
+
 int get_http_sts(char* bufhttp,int buflen)
 {
 	int len=0;
 	int ii,jj,kk;
- 	char buf[512];
- 	int index_prog;
+	char buf[512];
+	int index_prog;
 
 	index_prog=get_pgm_index();
 
@@ -104,55 +213,55 @@ int get_http_sts(char* bufhttp,int buflen)
 
 	for(ii=0;ii<RD_LAST;ii++)
 	{
-	sprintf(buf,"<table border=\"1\"><caption>%s</caption>\n",radiateur[ii].name);
-	strcpy(&bufhttp[len],buf);
-	len+=strlen(buf);
-
-
-	sprintf(buf,"<tr><th>Day</th> \n");
-	strcpy(&bufhttp[len],buf);
-	len+=strlen(buf);
-
-
-	for(kk=0;kk<24;kk++)
-	{
-	sprintf(buf,"<th colspan=\"4\">%ih00</th>\n",kk);
-	strcpy(&bufhttp[len],buf);
-	len+=strlen(buf);
-	}
-
-	sprintf(buf,"</tr>");
-	strcpy(&bufhttp[len],buf);
-	len+=strlen(buf);
-
-	for(jj=0;jj<7*24*4;jj+=24*4)
-	{
-		sprintf(buf,"<tr><td>%i</td>",jj/96);
+		sprintf(buf,"<table border=\"1\"><caption>%s</caption>\n",radiateur[ii].name);
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
 
-		for(kk=0;kk<24*4;kk++)
+
+		sprintf(buf,"<tr><th>Day</th> \n");
+		strcpy(&bufhttp[len],buf);
+		len+=strlen(buf);
+
+
+		for(kk=0;kk<24;kk++)
 		{
-			if(index_prog==jj+kk)
-			{
-				sprintf(buf,"<td bgcolor = #FF0000>%0.0f</td>",radiateur[ii].program[jj+kk]);
-			}
-			else
-			{
-				sprintf(buf,"<td bgcolor = #%2.2xA0A0 >%0.0f</td>",(int)(100+30*((radiateur[ii].program[jj+kk]-15))),radiateur[ii].program[jj+kk]);
-			}
+			sprintf(buf,"<th colspan=\"4\">%ih00</th>\n",kk);
 			strcpy(&bufhttp[len],buf);
 			len+=strlen(buf);
 		}
+
 		sprintf(buf,"</tr>");
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
-	}
+
+		for(jj=0;jj<7*24*4;jj+=24*4)
+		{
+			sprintf(buf,"<tr><td>%i</td>",jj/96);
+			strcpy(&bufhttp[len],buf);
+			len+=strlen(buf);
+
+			for(kk=0;kk<24*4;kk++)
+			{
+				if(index_prog==jj+kk)
+				{
+					sprintf(buf,"<td bgcolor = #FF0000>%0.0f</td>",radiateur[ii].program[jj+kk]);
+				}
+				else
+				{
+					sprintf(buf,"<td bgcolor = #%2.2xA0A0 >%0.0f</td>",(int)(100+30*((radiateur[ii].program[jj+kk]-15))),radiateur[ii].program[jj+kk]);
+				}
+				strcpy(&bufhttp[len],buf);
+				len+=strlen(buf);
+			}
+			sprintf(buf,"</tr>");
+			strcpy(&bufhttp[len],buf);
+			len+=strlen(buf);
+		}
 
 
-	sprintf(buf,"</table>\n");
-	strcpy(&bufhttp[len],buf);
-	len+=strlen(buf);
+		sprintf(buf,"</table>\n");
+		strcpy(&bufhttp[len],buf);
+		len+=strlen(buf);
 	}
 
 	/////////////////////////////////////////////////////////////////
@@ -222,18 +331,12 @@ int parse_http_cmd_token(char* cmd)
 
 	//LIGHT_Garage=on
 	if(strncmp("LIGHT_",cmd,strlen("LIGHT_"))==0)
-		{
+	{
 		for(ii=0;ii<LI_LAST;ii++)
 		{
-			if(strcmp("LIGHT_",cmd)==0)
+			if(strcmp(light[ii].name,&cmd[sizeof("LIGHT_")-1])==0)
 			{
-				info("HTTP","Command receive: PGM normal");
-				radiateur_init_pgm_cuisine(RD_CUISINE);
-				radiateur_init_pgm_chambre(RD_DAPHNEE);
-				radiateur_init_pgm_chambre(RD_VICTOR);
-				radiateur_init_pgm_homecinema(RD_HOMECINEMA);
-				radiateur_init_pgm_salon(RD_SALON);
-
+				info("HTTP","Command receive: Light : %s",light[ii].name);
 			}
 		}
 	}
@@ -243,7 +346,7 @@ int get_http_cmd(char* bufhttp,int buflen)
 {
 	int len=0;
 	int ii;
- 	char buf[512];
+	char buf[512];
 	struct tm * timeinfo;
 
 	sprintf(buf,"<html><head><title>Sample \"Hello, World\" Application</title></head>\n");
@@ -426,7 +529,7 @@ void warning(char* tag,char *format,...)
 
 void init_msg(void)
 {
- int ii;
+	int ii;
 
 	for(ii=0;ii<NBR_MSG_MAX;ii++)
 	{
@@ -448,4 +551,16 @@ int get_pgm_index(void)
 	timeinfo = localtime ( &rawtime );
 	index_prog=((timeinfo->tm_wday*24*60)+(timeinfo->tm_hour*60)+timeinfo->tm_min)/15;
 
+}
+
+char hextochar(char hex)
+{
+
+	if (hex >= 0 && hex <= 9) {
+		return hex + '0';
+	} else if (hex >= 0xa && hex <= 0xf) {
+		return hex + 'a' - 10;
+	} else {
+		return -1;   // getting here is bad: it means the character was invalid
+	}
 }

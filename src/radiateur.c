@@ -6,6 +6,9 @@
  */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 
 #include "Components.h"
 #include "radiateur.h"
@@ -175,62 +178,95 @@ void radiateur_init_pgm_piece(int rad)
 void thermometer_init(void)
 {
 	// TH_EXTERIEUR,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE
+
 	thermometer[TH_EXTERIEUR].mesure_date=0;
 	thermometer[TH_EXTERIEUR].temperature=19.0f;
-	strcpy(thermometer[TH_EXTERIEUR].id,">281C0CC8030000D8");
+	thermometer[TH_EXTERIEUR].type='V';
+	strcpy(thermometer[TH_EXTERIEUR].id,">V:281C0CC8030000D8");
 	strcpy(thermometer[TH_EXTERIEUR].name,"Exterior");
 	//rrd_create_temp(thermometer[TH_EXTERIEUR].name);
 
 	thermometer[TH_GARAGE].mesure_date=0;
 	thermometer[TH_GARAGE].temperature=19.0f;
-	strcpy(thermometer[TH_GARAGE].id,">28E01DC803000066");
+	thermometer[TH_GARAGE].type='V';
+	strcpy(thermometer[TH_GARAGE].id,">V:28E01DC803000066");
 	strcpy(thermometer[TH_GARAGE].name,"Garage");
 	//rrd_create_temp(thermometer[TH_GARAGE].name);
 
 	thermometer[TH_SALON].mesure_date=0;
 	thermometer[TH_SALON].temperature=19.0f;
-	strcpy(thermometer[TH_SALON].id,">28980CC8030000EE");
+	thermometer[TH_SALON].type='V';
+	strcpy(thermometer[TH_SALON].id,">V:28980CC8030000EE");
 	strcpy(thermometer[TH_SALON].name,"Salon");
 	//rrd_create_temp(thermometer[TH_SALON].name);
 
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;
-	strcpy(thermometer[TH_DAPHNEE].id,">28ADE14A0400007A");
+	thermometer[TH_DAPHNEE].type='V';
+	strcpy(thermometer[TH_DAPHNEE].id,">V:28ADE14A0400007A");
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
 	//rrd_create_temp(thermometer[TH_DAPHNEE].name);
 
 	thermometer[TH_VICTOR].mesure_date=0;
 	thermometer[TH_VICTOR].temperature=19.0f;
-	strcpy(thermometer[TH_VICTOR].id,">2877EB4A040000CC");
+	thermometer[TH_VICTOR].type='C';
+	strcpy(thermometer[TH_VICTOR].id,">C:6508503");
 	strcpy(thermometer[TH_VICTOR].name,"Victor");
 	//rrd_create_temp(thermometer[TH_VICTOR].name);
 
-
 	thermometer[TH_BARNABE].mesure_date=0;
 	thermometer[TH_BARNABE].temperature=19.0f;
-	strcpy(thermometer[TH_BARNABE].id,">2816B14A04000010");
+	thermometer[TH_BARNABE].type='V';
+	strcpy(thermometer[TH_BARNABE].id,">V:2816B14A04000010");
 	strcpy(thermometer[TH_BARNABE].name,"Barnabe");
 	//rrd_create_temp(thermometer[TH_BARNABE].name);
+
+	thermometer[TH_PARENT].mesure_date=0;
+	thermometer[TH_PARENT].temperature=19.0f;
+	thermometer[TH_PARENT].type='V';
+	strcpy(thermometer[TH_PARENT].id,">V:2877EB4A040000CC");
+	strcpy(thermometer[TH_PARENT].name,"Parent");
+	//rrd_create_temp(thermometer[TH_BARNABE].name);
+
+	thermometer[TH_DAPHNEE].mesure_date=0;
+	thermometer[TH_DAPHNEE].temperature=19.0f;
+	thermometer[TH_DAPHNEE].type='V';
+	strcpy(thermometer[TH_DAPHNEE].id,">V:28ADE14A0400007A");
+	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
+
+	thermometer[TH_CUISINE].mesure_date=0;
+	thermometer[TH_CUISINE].temperature=19.0f;
+	thermometer[TH_CUISINE].type='C';
+	strcpy(thermometer[TH_CUISINE].id,">C:6501504");
+	strcpy(thermometer[TH_CUISINE].name,"Cuisine");
+
+
 }
 
 void interupter_init(void)
 {
 
+	//>C:FE6142281E6A10
+
+
 	interrupter[IT_HOMECINEMA].action_date=0;
 	interrupter[IT_HOMECINEMA].action=0;
-	strcpy(interrupter[IT_HOMECINEMA].id,">0000000000081422");
+	strcpy(interrupter[IT_HOMECINEMA].id,">C:FE61422");
+
+
 
 	interrupter[IT_CUISINE].action_date=0;
 	interrupter[IT_CUISINE].action=0;
-	strcpy(interrupter[IT_CUISINE].id,">000000000008103A");
+	strcpy(interrupter[IT_CUISINE].id,">C:FE6103A");
 
 	interrupter[IT_GARAGE].action_date=0;
 	interrupter[IT_GARAGE].action=0;
-	strcpy(interrupter[IT_GARAGE].id,">0000000000088722");
-
+	strcpy(interrupter[IT_GARAGE].id,">C:FE68722");
 
 
 }
+
+
 
 void Light_init(void)
 {
@@ -239,16 +275,28 @@ void Light_init(void)
 	light[LI_ATELIER].blyss_id=3;
 	light[LI_ATELIER].presence=PR_ATELIER;
 	strcpy(light[LI_ATELIER].name,"Atelier");
+	memset(light[LI_ATELIER].interupteur,-1,sizeof(light[LI_ATELIER].interupteur));
 
 	light[LI_ETABLI].action_date=0;
 	light[LI_ETABLI].blyss_id=4;
 	light[LI_ETABLI].presence=PR_GARAGE;
 	strcpy(light[LI_ETABLI].name,"Etabli");
+	memset(light[LI_ETABLI].interupteur,-1,sizeof(light[LI_ETABLI].interupteur));
+	light[LI_ETABLI].interupteur[0]=IT_GARAGE;
 
 	light[LI_GARAGE].action_date=0;
 	light[LI_GARAGE].blyss_id=2;
 	light[LI_GARAGE].presence=PR_GARAGE;
 	strcpy(light[LI_GARAGE].name,"Garage");
+	memset(light[LI_GARAGE].interupteur,-1,sizeof(light[LI_GARAGE].interupteur));
+
+	light[LI_PRISE_1].action_date=0;
+	light[LI_PRISE_1].blyss_id=5;
+	light[LI_PRISE_1].presence=PR_GARAGE;
+	strcpy(light[LI_PRISE_1].name,"Prise 1");
+	memset(light[LI_PRISE_1].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
+	light[LI_PRISE_1].interupteur[0]=IT_HOMECINEMA;
+
 
 }
 
@@ -265,6 +313,7 @@ void Presence_init(void)
 	strcpy(presence[PR_GARAGE].name,"Garage");
 
 }
+
 void radiateur_evaluate_next_state(int rad)
 {
 	float targ_temp,measured_temp;
@@ -316,6 +365,31 @@ void radiateur_evaluate_next_state(int rad)
 	}
 }
 
+
+void light_evaluate_next_state(int li)
+{
+	int ii;
+
+	for(ii=0;ii<sizeof(light[0].interupteur)/sizeof(light[0].interupteur[0]);ii++)
+	{
+		if(light[li].interupteur[ii]>=0)
+		{
+		  //info("LIGHT","light %i interupteur %i",li,light[li].interupteur[ii]);
+		  if((time(NULL)- interrupter[light[li].interupteur[ii]].action_date)<5)
+		  {
+			 // info("LIGHT","SendBlyssCmd %i interupteur %i",light[li].blyss_id, interrupter[light[li].interupteur[ii]].action);
+			 // sleep(1);
+			 // SendBlyssCmd(light[li].blyss_id,interrupter[light[li].interupteur[ii]].action);
+		  }
+		}
+	}
+
+
+
+
+	interrupter[ii].action_date=time(NULL);
+}
+
 void * radiateur_loop(void * arg)
 {
 	int ii;
@@ -334,6 +408,10 @@ void * radiateur_loop(void * arg)
 		}
 
 
+		for(ii=0;ii<LI_LAST;ii++)
+		{
+			light_evaluate_next_state(ii);
+		}
 		SerialFilPiloteSendCommande();
 		sem_wait(&sem_capteur_data_available);
 
