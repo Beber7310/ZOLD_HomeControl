@@ -253,8 +253,6 @@ void interupter_init(void)
 	interrupter[IT_HOMECINEMA].action=0;
 	strcpy(interrupter[IT_HOMECINEMA].id,">C:FE61422");
 
-
-
 	interrupter[IT_CUISINE].action_date=0;
 	interrupter[IT_CUISINE].action=0;
 	strcpy(interrupter[IT_CUISINE].id,">C:FE6103A");

@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "Components.h"
 #include "radiateur.h"
+#include "SerialManagement.h"
 
 #define NBR_MSG_MAX	10000
 message_t msg_log[NBR_MSG_MAX];
@@ -310,7 +311,7 @@ int parse_http_cmd_token(char* cmd)
 	int ii;
 	if(strcmp("PGM=off",cmd)==0)
 	{
-		info("HTTP","Commqnd receive: PGM Off");
+		info("HTTP","Command receive: PGM Off");
 		radiateur_init_pgm_piece(RD_CUISINE);
 		radiateur_init_pgm_piece(RD_DAPHNEE);
 		radiateur_init_pgm_piece(RD_VICTOR);
@@ -334,9 +335,10 @@ int parse_http_cmd_token(char* cmd)
 	{
 		for(ii=0;ii<LI_LAST;ii++)
 		{
-			if(strcmp(light[ii].name,&cmd[sizeof("LIGHT_")-1])==0)
+			if(strncmp(light[ii].name,&cmd[sizeof("LIGHT_")-1],strlen(light[ii].name))==0)
 			{
 				info("HTTP","Command receive: Light : %s",light[ii].name);
+				SendBlyssCmd(ii,0);
 			}
 		}
 	}

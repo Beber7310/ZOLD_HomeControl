@@ -360,13 +360,17 @@ int SendBlyssCmd(int id,int value)
 	//0x98 -> 0xDA -> 0x1E -> 0xE6 -> 0x67
 
 
-	char cmd[16]="FE6142280981C0\n";
+	char cmd[16]="FE614"
+			"2280981C0\n";
+
 	/*
 	cmd[3]='0';
 	cmd[4]='0';
 	cmd[5]='0';
-	cmd[6]=(id%10)+'0';
 	*/
+	cmd[6]=(id%10)+'0';
+
+
 	cmd[8]= (value>0)? '0' : '1';
 
 	cmd[9]=hextochar(key[key_index]>>4);
