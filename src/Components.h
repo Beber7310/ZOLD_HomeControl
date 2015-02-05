@@ -18,7 +18,7 @@
 //
 
 enum radiateur_type { FIL_PILOTE,RF_CONTROLED };
-enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_VICTOR,RD_DAPHNEE,RD_CUISINE,RD_LAST};
+enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_BARNABE,RD_DAPHNEE,RD_CUISINE,RD_LAST};
 
 typedef struct {
 	enum 	radiateur_type type;
@@ -41,7 +41,7 @@ typedef struct {
 
 
 
-enum thermometer_name { TH_EXTERIEUR=0,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE,TH_PARENT,TH_CUISINE,TH_LAST};
+enum thermometer_name { TH_EXTERIEUR=0,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR_OLD,TH_VICTOR,TH_PARENT,TH_CUISINE,TH_LAST};
 
 typedef struct {
 	char name[32];
@@ -65,7 +65,7 @@ typedef struct {
 } interrupter_t;
 
 
-enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_LAST};//
+enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_CHAMBRE_B,LI_LAST};//
 typedef struct {
 	char name[32];
 	time_t action_date;

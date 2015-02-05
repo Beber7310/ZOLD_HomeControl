@@ -22,14 +22,14 @@ extern interrupter_t 	interrupter[IT_LAST];
 extern thermometer_t	thermometer[TH_LAST];
 extern presence_t 	    presence[PR_LAST];
 extern thermometer_t	thermometer[TH_LAST];
-*/
+ */
 
 
 void radiateur_init(void)
 {
 	radiateur[RD_CUISINE].type= FIL_PILOTE;
 	radiateur[RD_CUISINE].index = 0;
-	radiateur[RD_CUISINE].thermometer=-1;
+	radiateur[RD_CUISINE].thermometer=TH_CUISINE;
 	radiateur[RD_CUISINE].interupteur=IT_CUISINE;
 	radiateur[RD_CUISINE].calculated_target_temp = 0;
 	radiateur[RD_CUISINE].expected_state = 0;
@@ -49,16 +49,16 @@ void radiateur_init(void)
 	strcpy(radiateur[RD_DAPHNEE].name,"Daphnee");
 	radiateur_init_pgm_chambre(RD_DAPHNEE);
 
-	radiateur[RD_VICTOR].type= FIL_PILOTE;
-	radiateur[RD_VICTOR].index = 2;
-	radiateur[RD_VICTOR].thermometer=TH_VICTOR;
-	radiateur[RD_VICTOR].interupteur=-1;
-	radiateur[RD_VICTOR].calculated_target_temp = 0;
-	radiateur[RD_VICTOR].expected_state = 0;
-	radiateur[RD_VICTOR].http_req_time=0;
-	radiateur[RD_VICTOR].http_req_temp=0;
-	strcpy(radiateur[RD_VICTOR].name,"Victor");
-	radiateur_init_pgm_chambre(RD_VICTOR);
+	radiateur[RD_BARNABE].type= FIL_PILOTE;
+	radiateur[RD_BARNABE].index = 2;
+	radiateur[RD_BARNABE].thermometer=TH_VICTOR_OLD;
+	radiateur[RD_BARNABE].interupteur=-1;
+	radiateur[RD_BARNABE].calculated_target_temp = 0;
+	radiateur[RD_BARNABE].expected_state = 0;
+	radiateur[RD_BARNABE].http_req_time=0;
+	radiateur[RD_BARNABE].http_req_temp=0;
+	strcpy(radiateur[RD_BARNABE].name,"Barnabe");
+	radiateur_init_pgm_chambre(RD_BARNABE);
 
 	radiateur[RD_HOMECINEMA].type= FIL_PILOTE;
 	radiateur[RD_HOMECINEMA].index = 3;
@@ -84,7 +84,7 @@ void radiateur_init(void)
 
 }
 
-void radiateur_init_pgm_salon(int rad)
+void radiateur_init_pgm_froid(int rad)
 {
 	int ii,jj;
 	for(ii=0;ii<7*24*4;ii+=24*4)
@@ -101,8 +101,67 @@ void radiateur_init_pgm_salon(int rad)
 			}
 		}
 	}
-	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+
 }
+
+
+void radiateur_init_pgm_salon(int rad)
+{
+	int ii,jj;
+	for(ii=0;ii<7*24*4;ii+=24*4)
+	{
+		for(jj=0;jj<24*4;jj++)
+		{
+			//if((jj<7*4)||(jj>21*4))
+			if(((jj>=7*4)&&(jj<9*4)) || ((jj>15.5*4)&&(jj<21*4)))
+			{
+				radiateur[rad].program[ii+jj]=20.0f ;
+			}
+			else
+			{
+				radiateur[rad].program[ii+jj]=15.0f ;
+			}
+		}
+	}
+	ii=3*24*4;
+	for(jj=0;jj<24*4;jj++)
+	{
+		//if((jj<7*4)||(jj>21*4))
+		if(((jj>=7*4)&&(jj<9*4)) || ((jj>=12*4)&&(jj<21*4)))
+		{
+			radiateur[rad].program[ii+jj]=20.0f ;
+		}
+		else
+		{
+			radiateur[rad].program[ii+jj]=15.0f ;
+		}
+	}
+	ii=0*24*4;
+	for(jj=0;jj<24*4;jj++)
+	{
+		if((jj>=9*4)&&(jj<21*4))
+		{
+			radiateur[rad].program[ii+jj]=20.0f ;
+		}
+		else
+		{
+			radiateur[rad].program[ii+jj]=15.0f ;
+		}
+	}
+	ii=6*24*4;
+	for(jj=0;jj<24*4;jj++)
+	{
+		if((jj>=9*4)&&(jj<21*4))
+		{
+			radiateur[rad].program[ii+jj]=20.0f ;
+		}
+		else
+		{
+			radiateur[rad].program[ii+jj]=15.0f ;
+		}
+	}
+}
+
 
 void radiateur_init_pgm_chambre(int rad)
 {
@@ -121,6 +180,36 @@ void radiateur_init_pgm_chambre(int rad)
 			}
 		}
 	}
+
+	ii=0;
+	for(jj=0;jj<24*4;jj++)
+	{
+		if((jj>=8*4)&&(jj<=19*4))
+		{
+			radiateur[rad].program[ii+jj]=18.0f ;
+		}
+
+	}
+	ii=6*24*4;
+	for(jj=0;jj<24*4;jj++)
+	{
+		if((jj>=8*4)&&(jj<=19*4))
+		{
+			radiateur[rad].program[ii+jj]=18.0f ;
+		}
+
+	}
+	ii=3*24*4;
+	for(jj=0;jj<24*4;jj++)
+	{
+		if((jj>=13*4)&&(jj<=19*4))
+		{
+			radiateur[rad].program[ii+jj]=18.0f ;
+		}
+
+	}
+
+
 	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
@@ -150,16 +239,16 @@ void radiateur_init_pgm_homecinema(int rad)
 	for(ii=0;ii<7*24*4;ii+=24*4)
 	{
 		for(jj=0;jj<24*4;jj++)
-				{
-		if((jj>=20*4)&&(jj<21*4))
 		{
-			radiateur[rad].program[ii+jj]=20.0f ;
+			if((jj>=20*4)&&(jj<21*4))
+			{
+				radiateur[rad].program[ii+jj]=20.0f ;
+			}
+			else
+			{
+				radiateur[rad].program[ii+jj]=15.0f ;
+			}
 		}
-		else
-		{
-			radiateur[rad].program[ii+jj]=15.0f ;
-		}
-				}
 	}
 	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
@@ -174,6 +263,15 @@ void radiateur_init_pgm_piece(int rad)
 	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
+void radiateur_init_pgm_temp(int rad,float temp)
+{
+	int ii;
+	for(ii=0;ii<7*24*4;ii++)
+	{
+		radiateur[rad].program[ii]=temp ;
+	}
+	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+}
 
 void thermometer_init(void)
 {
@@ -207,18 +305,18 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
 	//rrd_create_temp(thermometer[TH_DAPHNEE].name);
 
-	thermometer[TH_VICTOR].mesure_date=0;
-	thermometer[TH_VICTOR].temperature=19.0f;
-	thermometer[TH_VICTOR].type='C';
-	strcpy(thermometer[TH_VICTOR].id,">C:6508503");
-	strcpy(thermometer[TH_VICTOR].name,"Victor");
+	thermometer[TH_VICTOR_OLD].mesure_date=0;
+	thermometer[TH_VICTOR_OLD].temperature=19.0f;
+	thermometer[TH_VICTOR_OLD].type='C';
+	strcpy(thermometer[TH_VICTOR_OLD].id,">C:6508503");
+	strcpy(thermometer[TH_VICTOR_OLD].name,"Barnabé");
 	//rrd_create_temp(thermometer[TH_VICTOR].name);
 
-	thermometer[TH_BARNABE].mesure_date=0;
-	thermometer[TH_BARNABE].temperature=19.0f;
-	thermometer[TH_BARNABE].type='V';
-	strcpy(thermometer[TH_BARNABE].id,">V:2816B14A04000010");
-	strcpy(thermometer[TH_BARNABE].name,"Barnabe");
+	thermometer[TH_VICTOR].mesure_date=0;
+	thermometer[TH_VICTOR].temperature=19.0f;
+	thermometer[TH_VICTOR].type='V';
+	strcpy(thermometer[TH_VICTOR].id,">V:2816B14A04000010");
+	strcpy(thermometer[TH_VICTOR].name,"Victor");
 	//rrd_create_temp(thermometer[TH_BARNABE].name);
 
 	thermometer[TH_PARENT].mesure_date=0;
@@ -270,31 +368,37 @@ void Light_init(void)
 {
 
 	light[LI_ATELIER].action_date=0;
-	light[LI_ATELIER].blyss_id=3;
+	light[LI_ATELIER].blyss_id=2;
 	light[LI_ATELIER].presence=PR_ATELIER;
 	strcpy(light[LI_ATELIER].name,"Atelier");
 	memset(light[LI_ATELIER].interupteur,-1,sizeof(light[LI_ATELIER].interupteur));
 
 	light[LI_ETABLI].action_date=0;
-	light[LI_ETABLI].blyss_id=4;
+	light[LI_ETABLI].blyss_id=1;
 	light[LI_ETABLI].presence=PR_GARAGE;
 	strcpy(light[LI_ETABLI].name,"Etabli");
 	memset(light[LI_ETABLI].interupteur,-1,sizeof(light[LI_ETABLI].interupteur));
 	light[LI_ETABLI].interupteur[0]=IT_GARAGE;
 
 	light[LI_GARAGE].action_date=0;
-	light[LI_GARAGE].blyss_id=2;
+	light[LI_GARAGE].blyss_id=0;
 	light[LI_GARAGE].presence=PR_GARAGE;
 	strcpy(light[LI_GARAGE].name,"Garage");
 	memset(light[LI_GARAGE].interupteur,-1,sizeof(light[LI_GARAGE].interupteur));
 
 	light[LI_PRISE_1].action_date=0;
-	light[LI_PRISE_1].blyss_id=5;
-	light[LI_PRISE_1].presence=PR_GARAGE;
-	strcpy(light[LI_PRISE_1].name,"Prise 1");
+	light[LI_PRISE_1].blyss_id=3;
+	light[LI_PRISE_1].presence=-1;
+	strcpy(light[LI_PRISE_1].name,"Prise_1");
 	memset(light[LI_PRISE_1].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
 	light[LI_PRISE_1].interupteur[0]=IT_HOMECINEMA;
 
+	light[LI_CHAMBRE_B].action_date=0;
+	light[LI_CHAMBRE_B].blyss_id=4;
+	light[LI_CHAMBRE_B].presence=-1;
+	strcpy(light[LI_CHAMBRE_B].name,"Chambre_B");
+	memset(light[LI_CHAMBRE_B].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
+	light[LI_CHAMBRE_B].interupteur[0]=IT_HOMECINEMA;
 
 }
 
@@ -302,12 +406,12 @@ void Presence_init(void)
 {
 
 	presence[PR_ATELIER].action_date=0;
-	strcpy(presence[PR_ATELIER].id,">00000000000802F3");
+	strcpy(presence[PR_ATELIER].id,">C:FE802F3");
 	strcpy(presence[PR_ATELIER].name,"Atelier");
 
 
 	presence[PR_GARAGE].action_date=0;
-	strcpy(presence[PR_GARAGE].id,">0000000000080769");
+	strcpy(presence[PR_GARAGE].id,">C:FE80769");
 	strcpy(presence[PR_GARAGE].name,"Garage");
 
 }
@@ -328,13 +432,13 @@ void radiateur_evaluate_next_state(int rad)
 	{
 		if(((time(NULL)-interrupter[radiateur[rad].interupteur].action_date)<3600) &&(interrupter[radiateur[rad].interupteur].action==1))
 		{
-			targ_temp=21.0f;
+			targ_temp=23.0f;
 		}
 	}
 
-	if((time(NULL)-radiateur[RD_SALON].http_req_time)<3600)
+	if((time(NULL)-radiateur[rad].http_req_time)<3600)
 	{
-		targ_temp=radiateur[RD_SALON].http_req_temp;
+		targ_temp=radiateur[rad].http_req_temp;
 	}
 
 	radiateur[rad].calculated_target_temp=targ_temp;
@@ -368,24 +472,19 @@ void light_evaluate_next_state(int li)
 {
 	int ii;
 
-	for(ii=0;ii<sizeof(light[0].interupteur)/sizeof(light[0].interupteur[0]);ii++)
+	if(light[li].presence>=0)
 	{
-		if(light[li].interupteur[ii]>=0)
+		if(((time(NULL)- presence[light[li].presence].action_date)>60) && (light[li].action_date < presence[light[li].presence].action_date))
 		{
-		  //info("LIGHT","light %i interupteur %i",li,light[li].interupteur[ii]);
-		  if((time(NULL)- interrupter[light[li].interupteur[ii]].action_date)<5)
-		  {
-			 // info("LIGHT","SendBlyssCmd %i interupteur %i",light[li].blyss_id, interrupter[light[li].interupteur[ii]].action);
-			 // sleep(1);
-			 // SendBlyssCmd(light[li].blyss_id,interrupter[light[li].interupteur[ii]].action);
-		  }
+			info("LIGHT","SendBlyssCmd %i interrupter %i",light[li].blyss_id, 0);
+			SendBlyssCmd(light[li].blyss_id,0);
+
+			light[li].action_date=time(NULL);
 		}
 	}
 
 
 
-
-	interrupter[ii].action_date=time(NULL);
 }
 
 void * radiateur_loop(void * arg)

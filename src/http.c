@@ -83,7 +83,6 @@ int cree_socket_ecoute(int port)
 /* termine la connection: ferme la socket et termine la thread */
 void fin_connection(FILE* stream, char* msg)
 {
-	fprintf(stderr, "fin de connection (%s, errno=%s)\n", msg, strerror(errno));
 	fclose(stream);
 	pthread_exit(NULL);
 }
@@ -253,13 +252,11 @@ void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 	}
 	else if(strcmp(short_name,HTTP_LIVE_STS)==0)
 	{
-		printf("HTTP_LIVE_STS\n");
 		bufhttp = (char*)malloc(256*1024);
 		http_length=get_http_sts(bufhttp,256*1024);
 	}
 	else if(strcmp(short_name,HTTP_LIVE_STS_SHORT)==0)
 	{
-		printf("HTTP_LIVE_STS_SHORT\n");
 		bufhttp = (char*)malloc(256*1024);
 		http_length=get_http_sts_short(bufhttp,256*1024);
 	}

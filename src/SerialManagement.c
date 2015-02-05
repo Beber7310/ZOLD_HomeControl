@@ -292,7 +292,7 @@ void update_capteur_info(char* pBuf)
 
 	for(ii=0;ii<PR_LAST;ii++)
 	{
-		if(strncmp(pBuf,presence[ii].id,18)==0)
+		if(strncmp(pBuf,presence[ii].id,10)==0)
 		{
 			presence[ii].action_date=time(NULL);
 			identified++;
@@ -352,16 +352,13 @@ int SendBlyssCmd(int id,int value)
 
     s  = spec.tv_sec;
     ms = spec.tv_nsec / 326; // Convert nanoseconds to milliseconds
-    info("debug","%i %i",ms,spec.tv_nsec);
-
 
 	timestamp=(311*ms)/1000;
 
 	//0x98 -> 0xDA -> 0x1E -> 0xE6 -> 0x67
 
 
-	char cmd[16]="FE614"
-			"2280981C0\n";
+	char cmd[17]="FE6142280981C0 ";
 
 	/*
 	cmd[3]='0';
@@ -379,7 +376,7 @@ int SendBlyssCmd(int id,int value)
 	cmd[11]=hextochar(timestamp>>4);
 	cmd[12]=hextochar(timestamp&0xF);
 
-
+	info("BLYSS","Command Send: %s",cmd);
 
 	key_index=(key_index+1)%sizeof(key);
 

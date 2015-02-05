@@ -18,6 +18,8 @@ int get_http_sts_short(char* bufhttp,int buflen);
 int get_http_cmd(char* bufhttp,int buflen);
 int parse_http_cmd(char* cmd);
 int parse_http_cmd_token(char* cmd);
+int parse_http_cmd_RAD_token(char* cmd);
+int parse_http_cmd_LIGHT_token(char* cmd);
 int get_pgm_index(void);
 char hextochar(char hex);
 typedef struct {

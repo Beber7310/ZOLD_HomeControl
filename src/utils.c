@@ -300,7 +300,6 @@ int parse_http_cmd(char* cmd)
 	pch = strtok(NULL,"?");
 	while (pch != NULL)
 	{
-		printf("Command %s\n",pch);
 		parse_http_cmd_token(pch);
 		pch = strtok (NULL, "?");
 	}
@@ -314,7 +313,7 @@ int parse_http_cmd_token(char* cmd)
 		info("HTTP","Command receive: PGM Off");
 		radiateur_init_pgm_piece(RD_CUISINE);
 		radiateur_init_pgm_piece(RD_DAPHNEE);
-		radiateur_init_pgm_piece(RD_VICTOR);
+		radiateur_init_pgm_piece(RD_BARNABE);
 		radiateur_init_pgm_piece(RD_HOMECINEMA);
 		radiateur_init_pgm_piece(RD_SALON);
 	}
@@ -324,25 +323,87 @@ int parse_http_cmd_token(char* cmd)
 		info("HTTP","Command receive: PGM normal");
 		radiateur_init_pgm_cuisine(RD_CUISINE);
 		radiateur_init_pgm_chambre(RD_DAPHNEE);
-		radiateur_init_pgm_chambre(RD_VICTOR);
+		radiateur_init_pgm_chambre(RD_BARNABE);
 		radiateur_init_pgm_homecinema(RD_HOMECINEMA);
 		radiateur_init_pgm_salon(RD_SALON);
 
 	}
+	if(strcmp("PGM=froid",cmd)==0)
+	{
+		info("HTTP","Command receive: PGM normal");
+		radiateur_init_pgm_froid(RD_CUISINE);
+		radiateur_init_pgm_froid(RD_DAPHNEE);
+		radiateur_init_pgm_froid(RD_BARNABE);
+		radiateur_init_pgm_froid(RD_HOMECINEMA);
+		radiateur_init_pgm_froid(RD_SALON);
 
-	//LIGHT_Garage=on
+	}
+
+	//RAD_Garage=on
+	if(strncmp("RAD_",cmd,strlen("RAD_"))==0)
+	{
+		parse_http_cmd_RAD_token(&cmd[sizeof("RAD_")-1]);
+	}
+
+	//LIGHT
 	if(strncmp("LIGHT_",cmd,strlen("LIGHT_"))==0)
 	{
-		for(ii=0;ii<LI_LAST;ii++)
+		parse_http_cmd_LIGHT_token(&cmd[sizeof("LIGHT_")-1]);
+	}
+}
+
+int parse_http_cmd_LIGHT_token(char* cmd)
+{
+	int ii;
+	int target_status;
+
+	char * pch;
+	pch = strtok (cmd,"=");
+	if(pch)
+		pch = strtok (NULL,"=");
+	if(pch)
+		target_status=atoi(pch);
+
+
+	for(ii=0;ii<LI_LAST;ii++)
+	{
+		if(strncmp(light[ii].name,cmd,strlen(light[ii].name))==0)
 		{
-			if(strncmp(light[ii].name,&cmd[sizeof("LIGHT_")-1],strlen(light[ii].name))==0)
-			{
-				info("HTTP","Command receive: Light : %s",light[ii].name);
-				SendBlyssCmd(ii,0);
-			}
+			info("HTTP","Command receive: %s",light[ii].name);
+			SendBlyssCmd(light[ii].blyss_id,target_status);
+
 		}
 	}
 }
+
+
+int parse_http_cmd_RAD_token(char* cmd)
+{
+	int ii;
+	float target_temp;
+
+	char * pch;
+	pch = strtok (cmd,"=");
+	if(pch)
+		pch = strtok (NULL,"=");
+	if(pch)
+		target_temp=atof(pch);
+
+
+	for(ii=0;ii<RD_LAST;ii++)
+	{
+		if(strncmp(radiateur[ii].name,cmd,strlen(radiateur[ii].name))==0)
+		{
+			info("HTTP","Command receive: : %s",radiateur[ii].name);
+
+			radiateur[ii].http_req_time=time(NULL);
+			radiateur[ii].http_req_temp=target_temp;
+			sem_post(&sem_capteur_data_available);
+		}
+	}
+}
+
+
 
 int get_http_cmd(char* bufhttp,int buflen)
 {
@@ -358,7 +419,6 @@ int get_http_cmd(char* bufhttp,int buflen)
 	sprintf(buf,"<body bgcolor=white>\n");
 	strcpy(&bufhttp[len],buf);
 	len+=strlen(buf);
-
 
 
 	// Radiator
@@ -454,6 +514,28 @@ int get_http_cmd(char* bufhttp,int buflen)
 	strcpy(&bufhttp[len],buf);
 	len+=strlen(buf);
 
+	// Normal
+	sprintf(buf,"<a href=\"hc_cmd?PGM=froid\">Froid</a>");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+	// Light
+	sprintf(buf,"<p><p><p>[Light]\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+	for(ii=0;ii<LI_LAST;ii++)
+	{
+
+		sprintf(buf,"<p>%s\n <a href=\"hc_cmd?LIGHT_%s=1\">on</a> <a href=\"hc_cmd?LIGHT_%s=0\">off</a> ",light[ii].name,light[ii].name,light[ii].name);
+		strcpy(&bufhttp[len],buf);
+		len+=strlen(buf);
+		if(len>buflen-512)
+		{
+			return len;
+		}
+	}
+
 	// Thermometer
 	sprintf(buf,"<p><p><p>[Thermometer]\n");
 	strcpy(&bufhttp[len],buf);
@@ -471,22 +553,7 @@ int get_http_cmd(char* bufhttp,int buflen)
 		}
 	}
 
-	// Light
-	sprintf(buf,"<p><p><p>[Light]\n");
-	strcpy(&bufhttp[len],buf);
-	len+=strlen(buf);
 
-	for(ii=0;ii<LI_LAST;ii++)
-	{
-
-		sprintf(buf,"<p>%s\n <a href=\"hc_cmd?LIGHT_%s=on\">on</a> <a href=\"hc_cmd?LIGHT_%s=off\">off</a> ",light[ii].name,light[ii].name,light[ii].name);
-		strcpy(&bufhttp[len],buf);
-		len+=strlen(buf);
-		if(len>buflen-512)
-		{
-			return len;
-		}
-	}
 
 
 	sprintf(buf,"</body></html>\n");
