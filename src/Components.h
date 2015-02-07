@@ -46,6 +46,7 @@ enum thermometer_name { TH_EXTERIEUR=0,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR_O
 typedef struct {
 	char name[32];
 	float temperature;
+	float hygrometrie;
 	time_t mesure_date;
 	char id[32];
 	char type;
@@ -56,7 +57,7 @@ typedef struct {
 //
 //	Interrupter
 //
-enum Interrupter_name { IT_HOMECINEMA=0,IT_CUISINE,IT_GARAGE,IT_LAST};
+enum Interrupter_name { IT_HOMECINEMA=0,IT_CUISINE,IT_GARAGE,IT_BARNABE,IT_LAST};
 
 typedef struct {
 	time_t action_date;

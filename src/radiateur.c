@@ -224,6 +224,10 @@ void radiateur_init_pgm_cuisine(int rad)
 			{
 				radiateur[rad].program[ii+jj]=20.0f ;
 			}
+			else if((jj>8*4)&&(jj<20*4))
+			{
+				radiateur[rad].program[ii+jj]=18.0f ;
+			}
 			else
 			{
 				radiateur[rad].program[ii+jj]=15.0f ;
@@ -279,6 +283,7 @@ void thermometer_init(void)
 
 	thermometer[TH_EXTERIEUR].mesure_date=0;
 	thermometer[TH_EXTERIEUR].temperature=19.0f;
+	thermometer[TH_EXTERIEUR].hygrometrie=-1.0f;
 	thermometer[TH_EXTERIEUR].type='V';
 	strcpy(thermometer[TH_EXTERIEUR].id,">V:281C0CC8030000D8");
 	strcpy(thermometer[TH_EXTERIEUR].name,"Exterior");
@@ -286,6 +291,7 @@ void thermometer_init(void)
 
 	thermometer[TH_GARAGE].mesure_date=0;
 	thermometer[TH_GARAGE].temperature=19.0f;
+	thermometer[TH_GARAGE].hygrometrie=-1.0f;
 	thermometer[TH_GARAGE].type='V';
 	strcpy(thermometer[TH_GARAGE].id,">V:28E01DC803000066");
 	strcpy(thermometer[TH_GARAGE].name,"Garage");
@@ -293,6 +299,7 @@ void thermometer_init(void)
 
 	thermometer[TH_SALON].mesure_date=0;
 	thermometer[TH_SALON].temperature=19.0f;
+	thermometer[TH_SALON].hygrometrie=-1.0f;
 	thermometer[TH_SALON].type='V';
 	strcpy(thermometer[TH_SALON].id,">V:28980CC8030000EE");
 	strcpy(thermometer[TH_SALON].name,"Salon");
@@ -300,6 +307,7 @@ void thermometer_init(void)
 
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;
+	thermometer[TH_DAPHNEE].hygrometrie=-1.0f;
 	thermometer[TH_DAPHNEE].type='V';
 	strcpy(thermometer[TH_DAPHNEE].id,">V:28ADE14A0400007A");
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
@@ -307,6 +315,7 @@ void thermometer_init(void)
 
 	thermometer[TH_VICTOR_OLD].mesure_date=0;
 	thermometer[TH_VICTOR_OLD].temperature=19.0f;
+	thermometer[TH_VICTOR_OLD].hygrometrie=-1.0f;
 	thermometer[TH_VICTOR_OLD].type='C';
 	strcpy(thermometer[TH_VICTOR_OLD].id,">C:6508503");
 	strcpy(thermometer[TH_VICTOR_OLD].name,"Barnabé");
@@ -314,6 +323,7 @@ void thermometer_init(void)
 
 	thermometer[TH_VICTOR].mesure_date=0;
 	thermometer[TH_VICTOR].temperature=19.0f;
+	thermometer[TH_VICTOR].hygrometrie=-1.0f;
 	thermometer[TH_VICTOR].type='V';
 	strcpy(thermometer[TH_VICTOR].id,">V:2816B14A04000010");
 	strcpy(thermometer[TH_VICTOR].name,"Victor");
@@ -321,6 +331,7 @@ void thermometer_init(void)
 
 	thermometer[TH_PARENT].mesure_date=0;
 	thermometer[TH_PARENT].temperature=19.0f;
+	thermometer[TH_PARENT].hygrometrie=-1.0f;
 	thermometer[TH_PARENT].type='V';
 	strcpy(thermometer[TH_PARENT].id,">V:2877EB4A040000CC");
 	strcpy(thermometer[TH_PARENT].name,"Parent");
@@ -328,12 +339,14 @@ void thermometer_init(void)
 
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;
+	thermometer[TH_DAPHNEE].hygrometrie=-1.0f;
 	thermometer[TH_DAPHNEE].type='V';
 	strcpy(thermometer[TH_DAPHNEE].id,">V:28ADE14A0400007A");
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
 
 	thermometer[TH_CUISINE].mesure_date=0;
 	thermometer[TH_CUISINE].temperature=19.0f;
+	thermometer[TH_CUISINE].hygrometrie=-1.0f;
 	thermometer[TH_CUISINE].type='C';
 	strcpy(thermometer[TH_CUISINE].id,">C:6501504");
 	strcpy(thermometer[TH_CUISINE].name,"Cuisine");
@@ -359,6 +372,9 @@ void interupter_init(void)
 	interrupter[IT_GARAGE].action=0;
 	strcpy(interrupter[IT_GARAGE].id,">C:FE68722");
 
+	interrupter[IT_BARNABE].action_date=0;
+	interrupter[IT_BARNABE].action=0;
+	strcpy(interrupter[IT_BARNABE].id,">C:FE685FA");
 
 }
 
@@ -474,7 +490,7 @@ void light_evaluate_next_state(int li)
 
 	if(light[li].presence>=0)
 	{
-		if(((time(NULL)- presence[light[li].presence].action_date)>60) && (light[li].action_date < presence[light[li].presence].action_date))
+		if(((time(NULL)- presence[light[li].presence].action_date)>600) && (light[li].action_date < presence[light[li].presence].action_date))
 		{
 			info("LIGHT","SendBlyssCmd %i interrupter %i",light[li].blyss_id, 0);
 			SendBlyssCmd(light[li].blyss_id,0);

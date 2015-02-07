@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 #include "http.h"
+#include "emon.h"
 
 int logData(char* dbtype,char* dbname,time_t date,float data)
 {
@@ -28,6 +29,7 @@ int logData(char* dbtype,char* dbname,time_t date,float data)
 		fclose (pFile);
 	}
 
+	emon_log_data(filename, data);
 }
 
 

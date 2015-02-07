@@ -273,7 +273,9 @@ void update_capteur_info(char* pBuf)
 				logData("th",thermometer[ii].name,time(NULL),thermometer[ii].temperature);
 
 				pBuf[12]=0;
-				info("RF","Received Humidity %s: %i%%",thermometer[ii].name,strtol(pBuf+10,0,16));
+				thermometer[ii].hygrometrie=(float)strtol(pBuf+10,0,16);
+				info("RF","Received Humidity %s: %f%%",thermometer[ii].name,thermometer[ii].hygrometrie);
+				logData("hy",thermometer[ii].name,time(NULL),thermometer[ii].hygrometrie);
 			}
 		}
 	}
