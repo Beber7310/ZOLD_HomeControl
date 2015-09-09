@@ -18,7 +18,7 @@ SET PUTTYSCP_BIN="C:\Program Files (x86)\PuTTY\pscp.exe"
 SET PUTTY_BIN="C:\Program Files (x86)\PuTTY\putty.exe"
 SET RASPBERRYPI_ADDR=homecontrol
 SET USERNAME=pi
-SET PASSWORD=raspberry
+SET PASSWORD=q27krtrq
 SET CMD_FILENAME=commands.sh
 
 rem Upload the file to raspberry pi

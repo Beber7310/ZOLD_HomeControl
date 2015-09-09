@@ -267,6 +267,16 @@ void radiateur_init_pgm_piece(int rad)
 	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
+void radiateur_init_pgm_hors_gele(int rad)
+{
+	int ii;
+	for(ii=0;ii<7*24*4;ii++)
+	{
+		radiateur[rad].program[ii]=12.0f ;
+	}
+	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+}
+
 void radiateur_init_pgm_temp(int rad,float temp)
 {
 	int ii;
@@ -297,6 +307,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_GARAGE].name,"Garage");
 	//rrd_create_temp(thermometer[TH_GARAGE].name);
 
+	/*
 	thermometer[TH_SALON].mesure_date=0;
 	thermometer[TH_SALON].temperature=19.0f;
 	thermometer[TH_SALON].hygrometrie=-1.0f;
@@ -304,6 +315,14 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_SALON].id,">V:28980CC8030000EE");
 	strcpy(thermometer[TH_SALON].name,"Salon");
 	//rrd_create_temp(thermometer[TH_SALON].name);
+	 */
+
+	thermometer[TH_SALON].mesure_date=0;
+	thermometer[TH_SALON].temperature=19.0f;
+	thermometer[TH_SALON].hygrometrie=-1.0f;
+	thermometer[TH_SALON].type='C';
+	strcpy(thermometer[TH_SALON].id,">C:6505101");
+	strcpy(thermometer[TH_SALON].name,"Salon");
 
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;

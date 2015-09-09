@@ -311,11 +311,11 @@ int parse_http_cmd_token(char* cmd)
 	if(strcmp("PGM=off",cmd)==0)
 	{
 		info("HTTP","Command receive: PGM Off");
-		radiateur_init_pgm_piece(RD_CUISINE);
-		radiateur_init_pgm_piece(RD_DAPHNEE);
-		radiateur_init_pgm_piece(RD_BARNABE);
-		radiateur_init_pgm_piece(RD_HOMECINEMA);
-		radiateur_init_pgm_piece(RD_SALON);
+		radiateur_init_pgm_hors_gele(RD_CUISINE);
+		radiateur_init_pgm_hors_gele(RD_DAPHNEE);
+		radiateur_init_pgm_hors_gele(RD_BARNABE);
+		radiateur_init_pgm_hors_gele(RD_HOMECINEMA);
+		radiateur_init_pgm_hors_gele(RD_SALON);
 	}
 
 	if(strcmp("PGM=normal",cmd)==0)
