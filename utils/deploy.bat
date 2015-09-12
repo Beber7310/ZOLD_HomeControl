@@ -1,4 +1,4 @@
-
+#C:/Users/Bertrand/workspace/HomeControl/utils/deploy.bat  "${ProjDirPath}/Debug/${ProjName}.a" /home/pi/projects/${ProjName}.a
 ECHO OFF
 
 ECHO Start deploy
