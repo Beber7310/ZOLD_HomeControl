@@ -307,15 +307,15 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_GARAGE].name,"Garage");
 	//rrd_create_temp(thermometer[TH_GARAGE].name);
 
-	/*
-	thermometer[TH_SALON].mesure_date=0;
-	thermometer[TH_SALON].temperature=19.0f;
-	thermometer[TH_SALON].hygrometrie=-1.0f;
-	thermometer[TH_SALON].type='V';
-	strcpy(thermometer[TH_SALON].id,">V:28980CC8030000EE");
-	strcpy(thermometer[TH_SALON].name,"Salon");
+
+	thermometer[TH_HOMECINEMA].mesure_date=0;
+	thermometer[TH_HOMECINEMA].temperature=19.0f;
+	thermometer[TH_HOMECINEMA].hygrometrie=-1.0f;
+	thermometer[TH_HOMECINEMA].type='V';
+	strcpy(thermometer[TH_HOMECINEMA].id,">V:28980CC8030000EE");
+	strcpy(thermometer[TH_HOMECINEMA].name,"HomeCinema");
 	//rrd_create_temp(thermometer[TH_SALON].name);
-	 */
+
 
 	thermometer[TH_SALON].mesure_date=0;
 	thermometer[TH_SALON].temperature=19.0f;
@@ -343,10 +343,12 @@ void thermometer_init(void)
 	thermometer[TH_VICTOR].mesure_date=0;
 	thermometer[TH_VICTOR].temperature=19.0f;
 	thermometer[TH_VICTOR].hygrometrie=-1.0f;
-	thermometer[TH_VICTOR].type='V';
-	strcpy(thermometer[TH_VICTOR].id,">V:2816B14A04000010");
+	thermometer[TH_VICTOR].type='C';
+	strcpy(thermometer[TH_VICTOR].id,">C:6503804");
 	strcpy(thermometer[TH_VICTOR].name,"Victor");
 	//rrd_create_temp(thermometer[TH_BARNABE].name);
+
+
 
 	thermometer[TH_PARENT].mesure_date=0;
 	thermometer[TH_PARENT].temperature=19.0f;
