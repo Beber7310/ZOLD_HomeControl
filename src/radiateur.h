@@ -18,6 +18,6 @@ void radiateur_init_pgm_hors_gele(int rad);
 void radiateur_init_pgm_froid(int rad);
 void * radiateur_loop(void * arg);
 void radiateur_init_pgm_temp(int rad,float temp);
-
+void rain_calcul(void);
 
 #endif /* RADIATEUR_H_ */

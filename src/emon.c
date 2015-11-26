@@ -29,8 +29,13 @@
 
 void emon_log_data(char* name, float value)
 {
-	char cmdline[1024];
-	sprintf(cmdline,"curl \"http://emoncms.org/input/post.json?json={%s:%f}&apikey=33d19b54e3e8cc180aa03bf0eeee8518\"",name,value);
+	//if(fork()==0)
+	{
+		char cmdline[1024];
+		sprintf(cmdline,"curl  \"http://emoncms.org/input/post.json?json={%s:%f}&apikey=33d19b54e3e8cc180aa03bf0eeee8518\"",name,value);
+		system(cmdline);
 
-	system(cmdline);
+	}
 }
+
+

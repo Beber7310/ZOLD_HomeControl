@@ -86,7 +86,7 @@ int get_http_sts_short(char* bufhttp,int buflen)
 
 	for(ii=0;ii<RD_LAST;ii++)
 	{
-		sprintf(buf," %s %i %i \n",radiateur[ii].name,radiateur[ii].calculated_target_temp,radiateur[ii].expected_state);
+		sprintf(buf,"RADIATOR %s %i %i \n",radiateur[ii].name,radiateur[ii].calculated_target_temp,radiateur[ii].expected_state);
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
 		if(len>buflen-512)
@@ -108,7 +108,7 @@ int get_http_sts_short(char* bufhttp,int buflen)
 	for(ii=0;ii<TH_LAST;ii++)
 	{
 
-		sprintf(buf," %s %f %is \n",thermometer[ii].name,thermometer[ii].temperature,time(NULL)-thermometer[ii].mesure_date);
+		sprintf(buf,"THERMOMETRE %s %f %is \n",thermometer[ii].name,thermometer[ii].temperature,time(NULL)-thermometer[ii].mesure_date);
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
 		if(len>buflen-512)
@@ -135,7 +135,7 @@ int get_http_sts_short(char* bufhttp,int buflen)
 		timeinfo = localtime (&presence[ii].action_date);
 		strftime (buffer,80,"%d/%m/%y %R",timeinfo);
 
-		sprintf(buf," %s %s\n",presence[ii].name,buffer);
+		sprintf(buf,"PRESENCE %s %s\n",presence[ii].name,buffer);
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
 		if(len>buflen-512)
@@ -157,7 +157,7 @@ int get_http_sts_short(char* bufhttp,int buflen)
 		struct tm * timeinfo;
 
 
-		sprintf(buf," %s\n",light[ii].name);
+		sprintf(buf,"LIGHT %s\n",light[ii].name);
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
 		if(len>buflen-512)

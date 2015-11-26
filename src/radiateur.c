@@ -170,7 +170,7 @@ void radiateur_init_pgm_chambre(int rad)
 	{
 		for(jj=0;jj<24*4;jj++)
 		{
-			if(((jj>19*4)&&(jj<21*4)) || ((jj>7*4)&&(jj<8*4)))
+			if(((jj>19*4)&&(jj<21*4)) || ((jj>7*4)&&(jj<8*4+2)))
 			{
 				radiateur[rad].program[ii+jj]=20.0f ;
 			}
@@ -393,6 +393,10 @@ void interupter_init(void)
 	interrupter[IT_GARAGE].action=0;
 	strcpy(interrupter[IT_GARAGE].id,">C:FE68722");
 
+	interrupter[IT_SAS_SDB].action_date=0;
+	interrupter[IT_SAS_SDB].action=0;
+	strcpy(interrupter[IT_SAS_SDB].id,">C:FE68792");
+
 	interrupter[IT_BARNABE].action_date=0;
 	interrupter[IT_BARNABE].action=0;
 	strcpy(interrupter[IT_BARNABE].id,">C:FE685FA");
@@ -437,6 +441,11 @@ void Light_init(void)
 	memset(light[LI_CHAMBRE_B].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
 	light[LI_CHAMBRE_B].interupteur[0]=IT_HOMECINEMA;
 
+}
+
+void Rain_Init(void)
+{
+	rain.last_rain=0;
 }
 
 void Presence_init(void)
@@ -514,6 +523,9 @@ void light_evaluate_next_state(int li)
 		if(((time(NULL)- presence[light[li].presence].action_date)>600) && (light[li].action_date < presence[light[li].presence].action_date))
 		{
 			info("LIGHT","SendBlyssCmd %i interrupter %i",light[li].blyss_id, 0);
+
+			SendBlyssCmd(light[li].blyss_id,0);
+			SendBlyssCmd(light[li].blyss_id,0);
 			SendBlyssCmd(light[li].blyss_id,0);
 
 			light[li].action_date=time(NULL);
@@ -522,6 +534,20 @@ void light_evaluate_next_state(int li)
 
 
 
+}
+
+void rain_calcul(void)
+{
+	if((rain.current_rain>=rain.last_rain)&&(rain.last_rain>0))
+	{
+		rain.falled=rain.current_rain-rain.last_rain;
+	}
+	else
+	{
+		rain.falled=0;
+	}
+
+	rain.last_rain=rain.current_rain;
 }
 
 void * radiateur_loop(void * arg)
@@ -533,6 +559,8 @@ void * radiateur_loop(void * arg)
 	interupter_init();
 	Light_init();
 	Presence_init();
+	Rain_Init();
+
 	while(1)
 	{
 		// info("RADIATEUR","Evaluate radiateur status");
@@ -541,11 +569,11 @@ void * radiateur_loop(void * arg)
 			radiateur_evaluate_next_state(ii);
 		}
 
-
 		for(ii=0;ii<LI_LAST;ii++)
 		{
 			light_evaluate_next_state(ii);
 		}
+
 		SerialFilPiloteSendCommande();
 		sem_wait(&sem_capteur_data_available);
 

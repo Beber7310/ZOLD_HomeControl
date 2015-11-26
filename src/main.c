@@ -18,6 +18,7 @@ int main()
 {
 	pthread_t th_radiateur;
 	pthread_t th_uart;
+	pthread_t th_uart_fp;
 	pthread_t th_http;
 
 	init_msg();
@@ -30,6 +31,13 @@ int main()
 		info("START UP","pthread_create error for thread uart_rf_loop");
 		exit (1);
 	}
+
+    if (pthread_create (&th_uart_fp, NULL, uart_filPilote_loop, 0) < 0)
+    	{
+    		info("START UP","pthread_create error for thread uart_filPilote_loop");
+    		exit (1);
+    	}
+
 
 /*
     while(1)

@@ -57,7 +57,7 @@ typedef struct {
 //
 //	Interrupter
 //
-enum Interrupter_name { IT_HOMECINEMA=0,IT_CUISINE,IT_GARAGE,IT_BARNABE,IT_LAST};
+enum Interrupter_name { IT_HOMECINEMA=0,IT_CUISINE,IT_GARAGE,IT_BARNABE,IT_SAS_SDB,IT_LAST};
 
 typedef struct {
 	time_t action_date;
@@ -82,6 +82,11 @@ typedef struct {
 	char id[32];
 } presence_t;
 
+typedef struct {
+	unsigned int last_rain;
+	unsigned int current_rain;
+	unsigned int falled;
+} rain_t;
 
 #ifdef MAIN_CODE
 	#define EXT
@@ -94,6 +99,7 @@ EXT interrupter_t 	interrupter[IT_LAST];
 EXT thermometer_t	thermometer[TH_LAST];
 EXT presence_t		presence[PR_LAST];
 EXT light_t			light[LI_LAST];
+EXT rain_t			rain;
 
 
 EXT sem_t 			sem_capteur_data_available;
