@@ -88,6 +88,11 @@ typedef struct {
 	unsigned int falled;
 } rain_t;
 
+typedef struct {
+	float current;
+	float power;
+} power_t;
+
 #ifdef MAIN_CODE
 	#define EXT
 #else
@@ -100,7 +105,7 @@ EXT thermometer_t	thermometer[TH_LAST];
 EXT presence_t		presence[PR_LAST];
 EXT light_t			light[LI_LAST];
 EXT rain_t			rain;
-
+EXT power_t			power;
 
 EXT sem_t 			sem_capteur_data_available;
 

@@ -73,9 +73,33 @@ int get_http_sts_short(char* bufhttp,int buflen)
 
 	index_prog=get_pgm_index();
 
+
+
+
+
+	sprintf(buf,"<html><head><title>HC</title><meta http-equiv=\"refresh\" content=\"1\" /></head><body>");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
 	sprintf(buf,"<pre>\n");
 	strcpy(&bufhttp[len],buf);
 	len+=strlen(buf);
+
+	/////////////////////////////////////////////////////////////////
+	// Power
+
+	sprintf(buf,"[POWER]\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+	sprintf(buf,"POWER %f\n",power.power);
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+	if(len>buflen-512)
+	{
+		return len;
+	}
+
 
 	/////////////////////////////////////////////////////////////////
 	// Radiator
@@ -166,6 +190,11 @@ int get_http_sts_short(char* bufhttp,int buflen)
 		}
 	}
 	sprintf(buf,"</pre>\n");
+	strcpy(&bufhttp[len],buf);
+	len+=strlen(buf);
+
+
+	sprintf(buf,"</body></html>");
 	strcpy(&bufhttp[len],buf);
 	len+=strlen(buf);
 

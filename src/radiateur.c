@@ -311,8 +311,11 @@ void thermometer_init(void)
 	thermometer[TH_HOMECINEMA].mesure_date=0;
 	thermometer[TH_HOMECINEMA].temperature=19.0f;
 	thermometer[TH_HOMECINEMA].hygrometrie=-1.0f;
-	thermometer[TH_HOMECINEMA].type='V';
-	strcpy(thermometer[TH_HOMECINEMA].id,">V:28980CC8030000EE");
+	//thermometer[TH_HOMECINEMA].type='V';
+	//strcpy(thermometer[TH_HOMECINEMA].id,">V:28980CC8030000EE");
+	thermometer[TH_HOMECINEMA].type='C';
+	strcpy(thermometer[TH_HOMECINEMA].id,">C:650B033");
+
 	strcpy(thermometer[TH_HOMECINEMA].name,"HomeCinema");
 	//rrd_create_temp(thermometer[TH_SALON].name);
 

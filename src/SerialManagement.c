@@ -12,7 +12,7 @@
 #include "Components.h"
 #include "utils.h"
 #include "rrd.h"
-
+#include "radiateur.h"
 /** SerialManagement.c
  *
  *  Created on: 16 déc. 2013
@@ -324,7 +324,7 @@ void * uart_rf_loop(void * arg)
 {
 	char buf[255];
 	int index=0;
-
+	int lastTargetUpdate=0;
 	int res;
 
 
@@ -343,6 +343,16 @@ void * uart_rf_loop(void * arg)
 				buf[ii]=0;
 				index=0;
 				update_capteur_info(buf);
+			}
+		}
+
+		if((time(NULL)-lastTargetUpdate)>60)
+		{
+			lastTargetUpdate=time(NULL);
+			warning("Target","Send");
+			for(int ii=0;ii<RD_LAST;ii++)
+			{
+				logData("targ",radiateur[ii].name,time(NULL),radiateur[ii].calculated_target_temp);
 			}
 		}
 
@@ -371,23 +381,28 @@ void * uart_filPilote_loop(void * arg)
 		{
 			if((buf[ii]=='\n') ||(buf[ii]=='\r') )
 			{
-
-
 				buf[ii]=0;
 
 				index=0;
+
+
+
 				if(buf[0]=='A')
 				{
-					info("AMP","%f",atof(buf+2)/10);
-					currentAcc+=atof(buf+2);
+					// data comming from arduino is 100ma by unit.
+					power.current=atof(buf+2)/10;
+					power.power=230*power.current;
+
+
+
+					currentAcc+=power.current;
 					sampleCount++;
-					if(sampleCount>=10)
+					//info("AMP","%f",power.current);
+					if(sampleCount>60)
 					{
-						// data comming from arduino is 100ma by unit.
-						// we divide by 600 rather than 60 to get Ampere
 						sampleCount=0;
-						logData("amp","house",time(NULL),currentAcc/100.0f);
-						logData("watt","house",time(NULL),230*currentAcc/100.0f);
+						logData("amp","house",time(NULL),currentAcc/60.0f);
+						logData("watt","house",time(NULL),230*currentAcc/60.0f);
 						currentAcc=0;
 					}
 				}

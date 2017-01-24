@@ -36,6 +36,7 @@ void emon_log_data(char* name, float value)
 		system(cmdline);
 
 	}
+
 }
 
 
