@@ -32,8 +32,10 @@
 #define HTTP_LIVE_STS_SHORT 	"hc_sts_short"
 #define HTTP_LIVE_CMD 			"hc_cmd"
 #define HTTP_LIVE_TMP 			"hc_tmp"
+#define HTTP_THERMOSTAT 		"hc_thermostat"
 
 #include "utils.h"
+#include "Components.h"
 #include "rrd.h"
 
 /* affiche un message d'erreur, errno et quitte */
@@ -270,9 +272,43 @@ void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 	}
 	else if(strcmp(short_name,HTTP_LIVE_TMP)==0)
 	{
-		parse_http_cmd(chemin);
+		float temp=parse_http_temp(chemin);
 		bufhttp = (char*)malloc(5*1024*1024);
-		http_length=log_get_http_temp(bufhttp,5*1024*1024);
+		sprintf(bufhttp,"{\n\"value\": %3.1f\n}",temp);
+		http_length=strlen(bufhttp);
+
+	}
+	else if(strcmp(short_name,HTTP_THERMOSTAT)==0)
+	{
+		char tmpstr[512];
+		char tmpstr2[512];
+		strncpy(tmpstr,chemin,512);
+		strncpy(tmpstr2,chemin,512);
+		int rad=parse_http_thermostat(chemin);
+		int status=parse_http_thermostat_status(tmpstr);
+
+		bufhttp = (char*)malloc(5*1024*1024);
+		//sprintf(bufhttp,"{\n\"value\": %3.1f\n}",temp);
+		if(status)
+		{
+			sprintf(bufhttp,"{\"targetHeatingCoolingState\": %i,\"targetTemperature\": %i,\"currentHeatingCoolingState\":%i,\"currentTemperature\": %2.2f,\"currentRelativeHumidity\": %2.2f}",
+					3,
+					radiateur[rad].calculated_target_temp,
+					radiateur[rad].expected_state,
+					thermometer[radiateur[rad].thermometer].temperature,
+					thermometer[radiateur[rad].thermometer].hygrometrie
+					);
+		}
+		else
+		{
+
+			radiateur[rad].http_req_time=time(NULL);
+			radiateur[rad].http_req_temp=parse_http_thermostat_target(tmpstr2);
+			sem_post(&sem_capteur_data_available);
+
+			sprintf(bufhttp, " ");
+		}
+		http_length=strlen(bufhttp);
 
 	}
 	else

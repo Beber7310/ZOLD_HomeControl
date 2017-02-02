@@ -66,7 +66,7 @@ typedef struct {
 } interrupter_t;
 
 
-enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_CHAMBRE_B,LI_LAST};//
+enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_AMPOULE_DISCO,LI_LAST};//
 typedef struct {
 	char name[32];
 	time_t action_date;

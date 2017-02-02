@@ -62,7 +62,7 @@ void radiateur_init(void)
 
 	radiateur[RD_HOMECINEMA].type= FIL_PILOTE;
 	radiateur[RD_HOMECINEMA].index = 3;
-	radiateur[RD_HOMECINEMA].thermometer=-1;
+	radiateur[RD_HOMECINEMA].thermometer=TH_HOMECINEMA;
 	radiateur[RD_HOMECINEMA].interupteur=IT_HOMECINEMA;
 	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
 	radiateur[RD_HOMECINEMA].expected_state = 0;
@@ -437,12 +437,12 @@ void Light_init(void)
 	memset(light[LI_PRISE_1].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
 	light[LI_PRISE_1].interupteur[0]=IT_HOMECINEMA;
 
-	light[LI_CHAMBRE_B].action_date=0;
-	light[LI_CHAMBRE_B].blyss_id=4;
-	light[LI_CHAMBRE_B].presence=-1;
-	strcpy(light[LI_CHAMBRE_B].name,"Chambre_B");
-	memset(light[LI_CHAMBRE_B].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
-	light[LI_CHAMBRE_B].interupteur[0]=IT_HOMECINEMA;
+	light[LI_AMPOULE_DISCO].action_date=0;
+	light[LI_AMPOULE_DISCO].blyss_id=4;
+	light[LI_AMPOULE_DISCO].presence=-1;
+	strcpy(light[LI_AMPOULE_DISCO].name,"Ampoule_Disco");
+	memset(light[LI_AMPOULE_DISCO].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
+	light[LI_AMPOULE_DISCO].interupteur[0]=IT_HOMECINEMA;
 
 }
 

@@ -15,6 +15,7 @@
 #include "Components.h"
 #include "radiateur.h"
 #include "SerialManagement.h"
+#include "Math.h"
 
 #define NBR_MSG_MAX	10000
 message_t msg_log[NBR_MSG_MAX];
@@ -217,13 +218,19 @@ int get_http_sts(char* bufhttp,int buflen)
 	strcpy(&bufhttp[len],buf);
 	len+=strlen(buf);
 
-	sprintf(buf,"<tr><th>Radiator</th> <th>target temp</th> <th>Power</th> </tr>\n");
+	sprintf(buf,"<tr><th>Radiator</th> <th>target temp</th> <th>Power</th> <th>Http Target temp</th>  <th>Http Time Req</th> </tr>\n");
 	strcpy(&bufhttp[len],buf);
 	len+=strlen(buf);
 
 	for(ii=0;ii<RD_LAST;ii++)
 	{
-		sprintf(buf,"<tr><td>%s</td> <td>%i</td><td>%i</td> </tr>\n",radiateur[ii].name,radiateur[ii].calculated_target_temp,radiateur[ii].expected_state);
+		sprintf(buf,"<tr><td>%s</td> <td>%i</td><td>%i</td> <td>%i</td> <td>%s</td></tr>\n",
+				radiateur[ii].name,
+				radiateur[ii].calculated_target_temp,
+				radiateur[ii].expected_state,
+				radiateur[ii].http_req_temp,
+				ctime(&radiateur[ii].http_req_time)
+				);
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
 		if(len>buflen-512)
@@ -322,6 +329,107 @@ int get_http_sts(char* bufhttp,int buflen)
 	return len;
 }
 
+
+float parse_http_temp(char* cmd)
+{
+	char* pch;
+	float temp=0;
+	pch = strtok(cmd,"?");
+	pch = strtok(NULL,"?");
+
+	for(int ii=0;ii<TH_LAST;ii++)
+	{
+		if(strncmp(thermometer[ii].name,pch,strlen(thermometer[ii].name))==0)
+		{
+			info("HTTP","Command Read thermometer receive: %s",thermometer[ii].name);
+			temp=thermometer[ii].temperature;
+		}
+	}
+	return temp;
+}
+
+float parse_http_thermostat_target(char* cmd)
+{
+	char* pch;
+	float res;
+
+
+	pch = strtok(cmd,"?");
+	info("HTTP",pch);
+	pch = strtok(NULL,"/");
+	info("HTTP",pch);
+	pch = strtok(NULL,"/");
+	info("HTTP",pch);
+	pch = strtok(NULL,"/");
+		info("HTTP",pch);
+
+	if(strncmp("off",pch,strlen("off"))==0)
+	{
+		return 15.0f;
+	}
+
+	if(strncmp("comfort",pch,strlen("comfort"))==0)
+	{
+		return 20.0f;
+	}
+
+	if(strncmp("no-frost",pch,strlen("no-frost"))==0)
+	{
+		return 15.0f;
+	}
+
+	res=atof (pch);
+
+	if(isnan(res))
+		res=15.0f;
+
+	if(res<15.0f)
+		res=15.0f;
+	return res;
+
+}
+
+int parse_http_thermostat_status(char* cmd)
+{
+	char* pch;
+	float temp=0;
+	pch = strtok(cmd,"?");
+	pch = strtok(NULL,"/");
+	pch = strtok(NULL,"/");
+
+	if(strncmp("status",pch,strlen("status"))==0)
+	{
+			info("HTTP","Command thermostat get status");
+			return 1;
+	}
+
+	info("HTTP","Command thermostat set target");
+	return 0;
+
+}
+int parse_http_thermostat(char* cmd)
+{
+	char* pch;
+	float temp=0;
+	pch = strtok(cmd,"?");
+	pch = strtok(NULL,"?");
+
+	for(int ii=0;ii<RD_LAST;ii++)
+	{
+		if(strncmp(radiateur[ii].name,pch,strlen(radiateur[ii].name))==0)
+		{
+			info("HTTP","Command thermostat receive: %s",radiateur[ii].name);
+			return ii;
+		}
+	}
+
+	warning("HTTP","Command thermostat receive unknown rad:%s ",cmd);
+	return 0;
+
+}
+
+
+
 int parse_http_cmd(char* cmd)
 {
 	char* pch;
@@ -332,7 +440,10 @@ int parse_http_cmd(char* cmd)
 		parse_http_cmd_token(pch);
 		pch = strtok (NULL, "?");
 	}
+	return 0;
 }
+
+
 
 int parse_http_cmd_token(char* cmd)
 {
