@@ -32,6 +32,7 @@
 #define HTTP_LIVE_STS_SHORT 	"hc_sts_short"
 #define HTTP_LIVE_CMD 			"hc_cmd"
 #define HTTP_LIVE_TMP 			"hc_tmp"
+#define HTTP_LIVE_AMP 			"hc_amp"
 #define HTTP_THERMOSTAT 		"hc_thermostat"
 
 #include "utils.h"
@@ -273,6 +274,14 @@ void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 	else if(strcmp(short_name,HTTP_LIVE_TMP)==0)
 	{
 		float temp=parse_http_temp(chemin);
+		bufhttp = (char*)malloc(5*1024*1024);
+		sprintf(bufhttp,"{\n\"value\": %3.1f\n}",temp);
+		http_length=strlen(bufhttp);
+
+	}
+	else if(strcmp(short_name,HTTP_LIVE_AMP)==0)
+	{
+		float temp=parse_http_amp(chemin);
 		bufhttp = (char*)malloc(5*1024*1024);
 		sprintf(bufhttp,"{\n\"value\": %3.1f\n}",temp);
 		http_length=strlen(bufhttp);

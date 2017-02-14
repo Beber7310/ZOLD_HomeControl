@@ -348,6 +348,12 @@ float parse_http_temp(char* cmd)
 	return temp;
 }
 
+float parse_http_amp(char* cmd)
+{
+
+	return power.current;
+}
+
 float parse_http_thermostat_target(char* cmd)
 {
 	char* pch;

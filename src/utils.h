@@ -24,6 +24,7 @@ int parse_http_cmd_token(char* cmd);
 int parse_http_cmd_RAD_token(char* cmd);
 int parse_http_cmd_LIGHT_token(char* cmd);
 float parse_http_temp(char* cmd);
+float parse_http_amp(char* cmd);
 int get_pgm_index(void);
 char hextochar(char hex);
 typedef struct {
