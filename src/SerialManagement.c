@@ -248,7 +248,6 @@ void update_capteur_info(char* pBuf)
 		{
 			if(strncmp(pBuf,thermometer[ii].id,18)==0)
 			{
-				thermometer[ii].smsSent=0;
 				thermometer[ii].temperature=atof(pBuf+20);
 				thermometer[ii].mesure_date=time(NULL);
 				if(strlen(pBuf)==30)
@@ -276,7 +275,6 @@ void update_capteur_info(char* pBuf)
 
 				//>C:65085033300F30
 				pBuf[16]=0;
-				thermometer[ii].smsSent=0;
 				thermometer[ii].temperature=strtol(pBuf+13,0,16)/10.0f;
 				thermometer[ii].mesure_date=time(NULL);
 				identified++;

@@ -290,7 +290,7 @@ void thermometer_init(void)
 	// TH_EXTERIEUR,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE
 
 	thermometer[TH_EXTERIEUR].smsSent=0;
-	thermometer[TH_EXTERIEUR].mesure_date=0;
+	thermometer[TH_EXTERIEUR].mesure_date=time(NULL);
 	thermometer[TH_EXTERIEUR].temperature=19.0f;
 	thermometer[TH_EXTERIEUR].hygrometrie=-1.0f;
 	thermometer[TH_EXTERIEUR].type='V';
@@ -299,7 +299,7 @@ void thermometer_init(void)
 	//rrd_create_temp(thermometer[TH_EXTERIEUR].name);
 
 	thermometer[TH_GARAGE].smsSent=0;
-	thermometer[TH_GARAGE].mesure_date=0;
+	thermometer[TH_GARAGE].mesure_date=time(NULL);
 	thermometer[TH_GARAGE].temperature=19.0f;
 	thermometer[TH_GARAGE].hygrometrie=-1.0f;
 	thermometer[TH_GARAGE].type='V';
@@ -308,7 +308,7 @@ void thermometer_init(void)
 	//rrd_create_temp(thermometer[TH_GARAGE].name);
 
 	thermometer[TH_HOMECINEMA].smsSent=0;
-	thermometer[TH_HOMECINEMA].mesure_date=0;
+	thermometer[TH_HOMECINEMA].mesure_date=time(NULL);
 	thermometer[TH_HOMECINEMA].temperature=19.0f;
 	thermometer[TH_HOMECINEMA].hygrometrie=-1.0f;
 	//thermometer[TH_HOMECINEMA].type='V';
@@ -319,7 +319,7 @@ void thermometer_init(void)
 	//rrd_create_temp(thermometer[TH_SALON].name);
 
 	thermometer[TH_SALON].smsSent=0;
-	thermometer[TH_SALON].mesure_date=0;
+	thermometer[TH_SALON].mesure_date=time(NULL);
 	thermometer[TH_SALON].temperature=19.0f;
 	thermometer[TH_SALON].hygrometrie=-1.0f;
 	thermometer[TH_SALON].type='C';
@@ -327,7 +327,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_SALON].name,"Salon");
 
 	thermometer[TH_DAPHNEE].smsSent=0;
-	thermometer[TH_DAPHNEE].mesure_date=0;
+	thermometer[TH_DAPHNEE].mesure_date=time(NULL);
 	thermometer[TH_DAPHNEE].temperature=19.0f;
 	thermometer[TH_DAPHNEE].hygrometrie=-1.0f;
 	thermometer[TH_DAPHNEE].type='V';
@@ -336,7 +336,7 @@ void thermometer_init(void)
 	//rrd_create_temp(thermometer[TH_DAPHNEE].name);
 
 	thermometer[TH_VICTOR_OLD].smsSent=0;
-	thermometer[TH_VICTOR_OLD].mesure_date=0;
+	thermometer[TH_VICTOR_OLD].mesure_date=time(NULL);
 	thermometer[TH_VICTOR_OLD].temperature=19.0f;
 	thermometer[TH_VICTOR_OLD].hygrometrie=-1.0f;
 	thermometer[TH_VICTOR_OLD].type='C';
@@ -345,7 +345,7 @@ void thermometer_init(void)
 	//rrd_create_temp(thermometer[TH_VICTOR].name);
 
 	thermometer[TH_VICTOR].smsSent=0;
-	thermometer[TH_VICTOR].mesure_date=0;
+	thermometer[TH_VICTOR].mesure_date=time(NULL);
 	thermometer[TH_VICTOR].temperature=19.0f;
 	thermometer[TH_VICTOR].hygrometrie=-1.0f;
 	thermometer[TH_VICTOR].type='C';
@@ -355,7 +355,7 @@ void thermometer_init(void)
 
 
 	thermometer[TH_PARENT].smsSent=0;
-	thermometer[TH_PARENT].mesure_date=0;
+	thermometer[TH_PARENT].mesure_date=time(NULL);
 	thermometer[TH_PARENT].temperature=19.0f;
 	thermometer[TH_PARENT].hygrometrie=-1.0f;
 	thermometer[TH_PARENT].type='V';
@@ -364,7 +364,7 @@ void thermometer_init(void)
 	//rrd_create_temp(thermometer[TH_BARNABE].name);
 
 	thermometer[TH_DAPHNEE].smsSent=0;
-	thermometer[TH_DAPHNEE].mesure_date=0;
+	thermometer[TH_DAPHNEE].mesure_date=time(NULL);
 	thermometer[TH_DAPHNEE].temperature=19.0f;
 	thermometer[TH_DAPHNEE].hygrometrie=-1.0f;
 	thermometer[TH_DAPHNEE].type='V';
@@ -372,7 +372,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
 
 	thermometer[TH_CUISINE].smsSent=0;
-	thermometer[TH_CUISINE].mesure_date=0;
+	thermometer[TH_CUISINE].mesure_date=time(NULL);
 	thermometer[TH_CUISINE].temperature=19.0f;
 	thermometer[TH_CUISINE].hygrometrie=-1.0f;
 	thermometer[TH_CUISINE].type='C';
@@ -617,7 +617,7 @@ void manageAlarm(void)
 		{
 			if((time(NULL)-thermometer[ii].mesure_date)<60*2)
 			{
-				thermometer[ii].smsSent=1;
+				thermometer[ii].smsSent=0;
 				sprintf(szBuf,"        --- HomeControl ---\n%s thermometer is back to normal",thermometer[ii].name);
 				sendSMS(szBuf);
 			}

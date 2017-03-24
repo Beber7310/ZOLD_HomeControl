@@ -26,6 +26,8 @@ int main()
 	info("START UP","\n\n    ---- Home control ---- \n");
     setpriority(PRIO_PROCESS, 0, -10);
 
+    sendSMS(" HomeControl Has rebooted");
+
     if (pthread_create (&th_uart, NULL, uart_rf_loop, 0) < 0)
 	{
 		info("START UP","pthread_create error for thread uart_rf_loop");
