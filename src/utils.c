@@ -241,7 +241,7 @@ int get_http_sts(char* bufhttp,int buflen)
 				radiateur[ii].expected_state,
 				radiateur[ii].http_req_temp,
 				ctime(&radiateur[ii].http_req_time)
-				);
+		);
 		strcpy(&bufhttp[len],buf);
 		len+=strlen(buf);
 		if(len>buflen-512)
@@ -378,7 +378,9 @@ float parse_http_thermostat_target(char* cmd)
 	pch = strtok(NULL,"/");
 	info("HTTP",pch);
 	pch = strtok(NULL,"/");
-		info("HTTP",pch);
+	info("HTTP",pch);
+
+	if(!pch)return 0.0f;
 
 	if(strncmp("off",pch,strlen("off"))==0)
 	{
@@ -414,10 +416,12 @@ int parse_http_thermostat_status(char* cmd)
 	pch = strtok(NULL,"/");
 	pch = strtok(NULL,"/");
 
+	if(!pch)
+		return 0;
 	if(strncmp("status",pch,strlen("status"))==0)
 	{
-			//info("HTTP","Command thermostat get status");
-			return 1;
+		//info("HTTP","Command thermostat get status");
+		return 1;
 	}
 
 	//info("HTTP","Command thermostat set target");
@@ -429,7 +433,12 @@ int parse_http_thermostat(char* cmd)
 	char* pch;
 	float temp=0;
 	pch = strtok(cmd,"?");
+	if(!pch)
+		return 0;
+
 	pch = strtok(NULL,"?");
+	if(!pch)
+		return 0;
 
 	for(int ii=0;ii<RD_LAST;ii++)
 	{
