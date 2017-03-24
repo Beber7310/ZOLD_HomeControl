@@ -22,6 +22,18 @@ message_t msg_log[NBR_MSG_MAX];
 
 int last_msg=0;
 
+
+
+void sendSMS(char* text)
+{
+	char szTmp[1024];
+	info("SMS",text);
+	sprintf(szTmp,"wget \"https://smsapi.free-mobile.fr/sendmsg?user=12497092&pass=HO6ri0tIuaVLYY&msg=%s\"",text);
+	system(szTmp);
+}
+
+
+
 void log_msg(const char* level,char* tag,char *format,va_list args)
 {
 
@@ -341,7 +353,7 @@ float parse_http_temp(char* cmd)
 	{
 		if(strncmp(thermometer[ii].name,pch,strlen(thermometer[ii].name))==0)
 		{
-			info("HTTP","Command Read thermometer receive: %s",thermometer[ii].name);
+			//info("HTTP","Command Read thermometer receive: %s",thermometer[ii].name);
 			temp=thermometer[ii].temperature;
 		}
 	}
@@ -405,11 +417,11 @@ int parse_http_thermostat_status(char* cmd)
 
 	if(strncmp("status",pch,strlen("status"))==0)
 	{
-			info("HTTP","Command thermostat get status");
+			//info("HTTP","Command thermostat get status");
 			return 1;
 	}
 
-	info("HTTP","Command thermostat set target");
+	//info("HTTP","Command thermostat set target");
 	return 0;
 
 }
@@ -424,7 +436,7 @@ int parse_http_thermostat(char* cmd)
 	{
 		if(strncmp(radiateur[ii].name,pch,strlen(radiateur[ii].name))==0)
 		{
-			info("HTTP","Command thermostat receive: %s",radiateur[ii].name);
+			//info("HTTP","Command thermostat receive: %s",radiateur[ii].name);
 			return ii;
 		}
 	}

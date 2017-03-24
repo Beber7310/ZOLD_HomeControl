@@ -104,7 +104,6 @@ void radiateur_init_pgm_froid(int rad)
 
 }
 
-
 void radiateur_init_pgm_salon(int rad)
 {
 	int ii,jj;
@@ -161,7 +160,6 @@ void radiateur_init_pgm_salon(int rad)
 		}
 	}
 }
-
 
 void radiateur_init_pgm_chambre(int rad)
 {
@@ -291,6 +289,7 @@ void thermometer_init(void)
 {
 	// TH_EXTERIEUR,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE
 
+	thermometer[TH_EXTERIEUR].smsSent=0;
 	thermometer[TH_EXTERIEUR].mesure_date=0;
 	thermometer[TH_EXTERIEUR].temperature=19.0f;
 	thermometer[TH_EXTERIEUR].hygrometrie=-1.0f;
@@ -299,6 +298,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_EXTERIEUR].name,"Exterior");
 	//rrd_create_temp(thermometer[TH_EXTERIEUR].name);
 
+	thermometer[TH_GARAGE].smsSent=0;
 	thermometer[TH_GARAGE].mesure_date=0;
 	thermometer[TH_GARAGE].temperature=19.0f;
 	thermometer[TH_GARAGE].hygrometrie=-1.0f;
@@ -307,7 +307,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_GARAGE].name,"Garage");
 	//rrd_create_temp(thermometer[TH_GARAGE].name);
 
-
+	thermometer[TH_HOMECINEMA].smsSent=0;
 	thermometer[TH_HOMECINEMA].mesure_date=0;
 	thermometer[TH_HOMECINEMA].temperature=19.0f;
 	thermometer[TH_HOMECINEMA].hygrometrie=-1.0f;
@@ -315,11 +315,10 @@ void thermometer_init(void)
 	//strcpy(thermometer[TH_HOMECINEMA].id,">V:28980CC8030000EE");
 	thermometer[TH_HOMECINEMA].type='C';
 	strcpy(thermometer[TH_HOMECINEMA].id,">C:650B033");
-
 	strcpy(thermometer[TH_HOMECINEMA].name,"HomeCinema");
 	//rrd_create_temp(thermometer[TH_SALON].name);
 
-
+	thermometer[TH_SALON].smsSent=0;
 	thermometer[TH_SALON].mesure_date=0;
 	thermometer[TH_SALON].temperature=19.0f;
 	thermometer[TH_SALON].hygrometrie=-1.0f;
@@ -327,6 +326,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_SALON].id,">C:6505101");
 	strcpy(thermometer[TH_SALON].name,"Salon");
 
+	thermometer[TH_DAPHNEE].smsSent=0;
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;
 	thermometer[TH_DAPHNEE].hygrometrie=-1.0f;
@@ -335,6 +335,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
 	//rrd_create_temp(thermometer[TH_DAPHNEE].name);
 
+	thermometer[TH_VICTOR_OLD].smsSent=0;
 	thermometer[TH_VICTOR_OLD].mesure_date=0;
 	thermometer[TH_VICTOR_OLD].temperature=19.0f;
 	thermometer[TH_VICTOR_OLD].hygrometrie=-1.0f;
@@ -343,6 +344,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_VICTOR_OLD].name,"Barnabé");
 	//rrd_create_temp(thermometer[TH_VICTOR].name);
 
+	thermometer[TH_VICTOR].smsSent=0;
 	thermometer[TH_VICTOR].mesure_date=0;
 	thermometer[TH_VICTOR].temperature=19.0f;
 	thermometer[TH_VICTOR].hygrometrie=-1.0f;
@@ -352,7 +354,7 @@ void thermometer_init(void)
 	//rrd_create_temp(thermometer[TH_BARNABE].name);
 
 
-
+	thermometer[TH_PARENT].smsSent=0;
 	thermometer[TH_PARENT].mesure_date=0;
 	thermometer[TH_PARENT].temperature=19.0f;
 	thermometer[TH_PARENT].hygrometrie=-1.0f;
@@ -361,6 +363,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_PARENT].name,"Parent");
 	//rrd_create_temp(thermometer[TH_BARNABE].name);
 
+	thermometer[TH_DAPHNEE].smsSent=0;
 	thermometer[TH_DAPHNEE].mesure_date=0;
 	thermometer[TH_DAPHNEE].temperature=19.0f;
 	thermometer[TH_DAPHNEE].hygrometrie=-1.0f;
@@ -368,6 +371,7 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_DAPHNEE].id,">V:28ADE14A0400007A");
 	strcpy(thermometer[TH_DAPHNEE].name,"Daphnee");
 
+	thermometer[TH_CUISINE].smsSent=0;
 	thermometer[TH_CUISINE].mesure_date=0;
 	thermometer[TH_CUISINE].temperature=19.0f;
 	thermometer[TH_CUISINE].hygrometrie=-1.0f;
@@ -443,6 +447,13 @@ void Light_init(void)
 	strcpy(light[LI_AMPOULE_DISCO].name,"Ampoule_Disco");
 	memset(light[LI_AMPOULE_DISCO].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
 	light[LI_AMPOULE_DISCO].interupteur[0]=IT_HOMECINEMA;
+
+	light[LI_VMC].action_date=0;
+	light[LI_VMC].blyss_id=5;
+	light[LI_VMC].presence=-1;
+	strcpy(light[LI_VMC].name,"VMC");
+	memset(light[LI_VMC].interupteur,-1,sizeof(light[LI_PRISE_1].interupteur));
+
 
 }
 
@@ -578,7 +589,40 @@ void * radiateur_loop(void * arg)
 		}
 
 		SerialFilPiloteSendCommande();
+		manageAlarm();
 		sem_wait(&sem_capteur_data_available);
 
 	}
+}
+
+
+void manageAlarm(void)
+{
+	int ii;
+	char szBuf[1024];
+
+	for(ii=0;ii<TH_LAST;ii++)
+	{
+
+		if(thermometer[ii].smsSent==0)
+		{
+			if((time(NULL)-thermometer[ii].mesure_date)>60*5)
+			{
+				thermometer[ii].smsSent=1;
+				sprintf(szBuf,"        --- HomeControl ---\n%s thermometer looks to be off",thermometer[ii].name);
+				sendSMS(szBuf);
+			}
+		}
+		else
+		{
+			if((time(NULL)-thermometer[ii].mesure_date)<60*2)
+			{
+				thermometer[ii].smsSent=1;
+				sprintf(szBuf,"        --- HomeControl ---\n%s thermometer is back to normal",thermometer[ii].name);
+				sendSMS(szBuf);
+			}
+		}
+
+	}
+
 }

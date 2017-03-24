@@ -27,6 +27,8 @@ float parse_http_temp(char* cmd);
 float parse_http_amp(char* cmd);
 int get_pgm_index(void);
 char hextochar(char hex);
+void sendSMS(char* text);
+
 typedef struct {
 	char 	level[16];
 	char 	tag[32];

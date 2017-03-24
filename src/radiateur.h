@@ -19,5 +19,6 @@ void radiateur_init_pgm_froid(int rad);
 void * radiateur_loop(void * arg);
 void radiateur_init_pgm_temp(int rad,float temp);
 void rain_calcul(void);
+void manageAlarm(void);
 
 #endif /* RADIATEUR_H_ */

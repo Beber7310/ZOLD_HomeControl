@@ -236,6 +236,7 @@ int SerialSendChar(char data)
 	return write(fd_rf,&data,1);
 }
 
+
 void update_capteur_info(char* pBuf)
 {
 	int ii;
@@ -247,6 +248,7 @@ void update_capteur_info(char* pBuf)
 		{
 			if(strncmp(pBuf,thermometer[ii].id,18)==0)
 			{
+				thermometer[ii].smsSent=0;
 				thermometer[ii].temperature=atof(pBuf+20);
 				thermometer[ii].mesure_date=time(NULL);
 				if(strlen(pBuf)==30)
@@ -274,6 +276,7 @@ void update_capteur_info(char* pBuf)
 
 				//>C:65085033300F30
 				pBuf[16]=0;
+				thermometer[ii].smsSent=0;
 				thermometer[ii].temperature=strtol(pBuf+13,0,16)/10.0f;
 				thermometer[ii].mesure_date=time(NULL);
 				identified++;
@@ -432,7 +435,7 @@ int SendBlyssCmd(int id,int value)
 	//0x98 -> 0xDA -> 0x1E -> 0xE6 -> 0x67
 
 
-	char cmd[17]="FE6142280981C0 ";
+	char cmd[17]="FE6152280981C0 ";
 
 	/*
 	cmd[3]='0';

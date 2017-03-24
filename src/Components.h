@@ -50,6 +50,7 @@ typedef struct {
 	time_t mesure_date;
 	char id[32];
 	char type;
+	int smsSent;
 } thermometer_t;
 
 
@@ -66,7 +67,7 @@ typedef struct {
 } interrupter_t;
 
 
-enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_AMPOULE_DISCO,LI_LAST};//
+enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_AMPOULE_DISCO,LI_VMC,LI_LAST};//
 typedef struct {
 	char name[32];
 	time_t action_date;
