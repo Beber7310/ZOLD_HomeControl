@@ -315,7 +315,7 @@ void thermometer_init(void)
 	//strcpy(thermometer[TH_HOMECINEMA].id,">V:28980CC8030000EE");
 	thermometer[TH_HOMECINEMA].type='C';
 	strcpy(thermometer[TH_HOMECINEMA].id,">C:650B033");
-	strcpy(thermometer[TH_HOMECINEMA].name,"HomeCinema");
+	strcpy(thermometer[TH_HOMECINEMA].name,"Homecinema");
 	//rrd_create_temp(thermometer[TH_SALON].name);
 
 	thermometer[TH_SALON].smsSent=0;
@@ -341,7 +341,7 @@ void thermometer_init(void)
 	thermometer[TH_VICTOR_OLD].hygrometrie=-1.0f;
 	thermometer[TH_VICTOR_OLD].type='C';
 	strcpy(thermometer[TH_VICTOR_OLD].id,">C:6508503");
-	strcpy(thermometer[TH_VICTOR_OLD].name,"Barnabé");
+	strcpy(thermometer[TH_VICTOR_OLD].name,"Barnabe");
 	//rrd_create_temp(thermometer[TH_VICTOR].name);
 
 	thermometer[TH_VICTOR].smsSent=0;

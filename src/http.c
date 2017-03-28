@@ -118,7 +118,7 @@ void lit_get(FILE* stream, char* url, int size)
 	for (j=0; buf[i] && buf[i]!=' ' && j<size-1; j++, i++) url[j] = buf[i];
 	url[j] = 0;
 	for (; buf[i]==' '; i++);
-	if (strncmp(buf+i, "HTTP/1.1", 8))
+	if (strncmp(buf+i, "HTTP/1.", 7))
 		fin_connection(stream, "la version n'est pas HTTP/1.1");
 }
 
