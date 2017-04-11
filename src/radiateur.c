@@ -606,7 +606,7 @@ void manageAlarm(void)
 
 		if(thermometer[ii].smsSent==0)
 		{
-			if((time(NULL)-thermometer[ii].mesure_date)>60*5)
+			if((time(NULL)-thermometer[ii].mesure_date)>60*15)
 			{
 				thermometer[ii].smsSent=1;
 				sprintf(szBuf,"        --- HomeControl ---\n%s thermometer looks to be off",thermometer[ii].name);

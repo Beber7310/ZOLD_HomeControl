@@ -14,6 +14,15 @@
 #include "http.h"
 #include "utils.h"
 
+int mainB()
+{
+	while(1)
+	{
+		sleep(5);
+		system("./Homecontrol.a");
+	}
+}
+
 int main()
 {
 	pthread_t th_radiateur;

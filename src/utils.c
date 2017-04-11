@@ -27,8 +27,9 @@ int last_msg=0;
 void sendSMS(char* text)
 {
 	char szTmp[1024];
-	sprintf(szTmp,"wget \"https://smsapi.free-mobile.fr/sendmsg?user=12497092&pass=HO6ri0tIuaVLYY&msg=%s\" -q",text);
-	system(szTmp);
+	sprintf(szTmp,"wget \"https://smsapi.free-mobile.fr/sendmsg?user=12497092&pass=HO6ri0tIuaVLYY&msg=%s\"  -o tmp_file ;",text);
+	system(szTmp);	 
+	system("rm -f sendmsg*");
 }
 
 
