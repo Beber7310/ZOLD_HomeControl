@@ -18,7 +18,7 @@
 //
 
 enum radiateur_type { FIL_PILOTE,RF_CONTROLED };
-enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_BARNABE,RD_DAPHNEE,RD_CUISINE,RD_LAST};
+enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_BARNABE,RD_DAPHNEE,RD_CUISINE,RD_VICTOR,RD_LAST};
 
 typedef struct {
 	enum 	radiateur_type type;
@@ -31,6 +31,8 @@ typedef struct {
 	int 	expected_state;
 	time_t	http_req_time;
 	int		http_req_temp;
+	int 	blyss_state;
+	time_t	blyss_time;
 } radiateur_t;
 
 
@@ -67,7 +69,7 @@ typedef struct {
 } interrupter_t;
 
 
-enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_AMPOULE_DISCO,LI_VMC,LI_LAST};//
+enum Light_name { LI_GARAGE=0,LI_ETABLI,LI_ATELIER,LI_PRISE_1,LI_AMPOULE_DISCO,LI_VMC,LI_RAD_BARNABE,LI_RAD_VICTOR,LI_LAST};//
 typedef struct {
 	char name[32];
 	time_t action_date;
@@ -109,6 +111,7 @@ EXT rain_t			rain;
 EXT power_t			power;
 
 EXT sem_t 			sem_capteur_data_available;
+EXT sem_t 			sem_blyss;
 
 
 #endif /* COMPONENTS_H_ */

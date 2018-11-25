@@ -8,11 +8,12 @@
 #include <unistd.h>
 #include <time.h>
 
-
 #include "Components.h"
 #include "utils.h"
 #include "rrd.h"
 #include "radiateur.h"
+#include "SerialManagement.h"
+
 /** SerialManagement.c
  *
  *  Created on: 16 déc. 2013
@@ -30,98 +31,101 @@ int fd_rf;
 int SerialFilPilote(void)
 {
 
-	struct termios oldtio,newtio;
-
+	struct termios oldtio, newtio;
 
 	/*
-  On ouvre le périphérique du modem en lecture/écriture, et pas comme
-  terminal de contrôle, puisque nous ne voulons pas être terminé si l'on
-  reçoit un caractère CTRL-C.
+	 On ouvre le périphérique du modem en lecture/écriture, et pas comme
+	 terminal de contrôle, puisque nous ne voulons pas être terminé si l'on
+	 reçoit un caractère CTRL-C.
 	 */
-	fd_fil_pilote = open(FIL_PILOTE_DEVICE, O_RDWR | O_NOCTTY );
-	if (fd_fil_pilote <0) {perror(FIL_PILOTE_DEVICE); exit(-1); }
+	fd_fil_pilote = open(FIL_PILOTE_DEVICE, O_RDWR | O_NOCTTY);
+	if (fd_fil_pilote < 0)
+	{
+		perror(FIL_PILOTE_DEVICE);
+		exit(-1);
+	}
 
-	tcgetattr(fd_fil_pilote,&oldtio); /* sauvegarde de la configuration courante */
+	tcgetattr(fd_fil_pilote, &oldtio); /* sauvegarde de la configuration courante */
 	bzero(&newtio, sizeof(newtio)); /* on initialise la structure à zéro */
 
 	/*
-  BAUDRATE: Affecte la vitesse. vous pouvez également utiliser cfsetispeed
-            et cfsetospeed.
-  CRTSCTS : contrôle de flux matériel (uniquement utilisé si le câble a
-            les lignes nécessaires. Voir la section 7 du Serial-HOWTO).
-  CS8     : 8n1 (8 bits,sans parité, 1 bit d'arrêt)
-  CLOCAL  : connexion locale, pas de contrôle par le modem
-  CREAD   : permet la réception des caractères
+	 BAUDRATE: Affecte la vitesse. vous pouvez également utiliser cfsetispeed
+	 et cfsetospeed.
+	 CRTSCTS : contrôle de flux matériel (uniquement utilisé si le câble a
+	 les lignes nécessaires. Voir la section 7 du Serial-HOWTO).
+	 CS8     : 8n1 (8 bits,sans parité, 1 bit d'arrêt)
+	 CLOCAL  : connexion locale, pas de contrôle par le modem
+	 CREAD   : permet la réception des caractères
 	 */
 	newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;
 
 	/*
-  IGNPAR  : ignore les octets ayant une erreur de parité.
-  ICRNL   : transforme CR en NL (sinon un CR de l'autre côté de la ligne
-            ne terminera pas l'entrée).
-  sinon, utiliser l'entrée sans traitement (device en mode raw).
+	 IGNPAR  : ignore les octets ayant une erreur de parité.
+	 ICRNL   : transforme CR en NL (sinon un CR de l'autre côté de la ligne
+	 ne terminera pas l'entrée).
+	 sinon, utiliser l'entrée sans traitement (device en mode raw).
 	 */
 	newtio.c_iflag = IGNPAR | ICRNL;
 
 	/*
- Sortie sans traitement (raw).
+	 Sortie sans traitement (raw).
 	 */
 	newtio.c_oflag = 0;
 
 	/*
-  ICANON  : active l'entrée en mode canonique
-  désactive toute fonctionnalité d'echo, et n'envoit pas de signal au
-  programme appelant.
+	 ICANON  : active l'entrée en mode canonique
+	 désactive toute fonctionnalité d'echo, et n'envoit pas de signal au
+	 programme appelant.
 	 */
 	newtio.c_lflag = ICANON;
 
 	/*
-  initialise les caractères de contrôle.
-  les valeurs par défaut peuvent être trouvées dans
-  /usr/include/termios.h, et sont données dans les commentaires.
-  Elles sont inutiles ici.
+	 initialise les caractères de contrôle.
+	 les valeurs par défaut peuvent être trouvées dans
+	 /usr/include/termios.h, et sont données dans les commentaires.
+	 Elles sont inutiles ici.
 	 */
-	newtio.c_cc[VINTR]    = 0;     /* Ctrl-c */
-	newtio.c_cc[VQUIT]    = 0;     /* Ctrl-\ */
-	newtio.c_cc[VERASE]   = 0;     /* del */
-	newtio.c_cc[VKILL]    = 0;     /* @ */
-	newtio.c_cc[VEOF]     = 4;     /* Ctrl-d */
-	newtio.c_cc[VTIME]    = 0;     /* compteur inter-caractère non utilisé */
-	newtio.c_cc[VMIN]     = 1;     /* read bloquant jusqu'à l'arrivée d'1 caractère */
-	newtio.c_cc[VSWTC]    = 0;     /* '\0' */
-	newtio.c_cc[VSTART]   = 0;     /* Ctrl-q */
-	newtio.c_cc[VSTOP]    = 0;     /* Ctrl-s */
-	newtio.c_cc[VSUSP]    = 0;     /* Ctrl-z */
-	newtio.c_cc[VEOL]     = 0;     /* '\0' */
-	newtio.c_cc[VREPRINT] = 0;     /* Ctrl-r */
-	newtio.c_cc[VDISCARD] = 0;     /* Ctrl-u */
-	newtio.c_cc[VWERASE]  = 0;     /* Ctrl-w */
-	newtio.c_cc[VLNEXT]   = 0;     /* Ctrl-v */
-	newtio.c_cc[VEOL2]    = 0;     /* '\0' */
+	newtio.c_cc[VINTR] = 0; /* Ctrl-c */
+	newtio.c_cc[VQUIT] = 0; /* Ctrl-\ */
+	newtio.c_cc[VERASE] = 0; /* del */
+	newtio.c_cc[VKILL] = 0; /* @ */
+	newtio.c_cc[VEOF] = 4; /* Ctrl-d */
+	newtio.c_cc[VTIME] = 0; /* compteur inter-caractère non utilisé */
+	newtio.c_cc[VMIN] = 1; /* read bloquant jusqu'à l'arrivée d'1 caractère */
+	newtio.c_cc[VSWTC] = 0; /* '\0' */
+	newtio.c_cc[VSTART] = 0; /* Ctrl-q */
+	newtio.c_cc[VSTOP] = 0; /* Ctrl-s */
+	newtio.c_cc[VSUSP] = 0; /* Ctrl-z */
+	newtio.c_cc[VEOL] = 0; /* '\0' */
+	newtio.c_cc[VREPRINT] = 0; /* Ctrl-r */
+	newtio.c_cc[VDISCARD] = 0; /* Ctrl-u */
+	newtio.c_cc[VWERASE] = 0; /* Ctrl-w */
+	newtio.c_cc[VLNEXT] = 0; /* Ctrl-v */
+	newtio.c_cc[VEOL2] = 0; /* '\0' */
 
 	/*
-  à présent, on vide la ligne du modem, et on active la configuration
-  pour le port
+	 à présent, on vide la ligne du modem, et on active la configuration
+	 pour le port
 	 */
 	tcflush(fd_fil_pilote, TCIFLUSH);
-	tcsetattr(fd_fil_pilote,TCSANOW,&newtio);
+	tcsetattr(fd_fil_pilote, TCSANOW, &newtio);
 
 	/*
-  la configuration du terminal est faite, à présent on traite
-  les entrées
-  Dans cet exemple, la réception d'un 'z' en début de ligne mettra
-  fin au programme.
+	 la configuration du terminal est faite, à présent on traite
+	 les entrées
+	 Dans cet exemple, la réception d'un 'z' en début de ligne mettra
+	 fin au programme.
 	 */
 	//while (STOP==FALSE) {     /* boucle jusqu'à condition de terminaison */
 	/* read bloque l'exécution du programme jusqu'à ce qu'un caractère de
-    fin de ligne soit lu, même si plus de 255 caractères sont saisis.
-    Si le nombre de caractères lus est inférieur au nombre de caractères
-    disponibles, des read suivant retourneront les caractères restants.
-    res sera positionné au nombre de caractères effectivement lus */
+	 fin de ligne soit lu, même si plus de 255 caractères sont saisis.
+	 Si le nombre de caractères lus est inférieur au nombre de caractères
+	 disponibles, des read suivant retourneront les caractères restants.
+	 res sera positionné au nombre de caractères effectivement lus */
 	/* res = read(fd_arduino,buf,255);
-    buf[res]=0;
-    printf(":%s", buf);
-    if (buf[0]=='z') STOP=TRUE;*/
+	 buf[res]=0;
+	 printf(":%s", buf);
+	 if (buf[0]=='z') STOP=TRUE;*/
 
 	/* restaure les anciens paramètres du port */
 	//tcsetattr(fd_arduino,TCSANOW,&oldtio);
@@ -131,232 +135,247 @@ int SerialFilPilote(void)
 int SerialRF(void)
 {
 
-	struct termios oldtio,newtio;
-
+	struct termios oldtio, newtio;
 
 	/*
-  On ouvre le périphérique du modem en lecture/écriture, et pas comme
-  terminal de contrôle, puisque nous ne voulons pas être terminé si l'on
-  reçoit un caractère CTRL-C.
+	 On ouvre le périphérique du modem en lecture/écriture, et pas comme
+	 terminal de contrôle, puisque nous ne voulons pas être terminé si l'on
+	 reçoit un caractère CTRL-C.
 	 */
-	fd_rf = open(RF_DEVICE, O_RDWR | O_NOCTTY );
-	if (fd_rf <0) {perror(RF_DEVICE); exit(-1); }
+	fd_rf = open(RF_DEVICE, O_RDWR | O_NOCTTY);
+	if (fd_rf < 0)
+	{
+		perror(RF_DEVICE);
+		exit(-1);
+	}
 
-	tcgetattr(fd_rf,&oldtio); /* sauvegarde de la configuration courante */
+	tcgetattr(fd_rf, &oldtio); /* sauvegarde de la configuration courante */
 	bzero(&newtio, sizeof(newtio)); /* on initialise la structure à zéro */
 
 	/*
-  BAUDRATE: Affecte la vitesse. vous pouvez également utiliser cfsetispeed
-            et cfsetospeed.
-  CRTSCTS : contrôle de flux matériel (uniquement utilisé si le câble a
-            les lignes nécessaires. Voir la section 7 du Serial-HOWTO).
-  CS8     : 8n1 (8 bits,sans parité, 1 bit d'arrêt)
-  CLOCAL  : connexion locale, pas de contrôle par le modem
-  CREAD   : permet la réception des caractères
+	 BAUDRATE: Affecte la vitesse. vous pouvez également utiliser cfsetispeed
+	 et cfsetospeed.
+	 CRTSCTS : contrôle de flux matériel (uniquement utilisé si le câble a
+	 les lignes nécessaires. Voir la section 7 du Serial-HOWTO).
+	 CS8     : 8n1 (8 bits,sans parité, 1 bit d'arrêt)
+	 CLOCAL  : connexion locale, pas de contrôle par le modem
+	 CREAD   : permet la réception des caractères
 	 */
 	newtio.c_cflag = BAUDRATE | CRTSCTS | CS8 | CLOCAL | CREAD;
 
 	/*
-  IGNPAR  : ignore les octets ayant une erreur de parité.
-  ICRNL   : transforme CR en NL (sinon un CR de l'autre côté de la ligne
-            ne terminera pas l'entrée).
-  sinon, utiliser l'entrée sans traitement (device en mode raw).
+	 IGNPAR  : ignore les octets ayant une erreur de parité.
+	 ICRNL   : transforme CR en NL (sinon un CR de l'autre côté de la ligne
+	 ne terminera pas l'entrée).
+	 sinon, utiliser l'entrée sans traitement (device en mode raw).
 	 */
 	newtio.c_iflag = IGNPAR | ICRNL;
 
 	/*
- Sortie sans traitement (raw).
+	 Sortie sans traitement (raw).
 	 */
 	newtio.c_oflag = 0;
 
 	/*
-  ICANON  : active l'entrée en mode canonique
-  désactive toute fonctionnalité d'echo, et n'envoit pas de signal au
-  programme appelant.
+	 ICANON  : active l'entrée en mode canonique
+	 désactive toute fonctionnalité d'echo, et n'envoit pas de signal au
+	 programme appelant.
 	 */
 	newtio.c_lflag = ICANON;
 
 	/*
-  initialise les caractères de contrôle.
-  les valeurs par défaut peuvent être trouvées dans
-  /usr/include/termios.h, et sont données dans les commentaires.
-  Elles sont inutiles ici.
+	 initialise les caractères de contrôle.
+	 les valeurs par défaut peuvent être trouvées dans
+	 /usr/include/termios.h, et sont données dans les commentaires.
+	 Elles sont inutiles ici.
 	 */
-	newtio.c_cc[VINTR]    = 0;     /* Ctrl-c */
-	newtio.c_cc[VQUIT]    = 0;     /* Ctrl-\ */
-	newtio.c_cc[VERASE]   = 0;     /* del */
-	newtio.c_cc[VKILL]    = 0;     /* @ */
-	newtio.c_cc[VEOF]     = 4;     /* Ctrl-d */
-	newtio.c_cc[VTIME]    = 0;     /* compteur inter-caractère non utilisé */
-	newtio.c_cc[VMIN]     = 1;     /* read bloquant jusqu'à l'arrivée d'1 caractère */
-	newtio.c_cc[VSWTC]    = 0;     /* '\0' */
-	newtio.c_cc[VSTART]   = 0;     /* Ctrl-q */
-	newtio.c_cc[VSTOP]    = 0;     /* Ctrl-s */
-	newtio.c_cc[VSUSP]    = 0;     /* Ctrl-z */
-	newtio.c_cc[VEOL]     = 0;     /* '\0' */
-	newtio.c_cc[VREPRINT] = 0;     /* Ctrl-r */
-	newtio.c_cc[VDISCARD] = 0;     /* Ctrl-u */
-	newtio.c_cc[VWERASE]  = 0;     /* Ctrl-w */
-	newtio.c_cc[VLNEXT]   = 0;     /* Ctrl-v */
-	newtio.c_cc[VEOL2]    = 0;     /* '\0' */
+	newtio.c_cc[VINTR] = 0; /* Ctrl-c */
+	newtio.c_cc[VQUIT] = 0; /* Ctrl-\ */
+	newtio.c_cc[VERASE] = 0; /* del */
+	newtio.c_cc[VKILL] = 0; /* @ */
+	newtio.c_cc[VEOF] = 4; /* Ctrl-d */
+	newtio.c_cc[VTIME] = 0; /* compteur inter-caractère non utilisé */
+	newtio.c_cc[VMIN] = 1; /* read bloquant jusqu'à l'arrivée d'1 caractère */
+	newtio.c_cc[VSWTC] = 0; /* '\0' */
+	newtio.c_cc[VSTART] = 0; /* Ctrl-q */
+	newtio.c_cc[VSTOP] = 0; /* Ctrl-s */
+	newtio.c_cc[VSUSP] = 0; /* Ctrl-z */
+	newtio.c_cc[VEOL] = 0; /* '\0' */
+	newtio.c_cc[VREPRINT] = 0; /* Ctrl-r */
+	newtio.c_cc[VDISCARD] = 0; /* Ctrl-u */
+	newtio.c_cc[VWERASE] = 0; /* Ctrl-w */
+	newtio.c_cc[VLNEXT] = 0; /* Ctrl-v */
+	newtio.c_cc[VEOL2] = 0; /* '\0' */
 
 	/*
-  à présent, on vide la ligne du modem, et on active la configuration
-  pour le port
+	 à présent, on vide la ligne du modem, et on active la configuration
+	 pour le port
 	 */
 	tcflush(fd_rf, TCIFLUSH);
-	tcsetattr(fd_rf,TCSANOW,&newtio);
-
+	tcsetattr(fd_rf, TCSANOW, &newtio);
 
 	return 0;
 }
 
 void SerialFilPiloteSendCommande(void)
 {
-	char cmd=0;
+	char cmd = 0;
 	int ii;
 
-	for(ii=0;ii<RD_LAST;ii++)
+	for (ii = 0; ii < RD_LAST; ii++)
 	{
-		if(ii==RD_SALON)
+		if (radiateur[ii].type == FIL_PILOTE)
 		{
-			cmd+= (radiateur[ii].expected_state?1:0)<<(radiateur[ii].index);
+			if (ii == RD_SALON)
+			{
+				cmd += (radiateur[ii].expected_state ? 1 : 0) << (radiateur[ii].index);
+			}
+			else
+			{
+				cmd += (radiateur[ii].expected_state ? 0 : 1) << (radiateur[ii].index);
+			}
 		}
-		else
+
+		/* Should not be commented*/
+		if (radiateur[ii].type == RF_CONTROLED)
 		{
-			cmd+= (radiateur[ii].expected_state?0:1)<<(radiateur[ii].index);
+			if((radiateur[ii].expected_state != radiateur[ii].blyss_state) || ((time(NULL) - radiateur[ii].blyss_time) > 3600))
+			{
+				radiateur[ii].blyss_time=time(NULL);
+				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 1 : 0);
+				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 1 : 0);
+				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 1 : 0);
+				radiateur[ii].blyss_state=radiateur[ii].expected_state;
+			}
 		}
+
 	}
 
-	write(fd_fil_pilote,&cmd,1);
+	write(fd_fil_pilote, &cmd, 1);
 }
 
 int SerialSendChar(char data)
 {
-	return write(fd_rf,&data,1);
+	return write(fd_rf, &data, 1);
 }
-
 
 void update_capteur_info(char* pBuf)
 {
 	int ii;
-	int identified=0;
+	int identified = 0;
 
-	for(ii=0;ii<TH_LAST;ii++)
+	for (ii = 0; ii < TH_LAST; ii++)
 	{
-		if(pBuf[1]=='V' && thermometer[ii].type == 'V')
+		if (pBuf[1] == 'V' && thermometer[ii].type == 'V')
 		{
-			if(strncmp(pBuf,thermometer[ii].id,18)==0)
+			if (strncmp(pBuf, thermometer[ii].id, 18) == 0)
 			{
-				thermometer[ii].temperature=atof(pBuf+20);
-				thermometer[ii].mesure_date=time(NULL);
-				if(strlen(pBuf)==30)
+				thermometer[ii].temperature = atof(pBuf + 20);
+				thermometer[ii].mesure_date = time(NULL);
+				if (strlen(pBuf) == 30)
 				{
-					rain.current_rain=atoi(pBuf+26);
+					rain.current_rain = atoi(pBuf + 26);
 					rain_calcul();
-					logData("rn",thermometer[ii].name,time(NULL),rain.falled);
-					info("RF","Received rain %s: %i",thermometer[ii].name,rain.current_rain);
+					logData("rn", thermometer[ii].name, time(NULL), rain.falled);
+					info("RF", "Received rain %s: %i", thermometer[ii].name, rain.current_rain);
 				}
 
 				identified++;
 				sem_post(&sem_capteur_data_available);
-				info("RF","Received thermometer %s: %f",thermometer[ii].name,thermometer[ii].temperature);
-				logData("th",thermometer[ii].name,time(NULL),thermometer[ii].temperature);
+				info("RF", "Received thermometer %s: %f", thermometer[ii].name, thermometer[ii].temperature);
+				logData("th", thermometer[ii].name, time(NULL), thermometer[ii].temperature);
 			}
 
 		}
-		if(pBuf[1]=='C' && thermometer[ii].type == 'C')
+		if (pBuf[1] == 'C' && thermometer[ii].type == 'C')
 		{
-			if(strncmp(pBuf,thermometer[ii].id,10)==0)
+			if (strncmp(pBuf, thermometer[ii].id, 10) == 0)
 			{
 				// Serial.print("Temp: ");
 				// int temp = ((data[5] & 0x0F) << 4) | ((data[6] & 0xF0) >> 4);
 				// Serial.println(temp/10.0f);
 
 				//>C:65085033300F30
-				pBuf[16]=0;
-				thermometer[ii].temperature=strtol(pBuf+13,0,16)/10.0f;
-				thermometer[ii].mesure_date=time(NULL);
+				pBuf[16] = 0;
+				thermometer[ii].temperature = strtol(pBuf + 13, 0, 16) / 10.0f;
+				thermometer[ii].mesure_date = time(NULL);
 				identified++;
 				sem_post(&sem_capteur_data_available);
-				info("RF","Received thermometer %s: %f",thermometer[ii].name,thermometer[ii].temperature);
-				logData("th",thermometer[ii].name,time(NULL),thermometer[ii].temperature);
+				info("RF", "Received thermometer %s: %f", thermometer[ii].name, thermometer[ii].temperature);
+				logData("th", thermometer[ii].name, time(NULL), thermometer[ii].temperature);
 
-				pBuf[12]=0;
-				thermometer[ii].hygrometrie=(float)strtol(pBuf+10,0,16);
-				info("RF","Received Humidity %s: %f%%",thermometer[ii].name,thermometer[ii].hygrometrie);
-				logData("hy",thermometer[ii].name,time(NULL),thermometer[ii].hygrometrie);
+				pBuf[12] = 0;
+				thermometer[ii].hygrometrie = (float) strtol(pBuf + 10, 0, 16);
+				info("RF", "Received Humidity %s: %f%%", thermometer[ii].name, thermometer[ii].hygrometrie);
+				logData("hy", thermometer[ii].name, time(NULL), thermometer[ii].hygrometrie);
 			}
 		}
 	}
 
-	for(ii=0;ii<IT_LAST;ii++)
+	for (ii = 0; ii < IT_LAST; ii++)
 	{
-		if(strncmp(pBuf,interrupter[ii].id,10)==0)
+		if (strncmp(pBuf, interrupter[ii].id, 10) == 0)
 		{
-			interrupter[ii].action=(pBuf[11]=='1')? 1 : 0;
-			interrupter[ii].action_date=time(NULL);
+			interrupter[ii].action = (pBuf[11] == '1') ? 1 : 0;
+			interrupter[ii].action_date = time(NULL);
 			identified++;
 			sem_post(&sem_capteur_data_available);
-			info("RF","Received interupter %i: %i",ii,interrupter[ii].action);
+			info("RF", "Received interupter %i: %i", ii, interrupter[ii].action);
 		}
 	}
 
-	for(ii=0;ii<PR_LAST;ii++)
+	for (ii = 0; ii < PR_LAST; ii++)
 	{
-		if(strncmp(pBuf,presence[ii].id,10)==0)
+		if (strncmp(pBuf, presence[ii].id, 10) == 0)
 		{
-			presence[ii].action_date=time(NULL);
+			presence[ii].action_date = time(NULL);
 			identified++;
 			sem_post(&sem_capteur_data_available);
-			info("RF","Received presence : %s",presence[ii].name);
+			info("RF", "Received presence : %s", presence[ii].name);
 			//logData("pr",presence[ii].name,time(NULL),1.0f);
 
 		}
 	}
 
-	if(identified==0 && pBuf[0] == '>')
+	if (identified == 0 && pBuf[0] == '>')
 	{
-		warning("RF","Unidentified rf tag %s",pBuf);
+		warning("RF", "Unidentified rf tag %s", pBuf);
 	}
 }
 
 void * uart_rf_loop(void * arg)
 {
 	char buf[255];
-	int index=0;
-	int lastTargetUpdate=0;
+	int index = 0;
+	int lastTargetUpdate = 0;
 	int res;
-
 
 	SerialRF();
 
-
-	while(1)
+	while (1)
 	{
-		res = read(fd_rf,&buf[index],255);
-		index+=res;
+		res = read(fd_rf, &buf[index], 255);
+		index += res;
 
-		for(int ii=0;ii<sizeof(buf);ii++)
+		for (int ii = 0; ii < sizeof(buf); ii++)
 		{
-			if((buf[ii]=='\n') ||(buf[ii]=='\r') )
+			if ((buf[ii] == '\n') || (buf[ii] == '\r'))
 			{
-				buf[ii]=0;
-				index=0;
+				buf[ii] = 0;
+				index = 0;
 				update_capteur_info(buf);
 			}
 		}
 
-		if((time(NULL)-lastTargetUpdate)>60)
+		if ((time(NULL) - lastTargetUpdate) > 60)
 		{
-			lastTargetUpdate=time(NULL);
-			warning("Target","Send");
-			for(int ii=0;ii<RD_LAST;ii++)
+			lastTargetUpdate = time(NULL);
+			warning("Target", "Send");
+			for (int ii = 0; ii < RD_LAST; ii++)
 			{
-				logData("targ",radiateur[ii].name,time(NULL),radiateur[ii].calculated_target_temp);
+				logData("targ", radiateur[ii].name, time(NULL), radiateur[ii].calculated_target_temp);
 			}
 		}
-
 
 	}
 
@@ -365,46 +384,42 @@ void * uart_rf_loop(void * arg)
 void * uart_filPilote_loop(void * arg)
 {
 	char buf[255];
-	int index=0;
-	int sampleCount=0;
-	float currentAcc=0;
+	int index = 0;
+	int sampleCount = 0;
+	float currentAcc = 0;
 
 	int res;
 
 	SerialFilPilote();
 
-	while(1)
+	while (1)
 	{
-		res = read(fd_fil_pilote,&buf[index],255);
-		index+=res;
+		res = read(fd_fil_pilote, &buf[index], 255);
+		index += res;
 
-		for(int ii=0;ii<sizeof(buf);ii++)
+		for (int ii = 0; ii < sizeof(buf); ii++)
 		{
-			if((buf[ii]=='\n') ||(buf[ii]=='\r') )
+			if ((buf[ii] == '\n') || (buf[ii] == '\r'))
 			{
-				buf[ii]=0;
+				buf[ii] = 0;
 
-				index=0;
+				index = 0;
 
-
-
-				if(buf[0]=='A')
+				if (buf[0] == 'A')
 				{
 					// data comming from arduino is 100ma by unit.
-					power.current=atof(buf+2)/10;
-					power.power=230*power.current;
+					power.current = atof(buf + 2) / 10;
+					power.power = 230 * power.current;
 
-
-
-					currentAcc+=power.current;
+					currentAcc += power.current;
 					sampleCount++;
 					//info("AMP","%f",power.current);
-					if(sampleCount>60)
+					if (sampleCount > 60)
 					{
-						sampleCount=0;
-						logData("amp","house",time(NULL),currentAcc/60.0f);
-						logData("watt","house",time(NULL),230*currentAcc/60.0f);
-						currentAcc=0;
+						sampleCount = 0;
+						logData("amp", "house", time(NULL), currentAcc / 60.0f);
+						logData("watt", "house", time(NULL), 230 * currentAcc / 60.0f);
+						currentAcc = 0;
 					}
 				}
 			}
@@ -413,49 +428,50 @@ void * uart_filPilote_loop(void * arg)
 
 }
 
-int SendBlyssCmd(int id,int value)
+int SendBlyssCmd(int id, int value)
 {
-	char timestamp=0;
-	static char key_index=0;
-	char key[]= {0x98, 0xDA, 0x1E, 0xE6, 0x67};
+	char timestamp = 0;
+	static char key_index = 0;
+	char key[] =
+	{ 0x98, 0xDA, 0x1E, 0xE6, 0x67 };
 
-	long            ms; // Milliseconds
-	time_t          s;  // Seconds
+	long ms; // Milliseconds
+	time_t s;  // Seconds
 	struct timespec spec;
 
+	sem_wait(&sem_blyss);
 	clock_gettime(CLOCK_REALTIME, &spec);
 
-	s  = spec.tv_sec;
+	s = spec.tv_sec;
 	ms = spec.tv_nsec / 326; // Convert nanoseconds to milliseconds
 
-	timestamp=(311*ms)/1000;
+	timestamp = (311 * ms) / 1000;
 
 	//0x98 -> 0xDA -> 0x1E -> 0xE6 -> 0x67
 
-
-	char cmd[17]="FE6152280981C0 ";
+	char cmd[17] = "FE6152280981C0 ";
 
 	/*
-	cmd[3]='0';
-	cmd[4]='0';
-	cmd[5]='0';
+	 cmd[3]='0';
+	 cmd[4]='0';
+	 cmd[5]='0';
 	 */
-	cmd[6]=(id%10)+'0';
+	cmd[6] = (id % 10) + '0';
 
+	cmd[8] = (value > 0) ? '0' : '1';
 
-	cmd[8]= (value>0)? '0' : '1';
+	cmd[9] = hextochar(key[key_index] >> 4);
+	cmd[10] = hextochar(key[key_index] & 0xF);
 
-	cmd[9]=hextochar(key[key_index]>>4);
-	cmd[10]=hextochar(key[key_index]&0xF);
+	cmd[11] = hextochar(timestamp >> 4);
+	cmd[12] = hextochar(timestamp & 0xF);
 
-	cmd[11]=hextochar(timestamp>>4);
-	cmd[12]=hextochar(timestamp&0xF);
+	info("BLYSS", "Command Send: %s", cmd);
 
-	info("BLYSS","Command Send: %s",cmd);
+	key_index = (key_index + 1) % sizeof(key);
 
-	key_index=(key_index+1)%sizeof(key);
-
-	return write(fd_rf,cmd,strlen(cmd));
+	int ret = write(fd_rf, cmd, strlen(cmd));
+	sem_post(&sem_blyss);
+	return ret;
 }
-
 

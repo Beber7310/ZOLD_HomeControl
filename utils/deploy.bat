@@ -14,9 +14,9 @@ IF "%2"=="" (
 	EXIT /b
 )
 
-SET PUTTYSCP_BIN="C:\Program Files (x86)\WinSCP\pscp.exe"
+SET PUTTYSCP_BIN="C:\Program Files\PuTTY\pscp.exe"
 SET PUTTY_BIN="C:\Program Files (x86)\WinSCP\putty.exe"
-SET RASPBERRYPI_ADDR=192.168.1.26
+SET RASPBERRYPI_ADDR=192.168.1.10
 SET USERNAME=pi
 SET PASSWORD=q27krtrq
 SET CMD_FILENAME=commands.sh

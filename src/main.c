@@ -37,6 +37,9 @@ int main()
 
     sendSMS(" HomeControl Has rebooted");
 
+    sem_init(&sem_capteur_data_available, 0,0);
+   	sem_init(&sem_blyss, 0,1);
+
     if (pthread_create (&th_uart, NULL, uart_rf_loop, 0) < 0)
 	{
 		info("START UP","pthread_create error for thread uart_rf_loop");
@@ -50,16 +53,8 @@ int main()
     	}
 
 
-/*
-    while(1)
-    {
-    		sleep(1);
-        	SendBlyssCmd(5,1);
-        	sleep(1);
-        	SendBlyssCmd(5,0);
-    }*/
 
-	sem_init(&sem_capteur_data_available, 0,0);
+
 
 	if (pthread_create (&th_radiateur, NULL, radiateur_loop, 0) < 0)
 	{

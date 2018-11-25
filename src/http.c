@@ -326,8 +326,8 @@ void envoie_live_data(FILE* stream, char* chemin, int keepalive)
 	}
 
 
-	modiftime[strlen(modiftime)-1] = 0; /* supprime le \n final */
-	curtime[strlen(curtime)-1] = 0;     /* supprime le \n final */
+	// modiftime[strlen(modiftime)-1] = 0; /* supprime le \n final */
+	// curtime[strlen(curtime)-1] = 0;     /* supprime le \n final */
 
 
 	/* envoie l'en-tête */
