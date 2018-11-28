@@ -93,7 +93,7 @@ void radiateur_init(void)
 
 	radiateur[RD_VICTOR].type = RF_CONTROLED;
 	radiateur[RD_VICTOR].index = 7;
-	radiateur[RD_VICTOR].thermometer = TH_VICTOR_OLD;
+	radiateur[RD_VICTOR].thermometer = TH_VICTOR;
 	radiateur[RD_VICTOR].interupteur = -1;
 	radiateur[RD_VICTOR].calculated_target_temp = 0;
 	radiateur[RD_VICTOR].expected_state = 0;
