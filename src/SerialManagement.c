@@ -239,12 +239,12 @@ void SerialFilPiloteSendCommande(void)
 		/* Should not be commented*/
 		if (radiateur[ii].type == RF_CONTROLED)
 		{
-			if((radiateur[ii].expected_state != radiateur[ii].blyss_state) || ((time(NULL) - radiateur[ii].blyss_time) > 3600))
+			if((radiateur[ii].expected_state != radiateur[ii].blyss_state) || ((time(NULL) - radiateur[ii].blyss_time) > 900))
 			{
 				radiateur[ii].blyss_time=time(NULL);
-				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 1 : 0);
-				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 1 : 0);
-				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 1 : 0);
+				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
+				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
+				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
 				radiateur[ii].blyss_state=radiateur[ii].expected_state;
 			}
 		}
@@ -370,7 +370,7 @@ void * uart_rf_loop(void * arg)
 		if ((time(NULL) - lastTargetUpdate) > 60)
 		{
 			lastTargetUpdate = time(NULL);
-			warning("Target", "Send");
+			//warning("Target", "Send");
 			for (int ii = 0; ii < RD_LAST; ii++)
 			{
 				logData("targ", radiateur[ii].name, time(NULL), radiateur[ii].calculated_target_temp);

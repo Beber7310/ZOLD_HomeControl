@@ -342,8 +342,8 @@ void thermometer_init(void)
 	thermometer[TH_EXTERIEUR].mesure_date = time(NULL);
 	thermometer[TH_EXTERIEUR].temperature = 19.0f;
 	thermometer[TH_EXTERIEUR].hygrometrie = -1.0f;
-	thermometer[TH_EXTERIEUR].type = 'V';
-	strcpy(thermometer[TH_EXTERIEUR].id, ">V:281C0CC8030000D8");
+	thermometer[TH_EXTERIEUR].type = 'C';
+	strcpy(thermometer[TH_EXTERIEUR].id, ">C:6509631");
 	strcpy(thermometer[TH_EXTERIEUR].name, "Exterior");
 	//rrd_create_temp(thermometer[TH_EXTERIEUR].name);
 
