@@ -60,7 +60,7 @@ typedef struct {
 //
 //	Interrupter
 //
-enum Interrupter_name { IT_HOMECINEMA=0,IT_CUISINE,IT_GARAGE,IT_BARNABE,IT_SAS_SDB,IT_LAST};
+enum Interrupter_name { IT_HOMECINEMA=0,IT_BARNABE,IT_GARAGE,IT_OLD_1,IT_SAS_SDB,IT_LAST};
 
 typedef struct {
 	time_t action_date;

@@ -28,7 +28,7 @@ void radiateur_init(void)
 	radiateur[RD_CUISINE].type = FIL_PILOTE;
 	radiateur[RD_CUISINE].index = 0;
 	radiateur[RD_CUISINE].thermometer = TH_CUISINE;
-	radiateur[RD_CUISINE].interupteur = IT_CUISINE;
+	radiateur[RD_CUISINE].interupteur = -1;
 	radiateur[RD_CUISINE].calculated_target_temp = 0;
 	radiateur[RD_CUISINE].expected_state = 0;
 	radiateur[RD_CUISINE].http_req_time = 0;
@@ -41,7 +41,7 @@ void radiateur_init(void)
 	radiateur[RD_DAPHNEE].type = FIL_PILOTE;
 	radiateur[RD_DAPHNEE].index = 1;
 	radiateur[RD_DAPHNEE].thermometer = TH_DAPHNEE;
-	radiateur[RD_DAPHNEE].interupteur = -1;
+	radiateur[RD_DAPHNEE].interupteur = IT_HOMECINEMA;
 	radiateur[RD_DAPHNEE].calculated_target_temp = 0;
 	radiateur[RD_DAPHNEE].expected_state = 0;
 	radiateur[RD_DAPHNEE].http_req_time = 0;
@@ -54,7 +54,7 @@ void radiateur_init(void)
 	radiateur[RD_BARNABE].type = RF_CONTROLED;
 	radiateur[RD_BARNABE].index = 6;
 	radiateur[RD_BARNABE].thermometer = TH_VICTOR_OLD;
-	radiateur[RD_BARNABE].interupteur = -1;
+	radiateur[RD_BARNABE].interupteur = IT_BARNABE;
 	radiateur[RD_BARNABE].calculated_target_temp = 0;
 	radiateur[RD_BARNABE].expected_state = 0;
 	radiateur[RD_BARNABE].http_req_time = 0;
@@ -67,7 +67,7 @@ void radiateur_init(void)
 	radiateur[RD_HOMECINEMA].type = FIL_PILOTE;
 	radiateur[RD_HOMECINEMA].index = 3;
 	radiateur[RD_HOMECINEMA].thermometer = TH_HOMECINEMA;
-	radiateur[RD_HOMECINEMA].interupteur = IT_HOMECINEMA;
+	radiateur[RD_HOMECINEMA].interupteur = -1;
 	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
 	radiateur[RD_HOMECINEMA].expected_state = 0;
 	radiateur[RD_HOMECINEMA].http_req_time = 0;
@@ -438,9 +438,9 @@ void interupter_init(void)
 	interrupter[IT_HOMECINEMA].action = 0;
 	strcpy(interrupter[IT_HOMECINEMA].id, ">C:FE61422");
 
-	interrupter[IT_CUISINE].action_date = 0;
-	interrupter[IT_CUISINE].action = 0;
-	strcpy(interrupter[IT_CUISINE].id, ">C:FE6103A");
+	interrupter[IT_BARNABE].action_date = 0;
+	interrupter[IT_BARNABE].action = 0;
+	strcpy(interrupter[IT_BARNABE].id, ">C:FE6103A");
 
 	interrupter[IT_GARAGE].action_date = 0;
 	interrupter[IT_GARAGE].action = 0;
@@ -450,9 +450,9 @@ void interupter_init(void)
 	interrupter[IT_SAS_SDB].action = 0;
 	strcpy(interrupter[IT_SAS_SDB].id, ">C:FE68792");
 
-	interrupter[IT_BARNABE].action_date = 0;
-	interrupter[IT_BARNABE].action = 0;
-	strcpy(interrupter[IT_BARNABE].id, ">C:FE685FA");
+	interrupter[IT_OLD_1].action_date = 0;
+	interrupter[IT_OLD_1].action = 0;
+	strcpy(interrupter[IT_OLD_1].id, ">C:FE685FA");
 
 }
 
@@ -483,14 +483,14 @@ void Light_init(void)
 	light[LI_PRISE_1].presence = -1;
 	strcpy(light[LI_PRISE_1].name, "Prise_1");
 	memset(light[LI_PRISE_1].interupteur, -1, sizeof(light[LI_PRISE_1].interupteur));
-	light[LI_PRISE_1].interupteur[0] = IT_HOMECINEMA;
+	light[LI_PRISE_1].interupteur[0] = IT_OLD_1;
 
 	light[LI_AMPOULE_DISCO].action_date = 0;
 	light[LI_AMPOULE_DISCO].blyss_id = 4;
 	light[LI_AMPOULE_DISCO].presence = -1;
 	strcpy(light[LI_AMPOULE_DISCO].name, "Ampoule_Disco");
 	memset(light[LI_AMPOULE_DISCO].interupteur, -1, sizeof(light[LI_PRISE_1].interupteur));
-	light[LI_AMPOULE_DISCO].interupteur[0] = IT_HOMECINEMA;
+
 
 	light[LI_VMC].action_date = 0;
 	light[LI_VMC].blyss_id = 5;
@@ -533,8 +533,8 @@ void radiateur_evaluate_next_state(int rad)
 {
 	float targ_temp, measured_temp;
 
-	time_t rawtime;
-	struct tm * timeinfo;
+//	time_t rawtime;
+//	struct tm * timeinfo;
 	int index_prog;
 
 	index_prog = get_pgm_index();
@@ -581,7 +581,7 @@ void radiateur_evaluate_next_state(int rad)
 
 void light_evaluate_next_state(int li)
 {
-	int ii;
+	//int ii;
 
 	if (light[li].presence >= 0)
 	{
@@ -596,7 +596,6 @@ void light_evaluate_next_state(int li)
 			light[li].action_date = time(NULL);
 		}
 	}
-
 }
 
 void rain_calcul(void)
