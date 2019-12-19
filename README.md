@@ -1,2 +1,2 @@
-HomeContro
-==========
+HomeControl
+===========
