@@ -32,9 +32,9 @@ void emon_log_data(char* name, float value)
 	//if(fork()==0)
 	{
 		char cmdline[1024];
-		sprintf(cmdline,"curl  \"http://emoncms.org/input/post.json?json={%s:%f}&apikey=33d19b54e3e8cc180aa03bf0eeee8518\"",name,value);
+		sprintf(cmdline,"curl  \"http://emonpi/input/post.json?json={%s:%f}&apikey=9c58f6f0491bf90f7c5580de8a7e7999\" -o emon -s",name,value);
 		system(cmdline);
-
+		//printf("%s\n",cmdline);
 	}
 
 }

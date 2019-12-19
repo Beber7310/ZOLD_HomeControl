@@ -17,12 +17,13 @@
 //	Radiateur
 //
 
-enum radiateur_type { FIL_PILOTE,RF_CONTROLED };
-enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_BARNABE,RD_DAPHNEE,RD_CUISINE,RD_VICTOR,RD_LAST};
+enum radiateur_type { FIL_PILOTE,RF_CONTROLED,SONOFF_HTTP };
+enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_BARNABE,RD_DAPHNEE,RD_CUISINE,RD_VICTOR,RD_PARENT,RD_LAST};
 
 typedef struct {
 	enum 	radiateur_type type;
 	char 	name[32];
+	char 	mqtt_topic[256];
 	int 	index;
 	float 	program[7*24*4];
 	int 	thermometer;
@@ -31,8 +32,8 @@ typedef struct {
 	int 	expected_state;
 	time_t	http_req_time;
 	int		http_req_temp;
-	int 	blyss_state;
-	time_t	blyss_time;
+	int 	mirror_state;
+	time_t	mirror_time;
 } radiateur_t;
 
 
@@ -43,10 +44,11 @@ typedef struct {
 
 
 
-enum thermometer_name { TH_EXTERIEUR=0,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR_OLD,TH_VICTOR,TH_PARENT,TH_CUISINE,TH_HOMECINEMA,TH_LAST};
+enum thermometer_name { TH_BROKEN=0,TH_GARAGE,TH_SALON,TH_BARNABE,TH_VICTOR,TH_CUISINE,TH_DAPHNE,TH_LAST};
 
 typedef struct {
 	char name[32];
+	char mqtt_topic[256];
 	float temperature;
 	float hygrometrie;
 	time_t mesure_date;
@@ -60,7 +62,7 @@ typedef struct {
 //
 //	Interrupter
 //
-enum Interrupter_name { IT_HOMECINEMA=0,IT_BARNABE,IT_GARAGE,IT_OLD_1,IT_SAS_SDB,IT_LAST};
+enum Interrupter_name { IT_HOMECINEMA=0,IT_BARNABE,IT_GARAGE,IT_OLD_1,IT_SOFIA,IT_LAST};
 
 typedef struct {
 	time_t action_date;
@@ -83,6 +85,7 @@ typedef struct {
 	char name[32];
 	time_t action_date;
 	char id[32];
+	char mqtt_topic[256];
 } presence_t;
 
 typedef struct {

@@ -13,6 +13,7 @@
 #include "rrd.h"
 #include "radiateur.h"
 #include "SerialManagement.h"
+#include "nodered.h"
 
 /** SerialManagement.c
  *
@@ -239,16 +240,33 @@ void SerialFilPiloteSendCommande(void)
 		/* Should not be commented*/
 		if (radiateur[ii].type == RF_CONTROLED)
 		{
-			if((radiateur[ii].expected_state != radiateur[ii].blyss_state) || ((time(NULL) - radiateur[ii].blyss_time) > 900))
+			if ((radiateur[ii].expected_state != radiateur[ii].mirror_state) || ((time(NULL) - radiateur[ii].mirror_time) > 900))
 			{
-				radiateur[ii].blyss_time=time(NULL);
+				radiateur[ii].mirror_time = time(NULL);
 				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
 				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
 				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
-				radiateur[ii].blyss_state=radiateur[ii].expected_state;
+				radiateur[ii].mirror_state = radiateur[ii].expected_state;
 			}
 		}
 
+		if (radiateur[ii].type == SONOFF_HTTP)
+		{
+			if ((radiateur[ii].expected_state != radiateur[ii].mirror_state) || ((time(NULL) - radiateur[ii].mirror_time) > 900))
+			{
+				char cmdline[1024];
+
+				radiateur[ii].mirror_time = time(NULL);
+				radiateur[ii].mirror_state = radiateur[ii].expected_state;
+
+				// sprintf(cmdline, "wget \"%s&payload=%s\"", radiateur[ii].mqtt_topic, radiateur[ii].expected_state ? "OFF" : "ON"); // Inverted on purpose as 220V on pilote wire  put the heater in "sleep"
+				// system(cmdline);
+
+				nodered_publish(radiateur[ii].mqtt_topic, radiateur[ii].expected_state ? "OFF" : "ON"); // Inverted on purpose as 220V on pilote wire  put the heater in "sleep"
+
+			}
+
+		}
 	}
 
 	write(fd_fil_pilote, &cmd, 1);
@@ -270,6 +288,9 @@ void update_capteur_info(char* pBuf)
 		{
 			if (strncmp(pBuf, thermometer[ii].id, 18) == 0)
 			{
+				char str_value[128];
+				char str_topic[256];
+
 				thermometer[ii].temperature = atof(pBuf + 20);
 				thermometer[ii].mesure_date = time(NULL);
 				if (strlen(pBuf) == 30)
@@ -284,6 +305,10 @@ void update_capteur_info(char* pBuf)
 				sem_post(&sem_capteur_data_available);
 				info("RF", "Received thermometer %s: %f", thermometer[ii].name, thermometer[ii].temperature);
 				logData("th", thermometer[ii].name, time(NULL), thermometer[ii].temperature);
+
+				sprintf(str_value, "%f", thermometer[ii].temperature);
+				sprintf(str_topic, "%s/temperature", thermometer[ii].mqtt_topic);
+				nodered_publish(str_topic, str_value);
 			}
 
 		}
@@ -291,6 +316,8 @@ void update_capteur_info(char* pBuf)
 		{
 			if (strncmp(pBuf, thermometer[ii].id, 10) == 0)
 			{
+				char str_value[128];
+				char str_topic[256];
 				// Serial.print("Temp: ");
 				// int temp = ((data[5] & 0x0F) << 4) | ((data[6] & 0xF0) >> 4);
 				// Serial.println(temp/10.0f);
@@ -304,10 +331,18 @@ void update_capteur_info(char* pBuf)
 				info("RF", "Received thermometer %s: %f", thermometer[ii].name, thermometer[ii].temperature);
 				logData("th", thermometer[ii].name, time(NULL), thermometer[ii].temperature);
 
+				sprintf(str_value, "%f", thermometer[ii].temperature);
+				sprintf(str_topic, "%s/temperature", thermometer[ii].mqtt_topic);
+				nodered_publish(str_topic, str_value);
+
 				pBuf[12] = 0;
 				thermometer[ii].hygrometrie = (float) strtol(pBuf + 10, 0, 16);
 				info("RF", "Received Humidity %s: %f%%", thermometer[ii].name, thermometer[ii].hygrometrie);
 				logData("hy", thermometer[ii].name, time(NULL), thermometer[ii].hygrometrie);
+
+				sprintf(str_value, "%f", thermometer[ii].hygrometrie);
+				sprintf(str_topic, "%s/hygrometrie", thermometer[ii].mqtt_topic);
+				nodered_publish(str_topic, str_value);
 			}
 		}
 	}
@@ -328,11 +363,21 @@ void update_capteur_info(char* pBuf)
 	{
 		if (strncmp(pBuf, presence[ii].id, 10) == 0)
 		{
+			char str_value[128];
+			char str_topic[256];
+			time_t now;
+
 			presence[ii].action_date = time(NULL);
 			identified++;
 			sem_post(&sem_capteur_data_available);
 			info("RF", "Received presence : %s", presence[ii].name);
-			//logData("pr",presence[ii].name,time(NULL),1.0f);
+			logData("pr",presence[ii].name,time(NULL),1.0f);
+
+			now = time(0);
+			strftime(str_value, 100, "%d-%m-%Y- %H:%M:%S.000", localtime(&now));
+
+			sprintf(str_topic, "%s/presence", presence[ii].mqtt_topic);
+			nodered_publish(str_topic, str_value);
 
 		}
 	}

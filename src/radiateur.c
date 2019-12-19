@@ -28,68 +28,73 @@ void radiateur_init(void)
 	radiateur[RD_CUISINE].type = FIL_PILOTE;
 	radiateur[RD_CUISINE].index = 0;
 	radiateur[RD_CUISINE].thermometer = TH_CUISINE;
-	radiateur[RD_CUISINE].interupteur = -1;
+	radiateur[RD_CUISINE].interupteur = IT_OLD_1;
 	radiateur[RD_CUISINE].calculated_target_temp = 0;
 	radiateur[RD_CUISINE].expected_state = 0;
 	radiateur[RD_CUISINE].http_req_time = 0;
 	radiateur[RD_CUISINE].http_req_temp = 0;
-	radiateur[RD_CUISINE].blyss_state = -1;
-	radiateur[RD_CUISINE].blyss_time = 0;
+	radiateur[RD_CUISINE].mirror_state = -1;
+	radiateur[RD_CUISINE].mirror_time = 0;
 	strcpy(radiateur[RD_CUISINE].name, "Cuisine");
+	strcpy(radiateur[RD_CUISINE].mqtt_topic, "");
+
 	radiateur_init_pgm_cuisine(RD_CUISINE);
 
 	radiateur[RD_DAPHNEE].type = FIL_PILOTE;
 	radiateur[RD_DAPHNEE].index = 1;
-	radiateur[RD_DAPHNEE].thermometer = TH_DAPHNEE;
+	radiateur[RD_DAPHNEE].thermometer = TH_DAPHNE;
 	radiateur[RD_DAPHNEE].interupteur = IT_HOMECINEMA;
 	radiateur[RD_DAPHNEE].calculated_target_temp = 0;
 	radiateur[RD_DAPHNEE].expected_state = 0;
 	radiateur[RD_DAPHNEE].http_req_time = 0;
 	radiateur[RD_DAPHNEE].http_req_temp = 0;
-	radiateur[RD_DAPHNEE].blyss_state = -1;
-	radiateur[RD_DAPHNEE].blyss_time = 0;
+	radiateur[RD_DAPHNEE].mirror_state = -1;
+	radiateur[RD_DAPHNEE].mirror_time = 0;
 	strcpy(radiateur[RD_DAPHNEE].name, "Daphnee");
+	strcpy(radiateur[RD_DAPHNEE].mqtt_topic, "");
 	radiateur_init_pgm_chambre(RD_DAPHNEE);
 
-	radiateur[RD_BARNABE].type = RF_CONTROLED;
+	radiateur[RD_BARNABE].type = SONOFF_HTTP;
 	radiateur[RD_BARNABE].index = 6;
-	radiateur[RD_BARNABE].thermometer = TH_VICTOR_OLD;
+	radiateur[RD_BARNABE].thermometer = TH_BARNABE;
 	radiateur[RD_BARNABE].interupteur = IT_BARNABE;
 	radiateur[RD_BARNABE].calculated_target_temp = 0;
 	radiateur[RD_BARNABE].expected_state = 0;
 	radiateur[RD_BARNABE].http_req_time = 0;
 	radiateur[RD_BARNABE].http_req_temp = 0;
-	radiateur[RD_BARNABE].blyss_state = -1;
-	radiateur[RD_BARNABE].blyss_time = 0;
+	radiateur[RD_BARNABE].mirror_state = -1;
+	radiateur[RD_BARNABE].mirror_time = 0;
 	strcpy(radiateur[RD_BARNABE].name, "Barnabe");
+	strcpy(radiateur[RD_BARNABE].mqtt_topic, "lamotte/barnabe/sonoff_heater/cmnd/POWER");
 	radiateur_init_pgm_chambre(RD_BARNABE);
 
 	radiateur[RD_HOMECINEMA].type = FIL_PILOTE;
 	radiateur[RD_HOMECINEMA].index = 3;
-	radiateur[RD_HOMECINEMA].thermometer = TH_HOMECINEMA;
+	radiateur[RD_HOMECINEMA].thermometer = -1;
 	radiateur[RD_HOMECINEMA].interupteur = -1;
 	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
 	radiateur[RD_HOMECINEMA].expected_state = 0;
 	radiateur[RD_HOMECINEMA].http_req_time = 0;
 	radiateur[RD_HOMECINEMA].http_req_temp = 0;
-	radiateur[RD_HOMECINEMA].blyss_state = -1;
-	radiateur[RD_HOMECINEMA].blyss_time = 0;
+	radiateur[RD_HOMECINEMA].mirror_state = -1;
+	radiateur[RD_HOMECINEMA].mirror_time = 0;
 	strcpy(radiateur[RD_HOMECINEMA].name, "Homecinema");
+	strcpy(radiateur[RD_HOMECINEMA].mqtt_topic, "");
 	radiateur_init_pgm_homecinema(RD_HOMECINEMA);
 
 	radiateur[RD_SALON].type = FIL_PILOTE;
 	radiateur[RD_SALON].index = 4;
 	radiateur[RD_SALON].thermometer = TH_SALON;
-	radiateur[RD_SALON].interupteur = -1;
+	radiateur[RD_SALON].interupteur = IT_OLD_1;
 	radiateur[RD_SALON].calculated_target_temp = 0;
 	radiateur[RD_SALON].expected_state = 0;
 	radiateur[RD_SALON].http_req_time = 0;
 	radiateur[RD_SALON].http_req_temp = 0;
-	radiateur[RD_SALON].blyss_state = -1;
-	radiateur[RD_SALON].blyss_time = 0;
+	radiateur[RD_SALON].mirror_state = -1;
+	radiateur[RD_SALON].mirror_time = 0;
 	strcpy(radiateur[RD_SALON].name, "Salon");
+	strcpy(radiateur[RD_SALON].mqtt_topic, "");
 	radiateur_init_pgm_salon(RD_SALON);
-
 
 	radiateur[RD_VICTOR].type = RF_CONTROLED;
 	radiateur[RD_VICTOR].index = 7;
@@ -99,10 +104,23 @@ void radiateur_init(void)
 	radiateur[RD_VICTOR].expected_state = 0;
 	radiateur[RD_VICTOR].http_req_time = 0;
 	radiateur[RD_VICTOR].http_req_temp = 0;
-	radiateur[RD_VICTOR].blyss_state = -1;
-	radiateur[RD_VICTOR].blyss_time = 0;
+	radiateur[RD_VICTOR].mirror_state = -1;
+	radiateur[RD_VICTOR].mirror_time = 0;
 	strcpy(radiateur[RD_VICTOR].name, "Victor");
+	strcpy(radiateur[RD_VICTOR].mqtt_topic, "");
 	radiateur_init_pgm_chambre(RD_VICTOR);
+
+	radiateur[RD_PARENT].type = FIL_PILOTE;
+	radiateur[RD_PARENT].index = 2;
+	radiateur[RD_PARENT].thermometer = -1;
+	radiateur[RD_PARENT].interupteur = IT_SOFIA;
+	radiateur[RD_PARENT].calculated_target_temp = 0;
+	radiateur[RD_PARENT].expected_state = 0;
+	radiateur[RD_PARENT].http_req_time = 0;
+	radiateur[RD_PARENT].http_req_temp = 0;
+	strcpy(radiateur[RD_PARENT].name, "Parent");
+	strcpy(radiateur[RD_PARENT].mqtt_topic, "");
+	radiateur_init_pgm_chambre(RD_PARENT);
 
 }
 
@@ -134,7 +152,11 @@ void radiateur_init_pgm_salon(int rad)
 		for (jj = 0; jj < 24 * 4; jj++)
 		{
 			//if((jj<7*4)||(jj>21*4))
-			if (((jj >= 7 * 4) && (jj < 9 * 4)) || ((jj > 15.5 * 4) && (jj < 21 * 4)))
+			if (((jj >= 7 * 4) && (jj < 9 * 4)))
+			{
+				radiateur[rad].program[ii + jj] = 21.0f;
+			}
+			else if ((jj > 15.5 * 4) && (jj < 21 * 4))
 			{
 				radiateur[rad].program[ii + jj] = 20.0f;
 			}
@@ -148,7 +170,11 @@ void radiateur_init_pgm_salon(int rad)
 	for (jj = 0; jj < 24 * 4; jj++)
 	{
 		//if((jj<7*4)||(jj>21*4))
-		if (((jj >= 7 * 4) && (jj < 9 * 4)) || ((jj >= 12 * 4) && (jj < 21 * 4)))
+		if ((jj >= 7 * 4) && (jj < 9 * 4))
+		{
+			radiateur[rad].program[ii + jj] = 21.0f;
+		}
+		else if ((jj >= 12 * 4) && (jj < 21 * 4))
 		{
 			radiateur[rad].program[ii + jj] = 20.0f;
 		}
@@ -229,7 +255,7 @@ void radiateur_init_pgm_chambre(int rad)
 
 	}
 
-	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void radiateur_init_pgm_cuisine(int rad)
@@ -241,7 +267,7 @@ void radiateur_init_pgm_cuisine(int rad)
 		{
 			if ((jj > 6 * 4) && (jj < 9 * 4))
 			{
-				radiateur[rad].program[ii + jj] = 20.0f;
+				radiateur[rad].program[ii + jj] = 22.0f;
 			}
 			else if ((jj > 8 * 4) && (jj < 16 * 4))
 			{
@@ -264,7 +290,7 @@ void radiateur_init_pgm_cuisine(int rad)
 		{
 			if ((jj > 6 * 4) && (jj < 9 * 4))
 			{
-				radiateur[rad].program[ii + jj] = 20.0f;
+				radiateur[rad].program[ii + jj] = 22.0f;
 			}
 			else if ((jj > 8 * 4) && (jj < 12 * 4))
 			{
@@ -281,7 +307,7 @@ void radiateur_init_pgm_cuisine(int rad)
 		}
 	}
 
-	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void radiateur_init_pgm_homecinema(int rad)
@@ -301,7 +327,7 @@ void radiateur_init_pgm_homecinema(int rad)
 			}
 		}
 	}
-	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void radiateur_init_pgm_piece(int rad)
@@ -311,7 +337,7 @@ void radiateur_init_pgm_piece(int rad)
 	{
 		radiateur[rad].program[ii] = 15.0f;
 	}
-	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void radiateur_init_pgm_hors_gele(int rad)
@@ -321,7 +347,7 @@ void radiateur_init_pgm_hors_gele(int rad)
 	{
 		radiateur[rad].program[ii] = 12.0f;
 	}
-	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void radiateur_init_pgm_temp(int rad, float temp)
@@ -331,21 +357,22 @@ void radiateur_init_pgm_temp(int rad, float temp)
 	{
 		radiateur[rad].program[ii] = temp;
 	}
-	//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
+//rrd_create_rad_pgm(radiateur[rad].name,radiateur[rad].program);
 }
 
 void thermometer_init(void)
 {
-	// TH_EXTERIEUR,TH_GARAGE,TH_SALON,TH_DAPHNEE,TH_VICTOR,TH_BARNABE
 
-	thermometer[TH_EXTERIEUR].smsSent = 0;
-	thermometer[TH_EXTERIEUR].mesure_date = time(NULL);
-	thermometer[TH_EXTERIEUR].temperature = 19.0f;
-	thermometer[TH_EXTERIEUR].hygrometrie = -1.0f;
-	thermometer[TH_EXTERIEUR].type = 'C';
-	strcpy(thermometer[TH_EXTERIEUR].id, ">C:6509631");
-	strcpy(thermometer[TH_EXTERIEUR].name, "Exterior");
-	//rrd_create_temp(thermometer[TH_EXTERIEUR].name);
+	thermometer[TH_BROKEN].smsSent = 0;
+	thermometer[TH_BROKEN].mesure_date = time(NULL);
+	thermometer[TH_BROKEN].temperature = 19.0f;
+	thermometer[TH_BROKEN].hygrometrie = -1.0f;
+	thermometer[TH_BROKEN].type = 'C';
+	strcpy(thermometer[TH_BROKEN].id, ">C:6509631");
+	strcpy(thermometer[TH_BROKEN].name, "Broken");
+	strcpy(thermometer[TH_BROKEN].mqtt_topic, "lamotte/broken");
+
+
 
 	thermometer[TH_GARAGE].smsSent = 0;
 	thermometer[TH_GARAGE].mesure_date = time(NULL);
@@ -354,18 +381,16 @@ void thermometer_init(void)
 	thermometer[TH_GARAGE].type = 'V';
 	strcpy(thermometer[TH_GARAGE].id, ">V:28E01DC803000066");
 	strcpy(thermometer[TH_GARAGE].name, "Garage");
-	//rrd_create_temp(thermometer[TH_GARAGE].name);
+	strcpy(thermometer[TH_GARAGE].mqtt_topic, "lamotte/garage");
 
-	thermometer[TH_HOMECINEMA].smsSent = 0;
-	thermometer[TH_HOMECINEMA].mesure_date = time(NULL);
-	thermometer[TH_HOMECINEMA].temperature = 19.0f;
-	thermometer[TH_HOMECINEMA].hygrometrie = -1.0f;
-	//thermometer[TH_HOMECINEMA].type='V';
-	//strcpy(thermometer[TH_HOMECINEMA].id,">V:28980CC8030000EE");
-	thermometer[TH_HOMECINEMA].type = 'C';
-	strcpy(thermometer[TH_HOMECINEMA].id, ">C:650B033");
-	strcpy(thermometer[TH_HOMECINEMA].name, "Homecinema");
-	//rrd_create_temp(thermometer[TH_SALON].name);
+	thermometer[TH_DAPHNE].smsSent = 0;
+	thermometer[TH_DAPHNE].mesure_date = time(NULL);
+	thermometer[TH_DAPHNE].temperature = 19.0f;
+	thermometer[TH_DAPHNE].hygrometrie = -1.0f;
+	thermometer[TH_DAPHNE].type = 'C';
+	strcpy(thermometer[TH_DAPHNE].id, ">C:650B033");
+	strcpy(thermometer[TH_DAPHNE].name, "Daphnee");
+	strcpy(thermometer[TH_DAPHNE].mqtt_topic, "lamotte/daphnee");
 
 	thermometer[TH_SALON].smsSent = 0;
 	thermometer[TH_SALON].mesure_date = time(NULL);
@@ -374,24 +399,16 @@ void thermometer_init(void)
 	thermometer[TH_SALON].type = 'C';
 	strcpy(thermometer[TH_SALON].id, ">C:6505101");
 	strcpy(thermometer[TH_SALON].name, "Salon");
+	strcpy(thermometer[TH_SALON].mqtt_topic, "lamotte/salon");
 
-	thermometer[TH_DAPHNEE].smsSent = 0;
-	thermometer[TH_DAPHNEE].mesure_date = time(NULL);
-	thermometer[TH_DAPHNEE].temperature = 19.0f;
-	thermometer[TH_DAPHNEE].hygrometrie = -1.0f;
-	thermometer[TH_DAPHNEE].type = 'V';
-	strcpy(thermometer[TH_DAPHNEE].id, ">V:28ADE14A0400007A");
-	strcpy(thermometer[TH_DAPHNEE].name, "Daphnee");
-	//rrd_create_temp(thermometer[TH_DAPHNEE].name);
-
-	thermometer[TH_VICTOR_OLD].smsSent = 0;
-	thermometer[TH_VICTOR_OLD].mesure_date = time(NULL);
-	thermometer[TH_VICTOR_OLD].temperature = 19.0f;
-	thermometer[TH_VICTOR_OLD].hygrometrie = -1.0f;
-	thermometer[TH_VICTOR_OLD].type = 'C';
-	strcpy(thermometer[TH_VICTOR_OLD].id, ">C:6508503");
-	strcpy(thermometer[TH_VICTOR_OLD].name, "Barnabe");
-	//rrd_create_temp(thermometer[TH_VICTOR].name);
+	thermometer[TH_BARNABE].smsSent = 0;
+	thermometer[TH_BARNABE].mesure_date = time(NULL);
+	thermometer[TH_BARNABE].temperature = 19.0f;
+	thermometer[TH_BARNABE].hygrometrie = -1.0f;
+	thermometer[TH_BARNABE].type = 'C';
+	strcpy(thermometer[TH_BARNABE].id, ">C:6508503");
+	strcpy(thermometer[TH_BARNABE].name, "Barnabe");
+	strcpy(thermometer[TH_BARNABE].mqtt_topic, "lamotte/barnabe");
 
 	thermometer[TH_VICTOR].smsSent = 0;
 	thermometer[TH_VICTOR].mesure_date = time(NULL);
@@ -400,24 +417,8 @@ void thermometer_init(void)
 	thermometer[TH_VICTOR].type = 'C';
 	strcpy(thermometer[TH_VICTOR].id, ">C:6503804");
 	strcpy(thermometer[TH_VICTOR].name, "Victor");
-	//rrd_create_temp(thermometer[TH_BARNABE].name);
+	strcpy(thermometer[TH_VICTOR].mqtt_topic, "lamotte/victor");
 
-	thermometer[TH_PARENT].smsSent = 0;
-	thermometer[TH_PARENT].mesure_date = time(NULL);
-	thermometer[TH_PARENT].temperature = 19.0f;
-	thermometer[TH_PARENT].hygrometrie = -1.0f;
-	thermometer[TH_PARENT].type = 'V';
-	strcpy(thermometer[TH_PARENT].id, ">V:2877EB4A040000CC");
-	strcpy(thermometer[TH_PARENT].name, "Parent");
-	//rrd_create_temp(thermometer[TH_BARNABE].name);
-
-	thermometer[TH_DAPHNEE].smsSent = 0;
-	thermometer[TH_DAPHNEE].mesure_date = time(NULL);
-	thermometer[TH_DAPHNEE].temperature = 19.0f;
-	thermometer[TH_DAPHNEE].hygrometrie = -1.0f;
-	thermometer[TH_DAPHNEE].type = 'V';
-	strcpy(thermometer[TH_DAPHNEE].id, ">V:28ADE14A0400007A");
-	strcpy(thermometer[TH_DAPHNEE].name, "Daphnee");
 
 	thermometer[TH_CUISINE].smsSent = 0;
 	thermometer[TH_CUISINE].mesure_date = time(NULL);
@@ -426,13 +427,16 @@ void thermometer_init(void)
 	thermometer[TH_CUISINE].type = 'C';
 	strcpy(thermometer[TH_CUISINE].id, ">C:6501504");
 	strcpy(thermometer[TH_CUISINE].name, "Cuisine");
+	strcpy(thermometer[TH_CUISINE].mqtt_topic, "lamotte/cuisine");
+
+
 
 }
 
 void interupter_init(void)
 {
 
-	//>C:FE6142281E6A10
+//>C:FE6142281E6A10
 
 	interrupter[IT_HOMECINEMA].action_date = 0;
 	interrupter[IT_HOMECINEMA].action = 0;
@@ -446,9 +450,9 @@ void interupter_init(void)
 	interrupter[IT_GARAGE].action = 0;
 	strcpy(interrupter[IT_GARAGE].id, ">C:FE68722");
 
-	interrupter[IT_SAS_SDB].action_date = 0;
-	interrupter[IT_SAS_SDB].action = 0;
-	strcpy(interrupter[IT_SAS_SDB].id, ">C:FE68792");
+	interrupter[IT_SOFIA].action_date = 0;
+	interrupter[IT_SOFIA].action = 0;
+	strcpy(interrupter[IT_SOFIA].id, ">C:FE68792");
 
 	interrupter[IT_OLD_1].action_date = 0;
 	interrupter[IT_OLD_1].action = 0;
@@ -483,14 +487,13 @@ void Light_init(void)
 	light[LI_PRISE_1].presence = -1;
 	strcpy(light[LI_PRISE_1].name, "Prise_1");
 	memset(light[LI_PRISE_1].interupteur, -1, sizeof(light[LI_PRISE_1].interupteur));
-	light[LI_PRISE_1].interupteur[0] = IT_OLD_1;
+
 
 	light[LI_AMPOULE_DISCO].action_date = 0;
 	light[LI_AMPOULE_DISCO].blyss_id = 4;
 	light[LI_AMPOULE_DISCO].presence = -1;
 	strcpy(light[LI_AMPOULE_DISCO].name, "Ampoule_Disco");
 	memset(light[LI_AMPOULE_DISCO].interupteur, -1, sizeof(light[LI_PRISE_1].interupteur));
-
 
 	light[LI_VMC].action_date = 0;
 	light[LI_VMC].blyss_id = 5;
@@ -518,15 +521,15 @@ void Rain_Init(void)
 
 void Presence_init(void)
 {
-
 	presence[PR_ATELIER].action_date = 0;
 	strcpy(presence[PR_ATELIER].id, ">C:FE802F3");
-	strcpy(presence[PR_ATELIER].name, "Atelier");
+	strcpy(presence[PR_ATELIER].name, "sdb_haut");
+	strcpy(presence[PR_ATELIER].mqtt_topic, "lamotte/sdb_haut");
 
 	presence[PR_GARAGE].action_date = 0;
 	strcpy(presence[PR_GARAGE].id, ">C:FE80769");
 	strcpy(presence[PR_GARAGE].name, "Garage");
-
+	strcpy(presence[PR_GARAGE].mqtt_topic, "lamotte/garage");
 }
 
 void radiateur_evaluate_next_state(int rad)
@@ -544,7 +547,7 @@ void radiateur_evaluate_next_state(int rad)
 	{
 		if (((time(NULL) - interrupter[radiateur[rad].interupteur].action_date) < 3600) && (interrupter[radiateur[rad].interupteur].action == 1))
 		{
-			targ_temp = 23.0f;
+			targ_temp = 21.0f;
 		}
 	}
 
@@ -563,7 +566,7 @@ void radiateur_evaluate_next_state(int rad)
 	{
 		measured_temp = 19.0f;
 	}
-	// info("RADIATEUR","Radiator %s target temp: %f measured temp: %f",radiateur[rad].name,targ_temp,measured_temp);
+// info("RADIATEUR","Radiator %s target temp: %f measured temp: %f",radiateur[rad].name,targ_temp,measured_temp);
 
 	if (measured_temp < (targ_temp - 0.5))
 	{
@@ -581,7 +584,7 @@ void radiateur_evaluate_next_state(int rad)
 
 void light_evaluate_next_state(int li)
 {
-	//int ii;
+//int ii;
 
 	if (light[li].presence >= 0)
 	{
