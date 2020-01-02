@@ -220,6 +220,9 @@ int SerialRF(void)
 
 void SerialFilPiloteSendCommande(void)
 {
+	char cmdline[1024];
+
+
 	char cmd = 0;
 	int ii;
 
@@ -269,7 +272,10 @@ void SerialFilPiloteSendCommande(void)
 		}
 	}
 
-	write(fd_fil_pilote, &cmd, 1);
+	//write(fd_fil_pilote, &cmd, 1);
+	sprintf(cmdline, "wget -q -O temp.filp \"http://homecontrolremote:8080/hc_cmd?FILP_DATA=%i\"",cmd);
+	system(cmdline);
+	// http://homecontrolremote:8080/hc_cmd?FILP_DATA=255
 }
 
 int SerialSendChar(char data)

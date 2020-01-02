@@ -21,6 +21,7 @@ int parse_http_thermostat_status(char* cmd);
 float parse_http_thermostat_target(char* cmd);
 int parse_http_cmd(char* cmd);
 int parse_http_cmd_token(char* cmd);
+int parse_http_mqtt_temp(char* cmd);
 int parse_http_cmd_RAD_token(char* cmd);
 int parse_http_cmd_LIGHT_token(char* cmd);
 float parse_http_temp(char* cmd);

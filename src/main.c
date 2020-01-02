@@ -47,13 +47,13 @@ int main()
 		info("START UP", "pthread_create error for thread uart_rf_loop");
 		exit(1);
 	}
-
+/* Commented as fil pilote is now in remote mode
 	if (pthread_create(&th_uart_fp, NULL, uart_filPilote_loop, 0) < 0)
 	{
 		info("START UP", "pthread_create error for thread uart_filPilote_loop");
 		exit(1);
 	}
-
+*/
 	if (pthread_create(&th_radiateur, NULL, radiateur_loop, 0) < 0)
 	{
 		info("START UP", "pthread_create error for thread radiateur_loop");

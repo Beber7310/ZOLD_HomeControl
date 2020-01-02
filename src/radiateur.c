@@ -372,8 +372,6 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_BROKEN].name, "Broken");
 	strcpy(thermometer[TH_BROKEN].mqtt_topic, "lamotte/broken");
 
-
-
 	thermometer[TH_GARAGE].smsSent = 0;
 	thermometer[TH_GARAGE].mesure_date = time(NULL);
 	thermometer[TH_GARAGE].temperature = 19.0f;
@@ -419,7 +417,6 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_VICTOR].name, "Victor");
 	strcpy(thermometer[TH_VICTOR].mqtt_topic, "lamotte/victor");
 
-
 	thermometer[TH_CUISINE].smsSent = 0;
 	thermometer[TH_CUISINE].mesure_date = time(NULL);
 	thermometer[TH_CUISINE].temperature = 19.0f;
@@ -429,7 +426,14 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_CUISINE].name, "Cuisine");
 	strcpy(thermometer[TH_CUISINE].mqtt_topic, "lamotte/cuisine");
 
-
+	thermometer[TH_EXTERIEUR].smsSent = 0;
+	thermometer[TH_EXTERIEUR].mesure_date = time(NULL);
+	thermometer[TH_EXTERIEUR].temperature = 19.0f;
+	thermometer[TH_EXTERIEUR].hygrometrie = -1.0f;
+	thermometer[TH_EXTERIEUR].type = 'S';
+	strcpy(thermometer[TH_EXTERIEUR].id, "0316A2790DBF");
+	strcpy(thermometer[TH_EXTERIEUR].name, "Exterieur");
+	strcpy(thermometer[TH_EXTERIEUR].mqtt_topic, "lamotte/exterieur");
 
 }
 
@@ -487,7 +491,6 @@ void Light_init(void)
 	light[LI_PRISE_1].presence = -1;
 	strcpy(light[LI_PRISE_1].name, "Prise_1");
 	memset(light[LI_PRISE_1].interupteur, -1, sizeof(light[LI_PRISE_1].interupteur));
-
 
 	light[LI_AMPOULE_DISCO].action_date = 0;
 	light[LI_AMPOULE_DISCO].blyss_id = 4;

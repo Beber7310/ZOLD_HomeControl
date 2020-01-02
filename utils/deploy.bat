@@ -16,9 +16,15 @@ IF "%2"=="" (
 
 SET PUTTYSCP_BIN="C:\Program Files\PuTTY\pscp.exe"
 SET PUTTY_BIN="C:\Program Files (x86)\WinSCP\putty.exe"
-SET RASPBERRYPI_ADDR=homecontrol
+SET RASPBERRYPI_ADDR=192.168.1.10
 SET USERNAME=pi
 SET PASSWORD=q27krtrq
+
+rem SET RASPBERRYPI_ADDR=emonpi
+rem SET USERNAME=pi
+rem SET PASSWORD=emonpi2016
+
+
 SET CMD_FILENAME=commands.sh
 
 rem Upload the file to raspberry pi

@@ -8,7 +8,7 @@
 
 //http://homecontrol:1880/mqtt?topic=
 
-#define MQTT_BROKER "http://homecontrol:1880/"
+#define MQTT_BROKER "http://emonpi:1880/"
 
 int nodered_publish(char* topic, char* value)
 {
