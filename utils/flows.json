@@ -1,1 +1,652 @@
-[{"id":"66726821.1456e8","type":"tab","label":"Flow 1","disabled":false,"info":""},{"id":"5d25ecf6.19afc4","type":"tab","label":"Flow 1"},{"id":"f6c62b72.a6ce68","type":"mqtt-broker","z":"","name":"","broker":"emonpi","port":"1883","clientid":"","usetls":false,"compatmode":true,"keepalive":"60","cleansession":true,"birthTopic":"","birthQos":"0","birthPayload":"","closeTopic":"","closePayload":"","willTopic":"","willQos":"0","willPayload":""},{"id":"47e558.48a64aa8","type":"mqtt in","z":"5d25ecf6.19afc4","name":"","topic":"lamotte/entree/sonoff_interrupteur/stat/POWER1","qos":"2","datatype":"auto","broker":"f6c62b72.a6ce68","x":260,"y":100,"wires":[["1b112ddc.062042","be91c74b.cf7308"]]},{"id":"1b112ddc.062042","type":"debug","z":"5d25ecf6.19afc4","name":"","active":false,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":550,"y":60,"wires":[]},{"id":"be91c74b.cf7308","type":"mqtt out","z":"5d25ecf6.19afc4","name":"sonoff_terasse_toit","topic":"lamotte/terasse/sonoff_terasse_toit/cmnd/POWER","qos":"","retain":"","broker":"f6c62b72.a6ce68","x":570,"y":100,"wires":[]},{"id":"6e438598.18384c","type":"mqtt in","z":"5d25ecf6.19afc4","name":"","topic":"lamotte/entree/sonoff_interrupteur/stat/POWER2","qos":"2","datatype":"auto","broker":"f6c62b72.a6ce68","x":235,"y":194,"wires":[["ce1d8e3d.d12b9","f34edea6.2dbb4"]]},{"id":"ce1d8e3d.d12b9","type":"mqtt out","z":"5d25ecf6.19afc4","name":"sonoff_terasse_sol","topic":"lamotte/terasse/sonoff_terasse_sol/cmnd/POWER","qos":"","retain":"","broker":"f6c62b72.a6ce68","x":575,"y":194,"wires":[]},{"id":"f34edea6.2dbb4","type":"debug","z":"5d25ecf6.19afc4","name":"","active":false,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":555,"y":154,"wires":[]},{"id":"c8ca77eb.69a948","type":"mqtt in","z":"5d25ecf6.19afc4","name":"","topic":"lamotte/sas_etage/sonoff_interrupteur/stat/POWER","qos":"2","datatype":"auto","broker":"f6c62b72.a6ce68","x":251,"y":311,"wires":[["ce4829eb.caf278","3a42607a.4637b"]]},{"id":"ce4829eb.caf278","type":"mqtt out","z":"5d25ecf6.19afc4","name":"","topic":"lamotte/sas_etage/sonoff_light/cmnd/POWER","qos":"","retain":"","broker":"f6c62b72.a6ce68","x":669,"y":310,"wires":[]},{"id":"3a42607a.4637b","type":"debug","z":"5d25ecf6.19afc4","name":"","active":false,"console":"false","complete":"payload","x":565,"y":265,"wires":[]},{"id":"23e239b0.ac3226","type":"http in","z":"5d25ecf6.19afc4","name":"","url":"/mqtt","method":"get","upload":false,"swaggerDoc":"","x":141,"y":496,"wires":[["17accf6a.f72a71","cb13c5b.789b638"]]},{"id":"4abb66a6.ebabe8","type":"debug","z":"5d25ecf6.19afc4","name":"","active":false,"console":"false","complete":"topic","x":917,"y":456,"wires":[]},{"id":"e8109302.abe0d","type":"mqtt out","z":"5d25ecf6.19afc4","name":"","topic":"","qos":"","retain":"","broker":"f6c62b72.a6ce68","x":910,"y":496,"wires":[]},{"id":"17accf6a.f72a71","type":"change","z":"5d25ecf6.19afc4","name":"","rules":[{"t":"move","p":"req.query.topic","pt":"msg","to":"topic","tot":"msg"}],"action":"","property":"","from":"","to":"","reg":false,"x":371,"y":496,"wires":[["365f4594.906cfa"]]},{"id":"365f4594.906cfa","type":"change","z":"5d25ecf6.19afc4","name":"","rules":[{"t":"move","p":"req.query.payload","pt":"msg","to":"payload","tot":"msg"}],"action":"","property":"","from":"","to":"","reg":false,"x":646,"y":496,"wires":[["e8109302.abe0d","4abb66a6.ebabe8"]]},{"id":"cb13c5b.789b638","type":"template","z":"5d25ecf6.19afc4","name":"page","field":"payload","fieldType":"msg","format":"handlebars","syntax":"mustache","template":"<html>\n    <head></head>\n    <body>\n        <h1>Hello World!</h1>\n    </body>\n</html>","x":313,"y":535,"wires":[["3181ac17.ae0fa4"]]},{"id":"3181ac17.ae0fa4","type":"http response","z":"5d25ecf6.19afc4","name":"","x":459,"y":535,"wires":[]},{"id":"e19223b9.63c8a","type":"mqtt in","z":"5d25ecf6.19afc4","name":"","topic":"lamotte/sdb_haut/presence","qos":"2","datatype":"auto","broker":"f6c62b72.a6ce68","x":170,"y":800,"wires":[["6da1a1.fc1ece6","c11c945a.a292f8"]]},{"id":"6da1a1.fc1ece6","type":"debug","z":"5d25ecf6.19afc4","name":"","active":false,"console":"false","complete":"payload","x":410,"y":740,"wires":[]},{"id":"ec40941b.928d58","type":"debug","z":"5d25ecf6.19afc4","name":"","active":false,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":610,"y":740,"wires":[]},{"id":"c11c945a.a292f8","type":"trigger","z":"5d25ecf6.19afc4","op1":"ON","op2":"OFF","op1type":"str","op2type":"str","duration":"10","extend":true,"units":"min","reset":"","bytopic":"all","name":"","x":410,"y":800,"wires":[["75cd02b1.ac5bcc","ec40941b.928d58"]]},{"id":"75cd02b1.ac5bcc","type":"mqtt out","z":"5d25ecf6.19afc4","name":"","topic":"lamotte/SDB/VMC/cmnd/POWER","qos":"","retain":"","broker":"f6c62b72.a6ce68","x":680,"y":800,"wires":[]},{"id":"3fc4d8f9.3ae938","type":"mqtt in","z":"5d25ecf6.19afc4","name":"","topic":"lamotte/exterieur/th/tele/SENSOR","qos":"2","datatype":"json","broker":"f6c62b72.a6ce68","x":190,"y":1000,"wires":[["969b3001.9e7ff"]]},{"id":"acd076a5.ec9468","type":"debug","z":"5d25ecf6.19afc4","name":"","active":false,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","x":590,"y":1060,"wires":[]},{"id":"83df3ec9.d3c98","type":"http request","z":"5d25ecf6.19afc4","name":"","method":"GET","ret":"txt","paytoqs":false,"url":"","tls":"","persist":false,"proxy":"","authType":"","x":730,"y":1000,"wires":[["4428bdfd.affa74"]]},{"id":"4428bdfd.affa74","type":"debug","z":"5d25ecf6.19afc4","name":"","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"false","x":930,"y":1060,"wires":[]},{"id":"1f7e5bcb.e0c214","type":"function","z":"5d25ecf6.19afc4","name":"func","func":"msg.url = \"192.168.1.10:8080/hc_mqtt_temp?\"+msg.payload.DS18B20.Id+\"=\"+msg.payload.DS18B20.Temperature;\nreturn msg;","outputs":1,"noerr":0,"x":570,"y":1000,"wires":[["83df3ec9.d3c98"]]},{"id":"e6d758b8.aa9988","type":"inject","z":"66726821.1456e8","name":"","topic":"","payload":"","payloadType":"date","repeat":"","crontab":"","once":false,"x":140,"y":140,"wires":[["79f413c5.353b3c"]]},{"id":"7d749119.31d81","type":"http request","z":"66726821.1456e8","name":"post to FRED","method":"POST","ret":"txt","url":"http://mike.fred.sensetecnic.com/api/test","tls":"","x":540,"y":140,"wires":[["c1b5538a.a9f0c"]]},{"id":"79f413c5.353b3c","type":"function","z":"66726821.1456e8","name":"set payload and headers","func":"msg.payload = \"data to post\";\nmsg.headers = {};\nmsg.headers['X-Auth-User'] = 'mike';\nmsg.headers['X-Auth-Key'] = 'fred-key';\n\nreturn msg;","outputs":1,"noerr":0,"x":330,"y":140,"wires":[["7d749119.31d81"]]},{"id":"c1b5538a.a9f0c","type":"debug","z":"66726821.1456e8","name":"","active":true,"console":"false","complete":"false","x":710,"y":140,"wires":[]},{"id":"969b3001.9e7ff","type":"json","z":"5d25ecf6.19afc4","name":"","property":"payload","action":"obj","pretty":false,"x":410,"y":1000,"wires":[["1f7e5bcb.e0c214","acd076a5.ec9468"]]}]
+[
+    {
+        "id": "66726821.1456e8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "5d25ecf6.19afc4",
+        "type": "tab",
+        "label": "Flow 1"
+    },
+    {
+        "id": "f6c62b72.a6ce68",
+        "type": "mqtt-broker",
+        "z": "",
+        "name": "",
+        "broker": "emonpi",
+        "port": "1883",
+        "clientid": "",
+        "usetls": false,
+        "compatmode": true,
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "closeTopic": "",
+        "closePayload": "",
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": ""
+    },
+    {
+        "id": "47e558.48a64aa8",
+        "type": "mqtt in",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/entree/sonoff_interrupteur/stat/POWER1",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "f6c62b72.a6ce68",
+        "x": 240,
+        "y": 100,
+        "wires": [
+            [
+                "1b112ddc.062042",
+                "be91c74b.cf7308"
+            ]
+        ]
+    },
+    {
+        "id": "1b112ddc.062042",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 550,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "be91c74b.cf7308",
+        "type": "mqtt out",
+        "z": "5d25ecf6.19afc4",
+        "name": "sonoff_terasse_toit",
+        "topic": "lamotte/terasse/sonoff_terasse_toit/cmnd/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "f6c62b72.a6ce68",
+        "x": 570,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "6e438598.18384c",
+        "type": "mqtt in",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/entree/sonoff_interrupteur/stat/POWER2",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "f6c62b72.a6ce68",
+        "x": 235,
+        "y": 194,
+        "wires": [
+            [
+                "ce1d8e3d.d12b9",
+                "f34edea6.2dbb4"
+            ]
+        ]
+    },
+    {
+        "id": "ce1d8e3d.d12b9",
+        "type": "mqtt out",
+        "z": "5d25ecf6.19afc4",
+        "name": "sonoff_terasse_sol",
+        "topic": "lamotte/terasse/sonoff_terasse_sol/cmnd/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "f6c62b72.a6ce68",
+        "x": 575,
+        "y": 194,
+        "wires": []
+    },
+    {
+        "id": "f34edea6.2dbb4",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 555,
+        "y": 154,
+        "wires": []
+    },
+    {
+        "id": "c8ca77eb.69a948",
+        "type": "mqtt in",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/sas_etage/sonoff_interrupteur/stat/POWER",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "f6c62b72.a6ce68",
+        "x": 250,
+        "y": 320,
+        "wires": [
+            [
+                "ce4829eb.caf278",
+                "3a42607a.4637b"
+            ]
+        ]
+    },
+    {
+        "id": "ce4829eb.caf278",
+        "type": "mqtt out",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/sas_etage/sonoff_light/cmnd/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "f6c62b72.a6ce68",
+        "x": 680,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "3a42607a.4637b",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 570,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "23e239b0.ac3226",
+        "type": "http in",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "url": "/mqtt",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 141,
+        "y": 496,
+        "wires": [
+            [
+                "17accf6a.f72a71",
+                "cb13c5b.789b638"
+            ]
+        ]
+    },
+    {
+        "id": "4abb66a6.ebabe8",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "topic",
+        "x": 917,
+        "y": 456,
+        "wires": []
+    },
+    {
+        "id": "e8109302.abe0d",
+        "type": "mqtt out",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "broker": "f6c62b72.a6ce68",
+        "x": 910,
+        "y": 496,
+        "wires": []
+    },
+    {
+        "id": "17accf6a.f72a71",
+        "type": "change",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "req.query.topic",
+                "pt": "msg",
+                "to": "topic",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 371,
+        "y": 496,
+        "wires": [
+            [
+                "365f4594.906cfa"
+            ]
+        ]
+    },
+    {
+        "id": "365f4594.906cfa",
+        "type": "change",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "req.query.payload",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 646,
+        "y": 496,
+        "wires": [
+            [
+                "e8109302.abe0d",
+                "4abb66a6.ebabe8"
+            ]
+        ]
+    },
+    {
+        "id": "cb13c5b.789b638",
+        "type": "template",
+        "z": "5d25ecf6.19afc4",
+        "name": "page",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<html>\n    <head></head>\n    <body>\n        <h1>Hello World!</h1>\n    </body>\n</html>",
+        "x": 313,
+        "y": 535,
+        "wires": [
+            [
+                "3181ac17.ae0fa4"
+            ]
+        ]
+    },
+    {
+        "id": "3181ac17.ae0fa4",
+        "type": "http response",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "x": 459,
+        "y": 535,
+        "wires": []
+    },
+    {
+        "id": "e19223b9.63c8a",
+        "type": "mqtt in",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/sdb_haut/presence",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "f6c62b72.a6ce68",
+        "x": 170,
+        "y": 660,
+        "wires": [
+            [
+                "6da1a1.fc1ece6",
+                "c11c945a.a292f8"
+            ]
+        ]
+    },
+    {
+        "id": "6da1a1.fc1ece6",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 410,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "ec40941b.928d58",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 610,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "c11c945a.a292f8",
+        "type": "trigger",
+        "z": "5d25ecf6.19afc4",
+        "op1": "ON",
+        "op2": "OFF",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "10",
+        "extend": true,
+        "units": "min",
+        "reset": "",
+        "bytopic": "all",
+        "name": "",
+        "x": 410,
+        "y": 660,
+        "wires": [
+            [
+                "75cd02b1.ac5bcc",
+                "ec40941b.928d58"
+            ]
+        ]
+    },
+    {
+        "id": "75cd02b1.ac5bcc",
+        "type": "mqtt out",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/SDB/VMC/cmnd/POWER",
+        "qos": "",
+        "retain": "",
+        "broker": "f6c62b72.a6ce68",
+        "x": 680,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "acd076a5.ec9468",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 590,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "83df3ec9.d3c98",
+        "type": "http request",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": false,
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 730,
+        "y": 740,
+        "wires": [
+            [
+                "4428bdfd.affa74"
+            ]
+        ]
+    },
+    {
+        "id": "4428bdfd.affa74",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 930,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "1f7e5bcb.e0c214",
+        "type": "function",
+        "z": "5d25ecf6.19afc4",
+        "name": "func",
+        "func": "msg.url = \"192.168.1.10:8080/hc_mqtt_temp?\"+msg.payload.DS18B20.Id+\"=\"+msg.payload.DS18B20.Temperature;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 570,
+        "y": 740,
+        "wires": [
+            [
+                "83df3ec9.d3c98"
+            ]
+        ]
+    },
+    {
+        "id": "e6d758b8.aa9988",
+        "type": "inject",
+        "z": "66726821.1456e8",
+        "name": "",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "79f413c5.353b3c"
+            ]
+        ]
+    },
+    {
+        "id": "7d749119.31d81",
+        "type": "http request",
+        "z": "66726821.1456e8",
+        "name": "post to FRED",
+        "method": "POST",
+        "ret": "txt",
+        "url": "http://mike.fred.sensetecnic.com/api/test",
+        "tls": "",
+        "x": 540,
+        "y": 140,
+        "wires": [
+            [
+                "c1b5538a.a9f0c"
+            ]
+        ]
+    },
+    {
+        "id": "79f413c5.353b3c",
+        "type": "function",
+        "z": "66726821.1456e8",
+        "name": "set payload and headers",
+        "func": "msg.payload = \"data to post\";\nmsg.headers = {};\nmsg.headers['X-Auth-User'] = 'mike';\nmsg.headers['X-Auth-Key'] = 'fred-key';\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 330,
+        "y": 140,
+        "wires": [
+            [
+                "7d749119.31d81"
+            ]
+        ]
+    },
+    {
+        "id": "c1b5538a.a9f0c",
+        "type": "debug",
+        "z": "66726821.1456e8",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 710,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "969b3001.9e7ff",
+        "type": "json",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 410,
+        "y": 740,
+        "wires": [
+            [
+                "1f7e5bcb.e0c214",
+                "acd076a5.ec9468"
+            ]
+        ]
+    },
+    {
+        "id": "c40a7fc.a2a588",
+        "type": "influxdb out",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "x": 200,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "3fc4d8f9.3ae938",
+        "type": "mqtt in",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/exterieur/th/tele/SENSOR",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "f6c62b72.a6ce68",
+        "x": 190,
+        "y": 740,
+        "wires": [
+            [
+                "969b3001.9e7ff"
+            ]
+        ]
+    },
+    {
+        "id": "7009f683.610568",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 590,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "1bedf3eb.8b605c",
+        "type": "http request",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": false,
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 730,
+        "y": 860,
+        "wires": [
+            [
+                "c59d495d.2d5638"
+            ]
+        ]
+    },
+    {
+        "id": "c59d495d.2d5638",
+        "type": "debug",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 930,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "9e14db0.194ed28",
+        "type": "function",
+        "z": "5d25ecf6.19afc4",
+        "name": "func",
+        "func": "msg.url = \"192.168.1.10:8080/hc_mqtt_temp?\"+msg.payload.DS18B20.Id+\"=\"+msg.payload.DS18B20.Temperature;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 570,
+        "y": 860,
+        "wires": [
+            [
+                "1bedf3eb.8b605c"
+            ]
+        ]
+    },
+    {
+        "id": "6a52994c.f3a468",
+        "type": "json",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 410,
+        "y": 860,
+        "wires": [
+            [
+                "9e14db0.194ed28",
+                "7009f683.610568"
+            ]
+        ]
+    },
+    {
+        "id": "adbb5d9c.63b61",
+        "type": "mqtt in",
+        "z": "5d25ecf6.19afc4",
+        "name": "",
+        "topic": "lamotte/victor/th/tele/SENSOR",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "f6c62b72.a6ce68",
+        "x": 180,
+        "y": 860,
+        "wires": [
+            [
+                "6a52994c.f3a468"
+            ]
+        ]
+    }
+]

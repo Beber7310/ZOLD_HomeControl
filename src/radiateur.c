@@ -68,9 +68,23 @@ void radiateur_init(void)
 	strcpy(radiateur[RD_BARNABE].mqtt_topic, "lamotte/barnabe/sonoff_heater/cmnd/POWER");
 	radiateur_init_pgm_chambre(RD_BARNABE);
 
+	radiateur[RD_VICTOR].type = SONOFF_HTTP;
+	radiateur[RD_VICTOR].index = 6;
+	radiateur[RD_VICTOR].thermometer = TH_VICTOR;
+	radiateur[RD_VICTOR].interupteur = -1;
+	radiateur[RD_VICTOR].calculated_target_temp = 0;
+	radiateur[RD_VICTOR].expected_state = 0;
+	radiateur[RD_VICTOR].http_req_time = 0;
+	radiateur[RD_VICTOR].http_req_temp = 0;
+	radiateur[RD_VICTOR].mirror_state = -1;
+	radiateur[RD_VICTOR].mirror_time = 0;
+	strcpy(radiateur[RD_VICTOR].name, "Victor");
+	strcpy(radiateur[RD_VICTOR].mqtt_topic, "lamotte/victor/sonoff_heater/cmnd/POWER");
+	radiateur_init_pgm_chambre(RD_VICTOR);
+
 	radiateur[RD_HOMECINEMA].type = FIL_PILOTE;
 	radiateur[RD_HOMECINEMA].index = 3;
-	radiateur[RD_HOMECINEMA].thermometer = -1;
+	radiateur[RD_HOMECINEMA].thermometer = TH_GARAGE;
 	radiateur[RD_HOMECINEMA].interupteur = -1;
 	radiateur[RD_HOMECINEMA].calculated_target_temp = 0;
 	radiateur[RD_HOMECINEMA].expected_state = 0;
@@ -95,20 +109,35 @@ void radiateur_init(void)
 	strcpy(radiateur[RD_SALON].name, "Salon");
 	strcpy(radiateur[RD_SALON].mqtt_topic, "");
 	radiateur_init_pgm_salon(RD_SALON);
+	/*
+	 radiateur[RD_BIBLI].type = RF_CONTROLED;
+	 radiateur[RD_BIBLI].index = 7;
+	 radiateur[RD_BIBLI].thermometer = TH_BIBLI;
+	 radiateur[RD_BIBLI].interupteur = -1;
+	 radiateur[RD_BIBLI].calculated_target_temp = 0;
+	 radiateur[RD_BIBLI].expected_state = 0;
+	 radiateur[RD_BIBLI].http_req_time = 0;
+	 radiateur[RD_BIBLI].http_req_temp = 0;
+	 radiateur[RD_BIBLI].mirror_state = -1;
+	 radiateur[RD_BIBLI].mirror_time = 0;
+	 strcpy(radiateur[RD_BIBLI].name, "bibliotheque");
+	 strcpy(radiateur[RD_BIBLI].mqtt_topic, "");
+	 radiateur_init_pgm_chambre(RD_BIBLI);
+	 */
 
-	radiateur[RD_VICTOR].type = RF_CONTROLED;
-	radiateur[RD_VICTOR].index = 7;
-	radiateur[RD_VICTOR].thermometer = TH_VICTOR;
-	radiateur[RD_VICTOR].interupteur = -1;
-	radiateur[RD_VICTOR].calculated_target_temp = 0;
-	radiateur[RD_VICTOR].expected_state = 0;
-	radiateur[RD_VICTOR].http_req_time = 0;
-	radiateur[RD_VICTOR].http_req_temp = 0;
-	radiateur[RD_VICTOR].mirror_state = -1;
-	radiateur[RD_VICTOR].mirror_time = 0;
-	strcpy(radiateur[RD_VICTOR].name, "Victor");
-	strcpy(radiateur[RD_VICTOR].mqtt_topic, "");
-	radiateur_init_pgm_chambre(RD_VICTOR);
+	radiateur[RD_BIBLI].type = SONOFF_HTTP;
+	radiateur[RD_BIBLI].index = 7;
+	radiateur[RD_BIBLI].thermometer = TH_BIBLI;
+	radiateur[RD_BIBLI].interupteur = -1;
+	radiateur[RD_BIBLI].calculated_target_temp = 0;
+	radiateur[RD_BIBLI].expected_state = 0;
+	radiateur[RD_BIBLI].http_req_time = 0;
+	radiateur[RD_BIBLI].http_req_temp = 0;
+	radiateur[RD_BIBLI].mirror_state = -1;
+	radiateur[RD_BIBLI].mirror_time = 0;
+	strcpy(radiateur[RD_BIBLI].name, "bibliotheque");
+	strcpy(radiateur[RD_BIBLI].mqtt_topic, "lamotte/bibliotheque/sonoff_heater/cmnd/POWER");
+	radiateur_init_pgm_chambre(RD_BIBLI);
 
 	radiateur[RD_PARENT].type = FIL_PILOTE;
 	radiateur[RD_PARENT].index = 2;
@@ -378,8 +407,8 @@ void thermometer_init(void)
 	thermometer[TH_GARAGE].hygrometrie = -1.0f;
 	thermometer[TH_GARAGE].type = 'V';
 	strcpy(thermometer[TH_GARAGE].id, ">V:28E01DC803000066");
-	strcpy(thermometer[TH_GARAGE].name, "Garage");
-	strcpy(thermometer[TH_GARAGE].mqtt_topic, "lamotte/garage");
+	strcpy(thermometer[TH_GARAGE].name, "HomeCinema");
+	strcpy(thermometer[TH_GARAGE].mqtt_topic, "lamotte/homecinema");
 
 	thermometer[TH_DAPHNE].smsSent = 0;
 	thermometer[TH_DAPHNE].mesure_date = time(NULL);
@@ -408,14 +437,14 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_BARNABE].name, "Barnabe");
 	strcpy(thermometer[TH_BARNABE].mqtt_topic, "lamotte/barnabe");
 
-	thermometer[TH_VICTOR].smsSent = 0;
-	thermometer[TH_VICTOR].mesure_date = time(NULL);
-	thermometer[TH_VICTOR].temperature = 19.0f;
-	thermometer[TH_VICTOR].hygrometrie = -1.0f;
-	thermometer[TH_VICTOR].type = 'C';
-	strcpy(thermometer[TH_VICTOR].id, ">C:6503804");
-	strcpy(thermometer[TH_VICTOR].name, "Victor");
-	strcpy(thermometer[TH_VICTOR].mqtt_topic, "lamotte/victor");
+	thermometer[TH_BIBLI].smsSent = 0;
+	thermometer[TH_BIBLI].mesure_date = time(NULL);
+	thermometer[TH_BIBLI].temperature = 19.0f;
+	thermometer[TH_BIBLI].hygrometrie = -1.0f;
+	thermometer[TH_BIBLI].type = 'C';
+	strcpy(thermometer[TH_BIBLI].id, ">C:6503804");
+	strcpy(thermometer[TH_BIBLI].name, "bibliotheque");
+	strcpy(thermometer[TH_BIBLI].mqtt_topic, "lamotte/bibliotheque");
 
 	thermometer[TH_CUISINE].smsSent = 0;
 	thermometer[TH_CUISINE].mesure_date = time(NULL);
@@ -435,6 +464,14 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_EXTERIEUR].name, "Exterieur");
 	strcpy(thermometer[TH_EXTERIEUR].mqtt_topic, "lamotte/exterieur");
 
+	thermometer[TH_VICTOR].smsSent = 0;
+	thermometer[TH_VICTOR].mesure_date = time(NULL);
+	thermometer[TH_VICTOR].temperature = 19.0f;
+	thermometer[TH_VICTOR].hygrometrie = -1.0f;
+	thermometer[TH_VICTOR].type = 'S';
+	strcpy(thermometer[TH_VICTOR].id, "0319A2791729");
+	strcpy(thermometer[TH_VICTOR].name, "Victor");
+	strcpy(thermometer[TH_VICTOR].mqtt_topic, "lamotte/victor");
 }
 
 void interupter_init(void)
@@ -662,6 +699,7 @@ void manageAlarm(void)
 			if ((time(NULL) - thermometer[ii].mesure_date) > 60 * 30)
 			{
 				thermometer[ii].smsSent = 1;
+				thermometer[ii].temperature = 19.0f;
 				sprintf(szBuf, "        --- HomeControl ---\n%s thermometer looks to be off", thermometer[ii].name);
 				sendSMS(szBuf);
 			}

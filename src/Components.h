@@ -18,7 +18,7 @@
 //
 
 enum radiateur_type { FIL_PILOTE,RF_CONTROLED,SONOFF_HTTP };
-enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_BARNABE,RD_DAPHNEE,RD_CUISINE,RD_VICTOR,RD_PARENT,RD_LAST};
+enum radiateur_name { RD_HOMECINEMA=0,RD_SALON,RD_BARNABE,RD_DAPHNEE,RD_CUISINE,RD_BIBLI,RD_PARENT,RD_VICTOR,RD_LAST};
 
 typedef struct {
 	enum 	radiateur_type type;
@@ -44,7 +44,7 @@ typedef struct {
 
 
 
-enum thermometer_name { TH_BROKEN=0,TH_GARAGE,TH_SALON,TH_BARNABE,TH_VICTOR,TH_CUISINE,TH_DAPHNE,TH_EXTERIEUR,TH_LAST};
+enum thermometer_name { TH_BROKEN=0,TH_GARAGE,TH_SALON,TH_BARNABE,TH_BIBLI,TH_VICTOR,TH_CUISINE,TH_DAPHNE,TH_EXTERIEUR,TH_LAST};
 
 typedef struct {
 	char name[32];

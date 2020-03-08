@@ -450,13 +450,13 @@ int parse_http_mqtt_temp(char* cmd)
 	char* szID;
 	char* szTemp;
 	pch = strtok(cmd, "?");
-	printf("CMD1 %s\n", pch);
+	// printf("CMD1 %s\n", pch);
 
 	szID = strtok(NULL, "=");
-	printf("CMD2 %s\n", szID);
+	// printf("CMD2 %s\n", szID);
 
 	szTemp = strtok(NULL, "=");
-	printf("CMD3 %s\n", szTemp);
+	// printf("CMD3 %s\n", szTemp);
 
 	int ii;
 	int identified = 0;
