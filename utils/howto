@@ -1,0 +1,23 @@
+sudo apt-get update
+sudo apt-get upgrade
+
+--Grafana
+wget https://dl.grafana.com/oss/release/grafana_6.4.4_armhf.deb
+sudo dpkg -i grafana_6.4.4_armhf.deb
+sudo systemctl enable grafana-server
+sudo systemctl start grafana-server
+
+user/password : admin/admin
+http://emonpi:3000 
+
+
+
+--Influxdb https://bentek.fr/influxdb-grafana-raspberry-pi/
+
+sudo apt-get install apt-transport-https
+sudo apt-get install curl
+curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list 
+sudo apt-get update
+sudo apt-get install influxdb
+
