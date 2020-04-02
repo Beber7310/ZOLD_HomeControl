@@ -127,7 +127,7 @@ void radiateur_init(void)
 
 	radiateur[RD_BIBLI].type = SONOFF_HTTP;
 	radiateur[RD_BIBLI].index = 7;
-	radiateur[RD_BIBLI].thermometer = TH_BIBLI;
+	radiateur[RD_BIBLI].thermometer = TH_BIBLI_NEW;
 	radiateur[RD_BIBLI].interupteur = -1;
 	radiateur[RD_BIBLI].calculated_target_temp = 0;
 	radiateur[RD_BIBLI].expected_state = 0;
@@ -437,14 +437,14 @@ void thermometer_init(void)
 	strcpy(thermometer[TH_BARNABE].name, "Barnabe");
 	strcpy(thermometer[TH_BARNABE].mqtt_topic, "lamotte/barnabe");
 
-	thermometer[TH_BIBLI].smsSent = 0;
-	thermometer[TH_BIBLI].mesure_date = time(NULL);
-	thermometer[TH_BIBLI].temperature = 19.0f;
-	thermometer[TH_BIBLI].hygrometrie = -1.0f;
-	thermometer[TH_BIBLI].type = 'C';
-	strcpy(thermometer[TH_BIBLI].id, ">C:6503804");
-	strcpy(thermometer[TH_BIBLI].name, "bibliotheque");
-	strcpy(thermometer[TH_BIBLI].mqtt_topic, "lamotte/bibliotheque");
+	thermometer[TH_VICTOR].smsSent = 0;
+	thermometer[TH_VICTOR].mesure_date = time(NULL);
+	thermometer[TH_VICTOR].temperature = 19.0f;
+	thermometer[TH_VICTOR].hygrometrie = -1.0f;
+	thermometer[TH_VICTOR].type = 'C';
+	strcpy(thermometer[TH_VICTOR].id, ">C:6503804");
+	strcpy(thermometer[TH_VICTOR].name, "Victor");
+	strcpy(thermometer[TH_VICTOR].mqtt_topic, "lamotte/victor");
 
 	thermometer[TH_CUISINE].smsSent = 0;
 	thermometer[TH_CUISINE].mesure_date = time(NULL);
@@ -460,18 +460,18 @@ void thermometer_init(void)
 	thermometer[TH_EXTERIEUR].temperature = 19.0f;
 	thermometer[TH_EXTERIEUR].hygrometrie = -1.0f;
 	thermometer[TH_EXTERIEUR].type = 'S';
-	strcpy(thermometer[TH_EXTERIEUR].id, "0316A2790DBF");
+	strcpy(thermometer[TH_EXTERIEUR].id, "0319A2791729");
 	strcpy(thermometer[TH_EXTERIEUR].name, "Exterieur");
 	strcpy(thermometer[TH_EXTERIEUR].mqtt_topic, "lamotte/exterieur");
 
-	thermometer[TH_VICTOR].smsSent = 0;
-	thermometer[TH_VICTOR].mesure_date = time(NULL);
-	thermometer[TH_VICTOR].temperature = 19.0f;
-	thermometer[TH_VICTOR].hygrometrie = -1.0f;
-	thermometer[TH_VICTOR].type = 'S';
-	strcpy(thermometer[TH_VICTOR].id, "0319A2791729");
-	strcpy(thermometer[TH_VICTOR].name, "Victor");
-	strcpy(thermometer[TH_VICTOR].mqtt_topic, "lamotte/victor");
+	thermometer[TH_BIBLI_NEW].smsSent = 0;
+	thermometer[TH_BIBLI_NEW].mesure_date = time(NULL);
+	thermometer[TH_BIBLI_NEW].temperature = 19.0f;
+	thermometer[TH_BIBLI_NEW].hygrometrie = -1.0f;
+	thermometer[TH_BIBLI_NEW].type = 'S';
+	strcpy(thermometer[TH_BIBLI_NEW].id, "0316A2790DBF");
+	strcpy(thermometer[TH_BIBLI_NEW].name, "Bibliotheque");
+	strcpy(thermometer[TH_BIBLI_NEW].mqtt_topic, "lamotte/bibliotheque");
 }
 
 void interupter_init(void)
