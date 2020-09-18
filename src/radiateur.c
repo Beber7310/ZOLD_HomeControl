@@ -471,7 +471,7 @@ void thermometer_init(void)
 	thermometer[TH_BIBLI_NEW].type = 'S';
 	strcpy(thermometer[TH_BIBLI_NEW].id, "0316A2790DBF");
 	strcpy(thermometer[TH_BIBLI_NEW].name, "Bibliotheque");
-	strcpy(thermometer[TH_BIBLI_NEW].mqtt_topic, "lamotte/bibliotheque");
+	strcpy(thermometer[TH_BIBLI_NEW].mqtt_topic, "lamotte/bibliotheque") ;
 }
 
 void interupter_init(void)
@@ -482,22 +482,29 @@ void interupter_init(void)
 	interrupter[IT_HOMECINEMA].action_date = 0;
 	interrupter[IT_HOMECINEMA].action = 0;
 	strcpy(interrupter[IT_HOMECINEMA].id, ">C:FE61422");
+	strcpy(interrupter[IT_HOMECINEMA].mqtt_topic, "lamotte/homecinema/switch/cmnd/POWER");
 
 	interrupter[IT_BARNABE].action_date = 0;
 	interrupter[IT_BARNABE].action = 0;
 	strcpy(interrupter[IT_BARNABE].id, ">C:FE6103A");
+	strcpy(interrupter[IT_BARNABE].mqtt_topic, "lamotte/barnabe/switch/cmnd/POWER");
+
 
 	interrupter[IT_GARAGE].action_date = 0;
 	interrupter[IT_GARAGE].action = 0;
 	strcpy(interrupter[IT_GARAGE].id, ">C:FE68722");
+	strcpy(interrupter[IT_GARAGE].mqtt_topic, "lamotte/garage/switch/cmnd/POWER");
 
 	interrupter[IT_SOFIA].action_date = 0;
 	interrupter[IT_SOFIA].action = 0;
 	strcpy(interrupter[IT_SOFIA].id, ">C:FE68792");
+	strcpy(interrupter[IT_SOFIA].mqtt_topic, "lamotte/sofia/switch/cmnd/POWER");
+
 
 	interrupter[IT_OLD_1].action_date = 0;
 	interrupter[IT_OLD_1].action = 0;
 	strcpy(interrupter[IT_OLD_1].id, ">C:FE685FA");
+	strcpy(interrupter[IT_OLD_1].mqtt_topic, "lamotte/it_old1/switch/cmnd/POWER");
 
 }
 

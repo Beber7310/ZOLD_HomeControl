@@ -68,6 +68,7 @@ typedef struct {
 	time_t action_date;
 	int action;
 	char id[18];
+	char mqtt_topic[256];
 } interrupter_t;
 
 
@@ -78,6 +79,7 @@ typedef struct {
 	int blyss_id;
 	int presence;
 	int interupteur[20];
+	char mqtt_topic[256];
 } light_t;
 
 enum Presence_name { PR_GARAGE=0,PR_ATELIER,PR_LAST};

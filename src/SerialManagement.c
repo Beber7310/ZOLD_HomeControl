@@ -29,8 +29,7 @@ int fd_rf;
 #define BAUDRATE B9600
 #define RF_DEVICE "/dev/ttyACM0"
 
-int SerialFilPilote(void)
-{
+int SerialFilPilote(void) {
 
 	struct termios oldtio, newtio;
 
@@ -40,8 +39,7 @@ int SerialFilPilote(void)
 	 reçoit un caractère CTRL-C.
 	 */
 	fd_fil_pilote = open(FIL_PILOTE_DEVICE, O_RDWR | O_NOCTTY);
-	if (fd_fil_pilote < 0)
-	{
+	if (fd_fil_pilote < 0) {
 		perror(FIL_PILOTE_DEVICE);
 		exit(-1);
 	}
@@ -133,8 +131,7 @@ int SerialFilPilote(void)
 	return 0;
 }
 
-int SerialRF(void)
-{
+int SerialRF(void) {
 
 	struct termios oldtio, newtio;
 
@@ -144,8 +141,7 @@ int SerialRF(void)
 	 reçoit un caractère CTRL-C.
 	 */
 	fd_rf = open(RF_DEVICE, O_RDWR | O_NOCTTY);
-	if (fd_rf < 0)
-	{
+	if (fd_rf < 0) {
 		perror(RF_DEVICE);
 		exit(-1);
 	}
@@ -218,45 +214,41 @@ int SerialRF(void)
 	return 0;
 }
 
-void SerialFilPiloteSendCommande(void)
-{
+void SerialFilPiloteSendCommande(void) {
 	char cmdline[1024];
-
 
 	char cmd = 0;
 	int ii;
 
-	for (ii = 0; ii < RD_LAST; ii++)
-	{
-		if (radiateur[ii].type == FIL_PILOTE)
-		{
-			if (ii == RD_SALON)
-			{
-				cmd += (radiateur[ii].expected_state ? 1 : 0) << (radiateur[ii].index);
-			}
-			else
-			{
-				cmd += (radiateur[ii].expected_state ? 0 : 1) << (radiateur[ii].index);
+	for (ii = 0; ii < RD_LAST; ii++) {
+		if (radiateur[ii].type == FIL_PILOTE) {
+			if (ii == RD_SALON) {
+				cmd += (radiateur[ii].expected_state ? 1 : 0)
+						<< (radiateur[ii].index);
+			} else {
+				cmd += (radiateur[ii].expected_state ? 0 : 1)
+						<< (radiateur[ii].index);
 			}
 		}
 
 		/* Should not be commented*/
-		if (radiateur[ii].type == RF_CONTROLED)
-		{
-			if ((radiateur[ii].expected_state != radiateur[ii].mirror_state) || ((time(NULL) - radiateur[ii].mirror_time) > 900))
-			{
+		if (radiateur[ii].type == RF_CONTROLED) {
+			if ((radiateur[ii].expected_state != radiateur[ii].mirror_state)
+					|| ((time(NULL) - radiateur[ii].mirror_time) > 900)) {
 				radiateur[ii].mirror_time = time(NULL);
-				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
-				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
-				SendBlyssCmd(radiateur[ii].index, radiateur[ii].expected_state ? 0 : 1);
+				SendBlyssCmd(radiateur[ii].index,
+						radiateur[ii].expected_state ? 0 : 1);
+				SendBlyssCmd(radiateur[ii].index,
+						radiateur[ii].expected_state ? 0 : 1);
+				SendBlyssCmd(radiateur[ii].index,
+						radiateur[ii].expected_state ? 0 : 1);
 				radiateur[ii].mirror_state = radiateur[ii].expected_state;
 			}
 		}
 
-		if (radiateur[ii].type == SONOFF_HTTP)
-		{
-			if ((radiateur[ii].expected_state != radiateur[ii].mirror_state) || ((time(NULL) - radiateur[ii].mirror_time) > 900))
-			{
+		if (radiateur[ii].type == SONOFF_HTTP) {
+			if ((radiateur[ii].expected_state != radiateur[ii].mirror_state)
+					|| ((time(NULL) - radiateur[ii].mirror_time) > 900)) {
 				char cmdline[1024];
 
 				radiateur[ii].mirror_time = time(NULL);
@@ -265,7 +257,8 @@ void SerialFilPiloteSendCommande(void)
 				// sprintf(cmdline, "wget \"%s&payload=%s\"", radiateur[ii].mqtt_topic, radiateur[ii].expected_state ? "OFF" : "ON"); // Inverted on purpose as 220V on pilote wire  put the heater in "sleep"
 				// system(cmdline);
 
-				nodered_publish(radiateur[ii].mqtt_topic, radiateur[ii].expected_state ? "OFF" : "ON"); // Inverted on purpose as 220V on pilote wire  put the heater in "sleep"
+				nodered_publish(radiateur[ii].mqtt_topic,
+						radiateur[ii].expected_state ? "OFF" : "ON"); // Inverted on purpose as 220V on pilote wire  put the heater in "sleep"
 
 			}
 
@@ -273,55 +266,54 @@ void SerialFilPiloteSendCommande(void)
 	}
 
 	//write(fd_fil_pilote, &cmd, 1);
-	sprintf(cmdline, "wget -q -O temp.filp \"http://homecontrolremote:8080/hc_cmd?FILP_DATA=%i\"",cmd);
+	sprintf(cmdline,
+			"wget -q -O temp.filp \"http://homecontrolremote:8080/hc_cmd?FILP_DATA=%i\"",
+			cmd);
 	system(cmdline);
 	// http://homecontrolremote:8080/hc_cmd?FILP_DATA=255
 }
 
-int SerialSendChar(char data)
-{
+int SerialSendChar(char data) {
 	return write(fd_rf, &data, 1);
 }
 
-void update_capteur_info(char* pBuf)
-{
+void update_capteur_info(char *pBuf) {
 	int ii;
 	int identified = 0;
 
-	for (ii = 0; ii < TH_LAST; ii++)
-	{
-		if (pBuf[1] == 'V' && thermometer[ii].type == 'V')
-		{
-			if (strncmp(pBuf, thermometer[ii].id, 18) == 0)
-			{
+	for (ii = 0; ii < TH_LAST; ii++) {
+		if (pBuf[1] == 'V' && thermometer[ii].type == 'V') {
+			if (strncmp(pBuf, thermometer[ii].id, 18) == 0) {
 				char str_value[128];
 				char str_topic[256];
 
 				thermometer[ii].temperature = atof(pBuf + 20);
 				thermometer[ii].mesure_date = time(NULL);
-				if (strlen(pBuf) == 30)
-				{
+				if (strlen(pBuf) == 30) {
 					rain.current_rain = atoi(pBuf + 26);
 					rain_calcul();
-					logData("rn", thermometer[ii].name, time(NULL), rain.falled);
-					info("RF", "Received rain %s: %i", thermometer[ii].name, rain.current_rain);
+					logData("rn", thermometer[ii].name, time(NULL),
+							rain.falled);
+					info("RF", "Received rain %s: %i", thermometer[ii].name,
+							rain.current_rain);
 				}
 
 				identified++;
 				sem_post(&sem_capteur_data_available);
-				info("RF", "Received thermometer %s: %f", thermometer[ii].name, thermometer[ii].temperature);
-				logData("th", thermometer[ii].name, time(NULL), thermometer[ii].temperature);
+				info("RF", "Received thermometer %s: %f", thermometer[ii].name,
+						thermometer[ii].temperature);
+				logData("th", thermometer[ii].name, time(NULL),
+						thermometer[ii].temperature);
 
 				sprintf(str_value, "%f", thermometer[ii].temperature);
-				sprintf(str_topic, "%s/temperature", thermometer[ii].mqtt_topic);
+				sprintf(str_topic, "%s/temperature",
+						thermometer[ii].mqtt_topic);
 				nodered_publish(str_topic, str_value);
 			}
 
 		}
-		if (pBuf[1] == 'C' && thermometer[ii].type == 'C')
-		{
-			if (strncmp(pBuf, thermometer[ii].id, 10) == 0)
-			{
+		if (pBuf[1] == 'C' && thermometer[ii].type == 'C') {
+			if (strncmp(pBuf, thermometer[ii].id, 10) == 0) {
 				char str_value[128];
 				char str_topic[256];
 				// Serial.print("Temp: ");
@@ -334,41 +326,51 @@ void update_capteur_info(char* pBuf)
 				thermometer[ii].mesure_date = time(NULL);
 				identified++;
 				sem_post(&sem_capteur_data_available);
-				info("RF", "Received thermometer %s: %f", thermometer[ii].name, thermometer[ii].temperature);
-				logData("th", thermometer[ii].name, time(NULL), thermometer[ii].temperature);
+				info("RF", "Received thermometer %s: %f", thermometer[ii].name,
+						thermometer[ii].temperature);
+				logData("th", thermometer[ii].name, time(NULL),
+						thermometer[ii].temperature);
 
 				sprintf(str_value, "%f", thermometer[ii].temperature);
-				sprintf(str_topic, "%s/temperature", thermometer[ii].mqtt_topic);
+				sprintf(str_topic, "%s/temperature",
+						thermometer[ii].mqtt_topic);
 				nodered_publish(str_topic, str_value);
 
 				pBuf[12] = 0;
 				thermometer[ii].hygrometrie = (float) strtol(pBuf + 10, 0, 16);
-				info("RF", "Received Humidity %s: %f%%", thermometer[ii].name, thermometer[ii].hygrometrie);
-				logData("hy", thermometer[ii].name, time(NULL), thermometer[ii].hygrometrie);
+				info("RF", "Received Humidity %s: %f%%", thermometer[ii].name,
+						thermometer[ii].hygrometrie);
+				logData("hy", thermometer[ii].name, time(NULL),
+						thermometer[ii].hygrometrie);
 
 				sprintf(str_value, "%f", thermometer[ii].hygrometrie);
-				sprintf(str_topic, "%s/hygrometrie", thermometer[ii].mqtt_topic);
+				sprintf(str_topic, "%s/hygrometrie",
+						thermometer[ii].mqtt_topic);
 				nodered_publish(str_topic, str_value);
 			}
 		}
 	}
 
-	for (ii = 0; ii < IT_LAST; ii++)
-	{
-		if (strncmp(pBuf, interrupter[ii].id, 10) == 0)
-		{
+	for (ii = 0; ii < IT_LAST; ii++) {
+		if (strncmp(pBuf, interrupter[ii].id, 10) == 0) {
+			char str_value[128];
+			char str_topic[256];
+
 			interrupter[ii].action = (pBuf[11] == '1') ? 1 : 0;
 			interrupter[ii].action_date = time(NULL);
 			identified++;
 			sem_post(&sem_capteur_data_available);
-			info("RF", "Received interupter %i: %i", ii, interrupter[ii].action);
+			info("RF", "Received interupter %i: %i", ii,
+					interrupter[ii].action);
+
+			sprintf(str_value, "%i", interrupter[ii].action);
+			sprintf(str_topic, "%s/switch", interrupter[ii].mqtt_topic);
+			nodered_publish(str_topic, str_value);
 		}
 	}
 
-	for (ii = 0; ii < PR_LAST; ii++)
-	{
-		if (strncmp(pBuf, presence[ii].id, 10) == 0)
-		{
+	for (ii = 0; ii < PR_LAST; ii++) {
+		if (strncmp(pBuf, presence[ii].id, 10) == 0) {
 			char str_value[128];
 			char str_topic[256];
 			time_t now;
@@ -377,7 +379,7 @@ void update_capteur_info(char* pBuf)
 			identified++;
 			sem_post(&sem_capteur_data_available);
 			info("RF", "Received presence : %s", presence[ii].name);
-			logData("pr",presence[ii].name,time(NULL),1.0f);
+			logData("pr", presence[ii].name, time(NULL), 1.0f);
 
 			now = time(0);
 			strftime(str_value, 100, "%d-%m-%Y- %H:%M:%S.000", localtime(&now));
@@ -388,14 +390,12 @@ void update_capteur_info(char* pBuf)
 		}
 	}
 
-	if (identified == 0 && pBuf[0] == '>')
-	{
+	if (identified == 0 && pBuf[0] == '>') {
 		warning("RF", "Unidentified rf tag %s", pBuf);
 	}
 }
 
-void * uart_rf_loop(void * arg)
-{
+void* uart_rf_loop(void *arg) {
 	char buf[255];
 	int index = 0;
 	int lastTargetUpdate = 0;
@@ -403,28 +403,24 @@ void * uart_rf_loop(void * arg)
 
 	SerialRF();
 
-	while (1)
-	{
+	while (1) {
 		res = read(fd_rf, &buf[index], 255);
 		index += res;
 
-		for (int ii = 0; ii < sizeof(buf); ii++)
-		{
-			if ((buf[ii] == '\n') || (buf[ii] == '\r'))
-			{
+		for (int ii = 0; ii < sizeof(buf); ii++) {
+			if ((buf[ii] == '\n') || (buf[ii] == '\r')) {
 				buf[ii] = 0;
 				index = 0;
 				update_capteur_info(buf);
 			}
 		}
 
-		if ((time(NULL) - lastTargetUpdate) > 60)
-		{
+		if ((time(NULL) - lastTargetUpdate) > 60) {
 			lastTargetUpdate = time(NULL);
 			//warning("Target", "Send");
-			for (int ii = 0; ii < RD_LAST; ii++)
-			{
-				logData("targ", radiateur[ii].name, time(NULL), radiateur[ii].calculated_target_temp);
+			for (int ii = 0; ii < RD_LAST; ii++) {
+				logData("targ", radiateur[ii].name, time(NULL),
+						radiateur[ii].calculated_target_temp);
 			}
 		}
 
@@ -432,8 +428,7 @@ void * uart_rf_loop(void * arg)
 
 }
 
-void * uart_filPilote_loop(void * arg)
-{
+void* uart_filPilote_loop(void *arg) {
 	char buf[255];
 	int index = 0;
 	int sampleCount = 0;
@@ -443,21 +438,17 @@ void * uart_filPilote_loop(void * arg)
 
 	SerialFilPilote();
 
-	while (1)
-	{
+	while (1) {
 		res = read(fd_fil_pilote, &buf[index], 255);
 		index += res;
 
-		for (int ii = 0; ii < sizeof(buf); ii++)
-		{
-			if ((buf[ii] == '\n') || (buf[ii] == '\r'))
-			{
+		for (int ii = 0; ii < sizeof(buf); ii++) {
+			if ((buf[ii] == '\n') || (buf[ii] == '\r')) {
 				buf[ii] = 0;
 
 				index = 0;
 
-				if (buf[0] == 'A')
-				{
+				if (buf[0] == 'A') {
 					// data comming from arduino is 100ma by unit.
 					power.current = atof(buf + 2) / 10;
 					power.power = 230 * power.current;
@@ -465,11 +456,11 @@ void * uart_filPilote_loop(void * arg)
 					currentAcc += power.current;
 					sampleCount++;
 					//info("AMP","%f",power.current);
-					if (sampleCount > 60)
-					{
+					if (sampleCount > 60) {
 						sampleCount = 0;
 						logData("amp", "house", time(NULL), currentAcc / 60.0f);
-						logData("watt", "house", time(NULL), 230 * currentAcc / 60.0f);
+						logData("watt", "house", time(NULL),
+								230 * currentAcc / 60.0f);
 						currentAcc = 0;
 					}
 				}
@@ -479,12 +470,10 @@ void * uart_filPilote_loop(void * arg)
 
 }
 
-int SendBlyssCmd(int id, int value)
-{
+int SendBlyssCmd(int id, int value) {
 	char timestamp = 0;
 	static char key_index = 0;
-	char key[] =
-	{ 0x98, 0xDA, 0x1E, 0xE6, 0x67 };
+	char key[] = { 0x98, 0xDA, 0x1E, 0xE6, 0x67 };
 
 	long ms; // Milliseconds
 	time_t s;  // Seconds
